@@ -51,7 +51,6 @@ const DeviceCard: FC<DeviceCardProps> = ({ device }) => {
           {...definition}
           texts={[{ text: 'Loading...', id: 'loading' }]}
           name={device.name || definition.name}
-          isLoading={true}
         ></PureDeviceCard>
       }
     >
