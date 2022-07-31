@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Google Sans', sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+*:not(input[type='text']) {
+  user-select: none;
+}
+
+body,
+html {
+  overscroll-behavior-y: contain;
+}
