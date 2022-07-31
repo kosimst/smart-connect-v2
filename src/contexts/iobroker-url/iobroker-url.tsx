@@ -7,49 +7,62 @@ import {
   useEffect,
   useState,
 } from 'react'
+import { Button, Container, Input, Row, Subtitle, Title } from './styles'
 
 export const IoBrokerUrlContext = createContext({
   url: '',
   setUrl: (newUrl: string) => {},
-  connected: false,
-  ready: false,
 })
 
 export const IoBrokerUrlProvider: FC<{ children?: ReactNode }> = ({
   children,
 }) => {
-  const [url, setUrlState] = useState('192.168.0.15')
-  const [connected, setConnected] = useState(false)
-  const [ready, setReady] = useState(false)
+  const [url, setUrlState] = useState('')
 
   const setUrl = useCallback((newUrl: string) => {
     setUrlState(newUrl)
     localStorage.setItem('iobroker-url', newUrl)
   }, [])
 
-  /*useEffect(() => {
+  useEffect(() => {
     const savedUrl = localStorage.getItem('iobroker-url')
-
-    setReady(true)
 
     if (!savedUrl) {
       return
     }
 
     setUrlState(savedUrl)
-  }, [])*/
+  }, [])
 
-  return (
+  const [input, setInput] = useState('')
+  const submit = useCallback(async () => {
+    if (input !== '192.168.0.15') {
+      return
+    }
+
+    setUrl(input)
+  }, [input])
+
+  return url ? (
     <IoBrokerUrlContext.Provider
       value={{
         url,
         setUrl,
-        connected,
-        ready,
       }}
     >
       {children}
     </IoBrokerUrlContext.Provider>
+  ) : (
+    <Container>
+      <Title>Hey there!</Title>
+
+      <Subtitle>Welcome to Smart Connect!</Subtitle>
+
+      <Row>
+        <Input value={input} onChange={(e) => setInput(e.target.value)} />
+        <Button onClick={submit}>Go!</Button>
+      </Row>
+    </Container>
   )
 }
 

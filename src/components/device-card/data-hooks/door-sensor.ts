@@ -16,7 +16,7 @@ const useData: DataHook = (device) => {
   )
 
   return {
-    toggleValue: opened,
+    toggleValue: !opened,
     texts,
   }
 }
