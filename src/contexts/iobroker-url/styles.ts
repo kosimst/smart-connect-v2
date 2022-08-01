@@ -1,19 +1,24 @@
 import styled from '@emotion/styled'
+import { Button as MuiButton, TextField } from '@mui/material'
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100vw;
-  height: 100vh;
+  padding: 32px 16px;
+  gap: 16px;
+
+  & > * {
+    width: 100%;
+  }
 `
 
 export const Row = styled.div``
 
-export const Input = styled.input``
+export const Input = styled(TextField)``
 
-export const Button = styled.button``
+export const Button = styled(MuiButton)``
 
 export const Title = styled.h1``
 

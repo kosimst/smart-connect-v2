@@ -1,4 +1,3 @@
-import { SupportedDeviceType } from '../../../constants/device-definitions'
 import Device from '../../../types/device'
 import DataHook from './data-hook'
 
@@ -17,7 +16,10 @@ const useDataHook = ({ type: deviceType }: Device) => {
     throw cachedError
   }
 
-  throw import(`../data-hooks/${deviceType}`)
+  throw import(
+    /* @vite-ignore */
+    `../data-hooks/${deviceType}`
+  )
     .then(({ default: dataHook }) => {
       cache.set(deviceType, dataHook)
       return dataHook as DataHook
