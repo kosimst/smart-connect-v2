@@ -38,7 +38,7 @@ export const SocketClientProvider: FC<{ children: ReactNode }> = ({
   const { url: ioBrokerUrl } = useIoBrokerUrl()
 
   const socketIoLoaded = useScript(
-    ioBrokerUrl ? `http://${ioBrokerUrl}:8081/lib/js/socket.io.js` : ''
+    ioBrokerUrl ? `https://${ioBrokerUrl}/lib/js/socket.io.js` : ''
   )
 
   const [connection, setConnection] = useState<SocketClient | null>(null)
@@ -51,6 +51,8 @@ export const SocketClientProvider: FC<{ children: ReactNode }> = ({
 
     const socket = new Connection({
       host: ioBrokerUrl,
+      port: 443,
+      protocol: 'wss',
     })
 
     const handler = (connected: boolean) => {
