@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useSocketClient } from '../contexts/socket-client'
+import useIoBroker from '../contexts/iobroker-context'
+import { useIoBrokerStates } from '../contexts/iobroker-states-context'
 import Device from '../types/device'
 
 const useDeviceState = <T extends any>(
@@ -7,7 +8,8 @@ const useDeviceState = <T extends any>(
   state: string,
   defaultValue: T
 ) => {
-  const ioSocket = useSocketClient()
+  const { fetchIoBroker } = useIoBroker()
+  const { subscribeState } = useIoBrokerStates()
 
   const path = `${device.id}.${state}`
 
@@ -16,48 +18,19 @@ const useDeviceState = <T extends any>(
 
   const setState = useCallback(
     (newValue: T) => {
-      if (!ioSocket.connected) {
-        return
-      }
-
-      ioSocket.setState(path, newValue)
+      fetchIoBroker(`/set/${path}?value=${newValue}`)
     },
-    [ioSocket, device.id, state]
+    [device.id, state, fetchIoBroker]
   )
 
   useEffect(() => {
-    if (!ioSocket.connected) {
-      return
-    }
-
-    let unsubscribe = () => {}
-
-    const addListener = async () => {
-      try {
-        await ioSocket.getState(path)
-      } catch (e) {
-        setExists(false)
-        return
-      }
-
+    const unsubscribe = subscribeState(path, (newValue) => {
+      setValue(newValue)
       setExists(true)
+    })
 
-      const handler = (id: string, state: any) => {
-        setValue(state.val)
-      }
-
-      ioSocket.subscribeState(path, handler)
-
-      unsubscribe = () =>
-        ioSocket.unsubscribeState(`${device.id}.${state}`, handler)
-    }
-
-    addListener()
-
-    return () => {
-      unsubscribe()
-    }
-  }, [ioSocket, setExists])
+    return unsubscribe
+  }, [subscribeState])
 
   return [value, setState, exists] as const
 }

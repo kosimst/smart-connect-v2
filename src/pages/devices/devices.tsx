@@ -4,12 +4,12 @@ import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
 import DeviceGrid from '../../components/device-grid'
 import deviceDefinitions from '../../constants/device-definitions'
+import { useIoBrokerStates } from '../../contexts/iobroker-states-context'
 import groupBy from '../../helpers/group-by'
-import useDevices from '../../hooks/use-devices'
 import { Chips, Room, RoomTitle } from './styles'
 
 const DevicesPage: FC = () => {
-  const devices = useDevices()
+  const { devices } = useIoBrokerStates()
 
   const deviceTypes = useMemo(
     () =>

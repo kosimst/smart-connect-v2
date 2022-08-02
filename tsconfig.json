@@ -18,5 +18,6 @@
     "strictNullChecks": true
   },
   "include": ["src"],
+  "exclude": ["src/service-worker"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

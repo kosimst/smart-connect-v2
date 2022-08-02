@@ -8,5 +8,5 @@ export const Container = styled(motion.span)`
   display: inline-block;
   border-radius: 99px;
   color: #eaeaea;
-  background-color: ${({ theme }) => theme.palette.chip};
+  background-color: #444;
 `

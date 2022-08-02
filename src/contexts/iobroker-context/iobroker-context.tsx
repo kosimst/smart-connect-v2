@@ -1,4 +1,4 @@
-import { TextField, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import {
   createContext,
   FC,
@@ -8,20 +8,92 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { Button, Container, Input, Row, Subtitle, Title } from './styles'
+import { Button, Container, Input } from './styles'
 
-export const IoBrokerUrlContext = createContext({
-  url: '',
-  cfClient: '',
-  cfSecret: '',
+const ALIVE_STATE = 'system.adapter.admin.0.alive'
+
+export const IoBrokerContext = createContext({
+  fetchIoBroker: (path: string): Promise<any> =>
+    Promise.reject(new Error('ioBroker not connected yet')),
+  connected: false,
 })
 
-export const IoBrokerUrlProvider: FC<{ children?: ReactNode }> = ({
+export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
   children,
 }) => {
   const [url, setUrlState] = useState('')
   const [cfClient, setCfClient] = useState('')
   const [cfSecret, setCfSecret] = useState('')
+
+  const [connected, setConnected] = useState(false)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (!url) {
+      setConnected(false)
+      return
+    }
+
+    const f = async () => {
+      try {
+        const response = await fetch(`https://${url}/get/${ALIVE_STATE}`, {
+          headers: {
+            'CF-Access-Client-Id': cfClient,
+            'CF-Access-Client-Secret': cfSecret,
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error(response.statusText)
+        }
+
+        const data = await response.json()
+
+        if (!data.val) {
+          throw new Error('Not alive')
+        }
+
+        setConnected(true)
+        setReady(true)
+      } catch {
+        setConnected(false)
+      }
+    }
+
+    f()
+
+    const interval = setInterval(f, 1000)
+
+    return () => clearInterval(interval)
+  }, [url])
+
+  const fetchIoBroker = useCallback(
+    async (path: string) => {
+      if (!connected) {
+        throw new Error('ioBroker not connected')
+      }
+
+      const response = await fetch(`https://${url}${path}`, {
+        headers: {
+          'CF-Access-Client-Id': cfClient,
+          'CF-Access-Client-Secret': cfSecret,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`)
+      }
+
+      try {
+        const data = await response.json()
+
+        return data
+      } catch (e: Error | any) {
+        throw new Error(`Invalid JSON: ${e?.message || e}`)
+      }
+    },
+    [connected, url]
+  )
 
   const setAccess = useCallback(
     (newUrl: string, newCfClient: string, newCfSecret: string) => {
@@ -77,36 +149,26 @@ export const IoBrokerUrlProvider: FC<{ children?: ReactNode }> = ({
     setLoading(true)
     setError('')
 
-    /*try {
-      const response = await fetch(`https://${urlInput}/lib/js/socket.io.js`, {
-        headers: {
-          'CF-Access-Client-Id': cfIdInput,
-          'CF-Access-Client-Secret': cfSecretInput,
-        },
-      })
-
-      console.log(response.ok, await response.text())
-    } catch (e: any) {
-      setError('Failed to connect')
-
-      console.error(e)
-
-      setLoading(false)
-    }*/
-
     setAccess(urlInput, cfIdInput, cfSecretInput)
   }, [urlInput])
 
   return url ? (
-    <IoBrokerUrlContext.Provider
-      value={{
-        url,
-        cfClient,
-        cfSecret,
-      }}
-    >
-      {children}
-    </IoBrokerUrlContext.Provider>
+    ready ? (
+      connected ? (
+        <IoBrokerContext.Provider
+          value={{
+            fetchIoBroker,
+            connected,
+          }}
+        >
+          {children}
+        </IoBrokerContext.Provider>
+      ) : (
+        <span>not connected</span>
+      )
+    ) : (
+      <span>not ready</span>
+    )
   ) : (
     <Container>
       <Typography variant="h1">Hey there!</Typography>
@@ -157,6 +219,6 @@ export const IoBrokerUrlProvider: FC<{ children?: ReactNode }> = ({
   )
 }
 
-const useIoBrokerUrl = () => useContext(IoBrokerUrlContext)
+const useIoBroker = () => useContext(IoBrokerContext)
 
-export default useIoBrokerUrl
+export default useIoBroker
