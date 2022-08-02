@@ -75,21 +75,21 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   }, [fetchIoBroker])
 
   const fetchStates = useCallback(async () => {
-    const chunks = nSizedChunks([...stateSubscriptions.entries()], 25)
+    const chunks = nSizedChunks([...stateSubscriptions.entries()], 10)
 
     for (const chunk of chunks) {
       const path = '/getBulk/' + chunk.map(([id]) => `${id}`).join(',')
 
-      fetchIoBroker(path).then((res: any[]) => {
-        for (const { id, val } of res) {
-          const subscriptions = stateSubscriptions.get(id)
-          if (subscriptions) {
-            for (const cb of subscriptions) {
-              cb(val)
-            }
+      const res = await fetchIoBroker(path)
+
+      for (const { id, val } of res) {
+        const subscriptions = stateSubscriptions.get(id)
+        if (subscriptions) {
+          for (const cb of subscriptions) {
+            cb(val)
           }
         }
-      })
+      }
     }
   }, [fetchIoBroker, stateSubscriptions])
 
