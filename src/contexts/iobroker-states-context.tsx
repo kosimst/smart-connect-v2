@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react'
+import { isSupportedDeviceType } from '../constants/device-definitions'
 import nSizedChunks from '../helpers/n-sized-chunks'
 import Device from '../types/device'
 import useIoBroker from './iobroker-context'
@@ -41,7 +42,37 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
 
   const { fetchIoBroker, connected } = useIoBroker()
 
-  const fetchDevices = useCallback(async () => {}, [])
+  const fetchDevices = useCallback(async () => {
+    const deviceStates = await fetchIoBroker(
+      '/objects?pattern=alias.0.*&type=channel'
+    )
+
+    const newDevices = Array<Device>()
+
+    for (const {
+      common: { name, role },
+      _id: id,
+      enums,
+    } of Object.values<any>(deviceStates)) {
+      if (!isSupportedDeviceType(role)) {
+        continue
+      }
+
+      const roomName = Object.entries(enums).find(
+        ([k, v]) => k.startsWith('enum.rooms.') && v
+      )?.[1] as string | undefined
+
+      newDevices.push({
+        id,
+        name,
+        type: role,
+        roomName,
+      })
+    }
+
+    setDevices(newDevices)
+    localStorage.setItem('devices', JSON.stringify(newDevices))
+  }, [fetchIoBroker])
 
   const fetchStates = useCallback(async () => {
     const chunks = nSizedChunks([...stateSubscriptions.entries()], 25)
