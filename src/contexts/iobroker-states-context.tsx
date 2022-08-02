@@ -80,15 +80,19 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     for (const chunk of chunks) {
       const path = '/getBulk/' + chunk.map(([id]) => `${id}`).join(',')
 
-      const res = await fetchIoBroker(path)
+      try {
+        const res = await fetchIoBroker(path)
 
-      for (const { id, val } of res) {
-        const subscriptions = stateSubscriptions.get(id)
-        if (subscriptions) {
-          for (const cb of subscriptions) {
-            cb(val)
+        for (const { id, val } of res) {
+          const subscriptions = stateSubscriptions.get(id)
+          if (subscriptions) {
+            for (const cb of subscriptions) {
+              cb(val)
+            }
           }
         }
+      } catch (e) {
+        console.warn('Failed to fetch states', e)
       }
     }
   }, [fetchIoBroker, stateSubscriptions])
