@@ -16,10 +16,7 @@ const useDataHook = ({ type: deviceType }: Device) => {
     throw cachedError
   }
 
-  throw import(
-    /* @vite-ignore */
-    `../data-hooks/${deviceType}`
-  )
+  throw import(`../data-hooks/${deviceType}`)
     .then(({ default: dataHook }) => {
       cache.set(deviceType, dataHook)
       return dataHook as DataHook
