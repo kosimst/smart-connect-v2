@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { Button, Container, Input } from './styles'
+import { Button, Container, Input, Title } from './styles'
 import ioBrokerDb from '../../db/iobroker-db'
 import { useLiveQuery } from 'dexie-react-hooks'
 
@@ -34,13 +34,8 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
   const [connected, setConnected] = useState(false)
   const [ready, setReady] = useState(false)
 
-  useEffect(() => {
-    if (!url) {
-      setConnected(false)
-      return
-    }
-
-    const f = async () => {
+  const heartbeat = useCallback(
+    async (url: string, cfClientId: string, cfClientSecret: string) => {
       try {
         const response = await fetch(`https://${url}/get/${ALIVE_STATE}`, {
           headers: {
@@ -61,17 +56,29 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
 
         setConnected(true)
         setReady(true)
+        return true
       } catch {
         setConnected(false)
+        return false
       }
+    },
+    []
+  )
+
+  useEffect(() => {
+    if (!url) {
+      setConnected(false)
+      return
     }
 
-    f()
+    heartbeat(url, cfClientId, cfClientSecret)
 
-    const interval = setInterval(f, 1000)
+    const interval = setInterval(() => {
+      heartbeat(url, cfClientId, cfClientSecret)
+    }, 1000)
 
     return () => clearInterval(interval)
-  }, [url])
+  }, [url, cfClientId, cfClientSecret])
 
   const fetchIoBroker = useCallback(
     async (path: string) => {
@@ -101,6 +108,11 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
     [connected, url]
   )
 
+  const deleteAccess = useCallback(async () => {
+    await ioBrokerDb.credentials.clear()
+    setConnected(false)
+  }, [])
+
   const setAccess = useCallback(
     async (newUrl: string, newCfClient: string, newCfSecret: string) => {
       await ioBrokerDb.credentials.clear()
@@ -113,7 +125,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
     []
   )
 
-  const [urlInput, setUrlInput] = useState('iobroker-steindl.ml')
+  const [urlInput, setUrlInput] = useState('')
   const [cfIdInput, setCfIdInput] = useState('')
   const [cfSecretInput, setCfSecretInput] = useState('')
 
@@ -137,10 +149,19 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
     setLoading(true)
     setError('')
 
-    setAccess(urlInput, cfIdInput, cfSecretInput)
-  }, [urlInput])
+    await setAccess(urlInput, cfIdInput, cfSecretInput)
 
-  return url ? (
+    if (await heartbeat(urlInput, cfIdInput, cfSecretInput)) {
+      setLoading(false)
+      setError('')
+    } else {
+      await deleteAccess()
+      setLoading(false)
+      setError('Failed to connect')
+    }
+  }, [urlInput, cfIdInput, cfSecretInput])
+
+  return url && !loading ? (
     ready ? (
       connected ? (
         <IoBrokerContext.Provider
@@ -159,7 +180,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
     )
   ) : (
     <Container>
-      <Typography variant="h1">Hey there!</Typography>
+      <Title variant="h1">Hey there!</Title>
 
       <Input
         value={urlInput}
@@ -170,6 +191,9 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
         error={!!error}
         disabled={loading}
         helperText={error}
+        InputProps={{
+          startAdornment: 'https://',
+        }}
       />
 
       <hr />

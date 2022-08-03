@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Button as MuiButton, TextField } from '@mui/material'
+import { Button as MuiButton, TextField, Typography } from '@mui/material'
 
 export const Container = styled.div`
   display: flex;
@@ -20,6 +20,8 @@ export const Input = styled(TextField)``
 
 export const Button = styled(MuiButton)``
 
-export const Title = styled.h1``
+export const Title = styled(Typography)`
+  margin-bottom: 16px;
+`
 
 export const Subtitle = styled.h2``

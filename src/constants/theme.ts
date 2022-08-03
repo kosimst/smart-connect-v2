@@ -7,7 +7,7 @@ const baseTheme = createTheme({
       fontFamily: 'Google Sans',
     },
     h1: {
-      fontSize: '3rem',
+      fontSize: '2.5rem',
       fontWeight: 'bold',
     },
     h2: {
