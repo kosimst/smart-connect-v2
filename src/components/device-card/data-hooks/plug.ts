@@ -4,15 +4,22 @@ import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
   const [on, setOn] = useDeviceState(device, 'on', false)
+  const [power, , powerExists] = useDeviceState(device, 'power', 0)
 
   const texts = useMemo<DataText[]>(
-    () => [
-      {
-        id: 'on',
-        text: on ? 'On' : 'Off',
-      },
-    ],
-    [on]
+    () =>
+      [
+        {
+          id: 'on',
+          text: on ? 'On' : 'Off',
+        },
+        powerExists &&
+          on && {
+            id: 'power',
+            text: `${power}W`,
+          },
+      ].filter(Boolean) as DataText[],
+    [on, power]
   )
 
   return {

@@ -8,6 +8,9 @@ import shutter from './shutter'
 import valve from './valve'
 import windowOpener from './window-opener'
 import wirelessSwitch from './wireless-switch'
+import fan from './fan'
+import plug from './plug'
+import brightnessSensor from './brightness-sensor'
 
 const dataHooks = {
   'bed-occupancy-sensor': bedOccupancySensor,
@@ -20,6 +23,9 @@ const dataHooks = {
   valve,
   'window-opener': windowOpener,
   'wireless-switch': wirelessSwitch,
+  fan,
+  plug,
+  'brightness-sensor': brightnessSensor,
 }
 
 export default dataHooks

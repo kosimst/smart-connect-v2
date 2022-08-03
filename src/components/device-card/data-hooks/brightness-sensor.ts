@@ -1,24 +1,22 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
-  const [on, setOn] = useDeviceState(device, 'on', false)
+  const [lux] = useDeviceState(device, 'lux', 0)
 
   const texts = useMemo<DataText[]>(
     () => [
       {
-        id: 'on',
-        text: on ? 'On' : 'Off',
+        id: 'lux',
+        text: `${lux} Lux`,
       },
     ],
-    [on]
+    [lux]
   )
 
   return {
     texts,
-    toggleValue: on,
-    onToggleChange: setOn,
   }
 }
 

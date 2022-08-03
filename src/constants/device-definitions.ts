@@ -62,6 +62,13 @@ const deviceDefinitions = {
     name: 'Climate',
     fullName: 'Climate sensor',
   },
+  'brightness-sensor': {
+    icon: 'brightness_6',
+    color: '#4527A0',
+    bgColor: '#D1C4E9',
+    name: 'Brightness',
+    fullName: 'Brightness sensor',
+  },
   'wireless-switch': {
     icon: 'switch',
     color: '#AD1457',
@@ -76,12 +83,12 @@ const deviceDefinitions = {
     name: 'Valve',
     fullName: 'Valve',
   },
-  default: {
-    icon: 'home_iot_device',
-    color: '#0565DB',
+  fan: {
+    icon: 'mode_fan',
+    color: '#1565C0',
     bgColor: '#CCE4FC',
-    name: 'Unknown',
-    fullName: 'Unknown device',
+    name: 'Fan',
+    fullName: 'Fan',
   },
 } as const
 

@@ -16,6 +16,11 @@ export default defineConfig({
       },
       registerType: 'autoUpdate',
       injectRegister: 'inline',
+      manifest: {
+        name: 'Smart Connect',
+        display: 'standalone',
+        orientation: 'portrait-primary',
+      },
     }),
     react(),
     dynamicImport(),
