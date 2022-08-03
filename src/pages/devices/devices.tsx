@@ -9,15 +9,7 @@ import { useIoBrokerStates } from '../../contexts/iobroker-states-context'
 import { useSettings } from '../../contexts/settings'
 import greeting from '../../helpers/greeting'
 import groupBy from '../../helpers/group-by'
-import {
-  Chips,
-  Hr,
-  Link,
-  LinksGrid,
-  PageTitle,
-  Room,
-  RoomTitle,
-} from './styles'
+import { Chips, Link, LinksGrid, Room, RoomTitle } from './styles'
 
 const DevicesPage: FC = () => {
   const { devices } = useIoBrokerStates()
