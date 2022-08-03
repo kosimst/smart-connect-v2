@@ -16,7 +16,8 @@ const DevicesPage: FC = () => {
       devices
         .map((device) => device.type)
         .map((type) => deviceDefinitions[type].name)
-        .filter((type, index, types) => types.indexOf(type) === index),
+        .filter((type, index, types) => types.indexOf(type) === index)
+        .sort(),
     [devices]
   )
   const [selectedDeviceTypes, setSelectedDeviceTypes] = useState(
