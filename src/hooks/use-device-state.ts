@@ -1,6 +1,8 @@
+import { useLiveQuery } from 'dexie-react-hooks'
 import { useCallback, useEffect, useState } from 'react'
 import useIoBroker from '../contexts/iobroker-context'
 import { useIoBrokerStates } from '../contexts/iobroker-states-context'
+import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
 
 const useDeviceState = <T extends any>(
@@ -9,25 +11,34 @@ const useDeviceState = <T extends any>(
   defaultValue: T
 ) => {
   const { fetchIoBroker } = useIoBroker()
-  const { subscribeState } = useIoBrokerStates()
+  const { subscribeState, updateState } = useIoBrokerStates()
 
   const path = `${device.id}.${state}`
 
   const [value, setValue] = useState<T>(defaultValue)
   const [exists, setExists] = useState<boolean>(false)
 
+  const dbEntry = useLiveQuery(
+    () => ioBrokerDb.states.where('id').equals(path).first(),
+    [path]
+  )
+
   const setState = useCallback(
     (newValue: T) => {
-      fetchIoBroker(`/set/${path}?value=${newValue}`)
+      updateState(path, newValue)
     },
-    [device.id, state, fetchIoBroker]
+    [updateState]
   )
 
   useEffect(() => {
-    const unsubscribe = subscribeState(path, (newValue) => {
-      setValue(newValue)
+    if (dbEntry?.value !== undefined) {
+      setValue(dbEntry?.value)
       setExists(true)
-    })
+    }
+  }, [dbEntry])
+
+  useEffect(() => {
+    const unsubscribe = subscribeState(path)
 
     return unsubscribe
   }, [subscribeState])

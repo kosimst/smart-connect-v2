@@ -8,18 +8,23 @@ import {
   useState,
 } from 'react'
 import { isSupportedDeviceType } from '../constants/device-definitions'
+import ioBrokerDb from '../db/iobroker-db'
 import nSizedChunks from '../helpers/n-sized-chunks'
+import randomUUID from '../helpers/randomUUID'
 import Device from '../types/device'
 import useIoBroker from './iobroker-context'
 
 type IoBrokerStates = {
-  subscribeState(id: string, cb: (val: any) => void): () => void
-  //updateState(id: string, val: any): void
+  subscribeState(id: string): () => void
+  updateState(id: string, val: any): void
   devices: Device[]
 }
 
 const IoBrokerStatesContext = createContext<IoBrokerStates>({
   subscribeState: () => {
+    throw new Error('State provider not initialized yet')
+  },
+  updateState: () => {
     throw new Error('State provider not initialized yet')
   },
   devices: [],
@@ -29,9 +34,6 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [devices, setDevices] = useState<Device[]>([])
-  const [stateSubscriptions, setStateSubscriptions] = useState<
-    Map<string, Set<Parameters<IoBrokerStates['subscribeState']>['1']>>
-  >(new Map())
 
   useEffect(() => {
     const devices = localStorage.getItem('devices')
@@ -75,27 +77,30 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   }, [fetchIoBroker])
 
   const fetchStates = useCallback(async () => {
-    const chunks = nSizedChunks([...stateSubscriptions.entries()], 10)
+    const serviceWorker = navigator.serviceWorker.controller
 
-    for (const chunk of chunks) {
-      const path = '/getBulk/' + chunk.map(([id]) => `${id}`).join(',')
-
-      try {
-        const res = await fetchIoBroker(path)
-
-        for (const { id, val } of res) {
-          const subscriptions = stateSubscriptions.get(id)
-          if (subscriptions) {
-            for (const cb of subscriptions) {
-              cb(val)
-            }
-          }
-        }
-      } catch (e) {
-        console.warn('Failed to fetch states', e)
-      }
+    if (!serviceWorker) {
+      return
     }
-  }, [fetchIoBroker, stateSubscriptions])
+
+    serviceWorker.postMessage({
+      type: 'fetch-states',
+    })
+  }, [fetchIoBroker])
+
+  const updateState = useCallback(
+    async (id: string, value: any) => {
+      await fetchIoBroker(`/set/${id}?value=${value}`)
+
+      await ioBrokerDb.states.put({
+        id: id,
+        value,
+      })
+
+      fetchStates()
+    },
+    [fetchIoBroker, fetchStates]
+  )
 
   useEffect(() => {
     if (!connected) {
@@ -116,45 +121,29 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     }
 
     fetchStates()
-    const interval = setInterval(fetchStates, 5 * 1000)
+    const interval = setInterval(fetchStates, 5000)
 
     return () => {
       clearInterval(interval)
     }
   }, [connected, fetchStates])
 
-  const subscribeState = useCallback<IoBrokerStates['subscribeState']>(
-    (id, cb) => {
-      setStateSubscriptions((prev) => {
-        const stateSubscriptionSet = new Set(prev.get(id))
-        const newVal = new Map(prev)
+  const subscribeState = useCallback<IoBrokerStates['subscribeState']>((id) => {
+    const subscriptionId = randomUUID()
 
-        stateSubscriptionSet.add(cb)
-        newVal.set(id, stateSubscriptionSet)
+    ioBrokerDb.subscribedStates.put({ id, subscriptionId })
 
-        return newVal
-      })
-
-      return () => {
-        setStateSubscriptions((prev) => {
-          const stateSubscriptionSet = new Set(prev.get(id))
-          const newVal = new Map(prev)
-
-          stateSubscriptionSet.delete(cb)
-          newVal.set(id, stateSubscriptionSet)
-
-          return newVal
-        })
-      }
-    },
-    []
-  )
+    return () => {
+      ioBrokerDb.subscribedStates.delete(subscriptionId)
+    }
+  }, [])
 
   return (
     <IoBrokerStatesContext.Provider
       value={{
         subscribeState,
         devices,
+        updateState,
       }}
     >
       {children}

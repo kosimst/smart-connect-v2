@@ -9,6 +9,8 @@ import {
   useState,
 } from 'react'
 import { Button, Container, Input } from './styles'
+import ioBrokerDb from '../../db/iobroker-db'
+import { useLiveQuery } from 'dexie-react-hooks'
 
 const ALIVE_STATE = 'system.adapter.admin.0.alive'
 
@@ -21,9 +23,13 @@ export const IoBrokerContext = createContext({
 export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
   children,
 }) => {
-  const [url, setUrlState] = useState('')
-  const [cfClient, setCfClient] = useState('')
-  const [cfSecret, setCfSecret] = useState('')
+  const [
+    { cfClientId, cfClientSecret, url } = {
+      cfClientId: '',
+      cfClientSecret: '',
+      url: '',
+    },
+  ] = useLiveQuery(() => ioBrokerDb.credentials.limit(1).toArray(), [], [])
 
   const [connected, setConnected] = useState(false)
   const [ready, setReady] = useState(false)
@@ -38,8 +44,8 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
       try {
         const response = await fetch(`https://${url}/get/${ALIVE_STATE}`, {
           headers: {
-            'CF-Access-Client-Id': cfClient,
-            'CF-Access-Client-Secret': cfSecret,
+            'CF-Access-Client-Id': cfClientId,
+            'CF-Access-Client-Secret': cfClientSecret,
           },
         })
 
@@ -75,8 +81,8 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
 
       const response = await fetch(`https://${url}${path}`, {
         headers: {
-          'CF-Access-Client-Id': cfClient,
-          'CF-Access-Client-Secret': cfSecret,
+          'CF-Access-Client-Id': cfClientId,
+          'CF-Access-Client-Secret': cfClientSecret,
         },
       })
 
@@ -96,30 +102,16 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
   )
 
   const setAccess = useCallback(
-    (newUrl: string, newCfClient: string, newCfSecret: string) => {
-      setUrlState(newUrl)
-      setCfClient(newCfClient)
-      setCfSecret(newCfSecret)
-      localStorage.setItem('iobroker-url', newUrl)
-      localStorage.setItem('iobroker-cf-client', newCfClient)
-      localStorage.setItem('iobroker-cf-secret', newCfSecret)
+    async (newUrl: string, newCfClient: string, newCfSecret: string) => {
+      await ioBrokerDb.credentials.clear()
+      await ioBrokerDb.credentials.add({
+        url: newUrl,
+        cfClientId: newCfClient,
+        cfClientSecret: newCfSecret,
+      })
     },
     []
   )
-
-  useEffect(() => {
-    const savedUrl = localStorage.getItem('iobroker-url')
-    const savedCfClient = localStorage.getItem('iobroker-cf-client')
-    const savedCfSecret = localStorage.getItem('iobroker-cf-secret')
-
-    if (!savedUrl || !savedCfClient || !savedCfSecret) {
-      return
-    }
-
-    setUrlState(savedUrl)
-    setCfClient(savedCfClient)
-    setCfSecret(savedCfSecret)
-  }, [])
 
   const [urlInput, setUrlInput] = useState('iobroker-steindl.ml')
   const [cfIdInput, setCfIdInput] = useState(
@@ -167,7 +159,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
         <span>not connected</span>
       )
     ) : (
-      <span>not ready</span>
+      <></>
     )
   ) : (
     <Container>
