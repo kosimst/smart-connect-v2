@@ -12,6 +12,7 @@ import {
 import { Button, Container, Input, Title } from './styles'
 import ioBrokerDb from '../../db/iobroker-db'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { AnimatePresence } from 'framer-motion'
 
 const ALIVE_STATE = 'system.adapter.admin.0.alive'
 
@@ -217,103 +218,114 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
     [setVapidPublicKey]
   )
 
-  return url && !loading ? (
-    ready ? (
-      connected ? (
-        <IoBrokerContext.Provider
-          value={{
-            fetchIoBroker,
-            connected,
-            pushSubscriptionDetails,
-            setVapidPublicKey: setVapidPublicKeyPersistently,
-            vapidPublicKey,
+  return (
+    <AnimatePresence>
+      {url && !loading ? (
+        ready ? (
+          connected ? (
+            <IoBrokerContext.Provider
+              value={{
+                fetchIoBroker,
+                connected,
+                pushSubscriptionDetails,
+                setVapidPublicKey: setVapidPublicKeyPersistently,
+                vapidPublicKey,
+              }}
+            >
+              {children}
+            </IoBrokerContext.Provider>
+          ) : (
+            <span>not connected</span>
+          )
+        ) : (
+          <></>
+        )
+      ) : (
+        <Container
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            delay: 0.5,
           }}
         >
-          {children}
-        </IoBrokerContext.Provider>
-      ) : (
-        <span>not connected</span>
-      )
-    ) : (
-      <></>
-    )
-  ) : (
-    <Container>
-      <Title variant="h1">Hey there!</Title>
+          <Title variant="h1">Hey there!</Title>
 
-      <Input
-        value={urlInput}
-        onChange={(e) => setUrlInput(e.target.value)}
-        placeholder="your-domain.xyz"
-        label="ioBroker Domain"
-        fullWidth
-        error={!!error}
-        disabled={loading}
-        helperText={error}
-        InputProps={{
-          startAdornment: 'https://',
-        }}
-        autoCapitalize="none"
-        spellCheck={false}
-        autoCorrect="off"
-        autoComplete="off"
-      />
+          <Input
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            placeholder="your-domain.xyz"
+            label="ioBroker Domain"
+            fullWidth
+            error={!!error}
+            disabled={loading}
+            helperText={error}
+            InputProps={{
+              startAdornment: 'https://',
+            }}
+            autoCapitalize="none"
+            spellCheck={false}
+            autoCorrect="off"
+            autoComplete="off"
+          />
 
-      <hr />
+          <hr />
 
-      <Input
-        value={cfIdInput}
-        onChange={(e) => setCfIdInput(e.target.value)}
-        placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.access"
-        label="CF-Access-Client-Id"
-        fullWidth
-        error={!!error}
-        disabled={loading}
-        autoCapitalize="none"
-        spellCheck={false}
-        autoCorrect="off"
-        autoComplete="off"
-      />
+          <Input
+            value={cfIdInput}
+            onChange={(e) => setCfIdInput(e.target.value)}
+            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.access"
+            label="CF-Access-Client-Id"
+            fullWidth
+            error={!!error}
+            disabled={loading}
+            autoCapitalize="none"
+            spellCheck={false}
+            autoCorrect="off"
+            autoComplete="off"
+          />
 
-      <Input
-        value={cfSecretInput}
-        onChange={(e) => setCfSecretInput(e.target.value)}
-        placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        label="CF-Access-Client-Secret"
-        fullWidth
-        error={!!error}
-        disabled={loading}
-        autoCapitalize="none"
-        spellCheck={false}
-        autoCorrect="off"
-        autoComplete="off"
-      />
+          <Input
+            value={cfSecretInput}
+            onChange={(e) => setCfSecretInput(e.target.value)}
+            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            label="CF-Access-Client-Secret"
+            fullWidth
+            error={!!error}
+            disabled={loading}
+            autoCapitalize="none"
+            spellCheck={false}
+            autoCorrect="off"
+            autoComplete="off"
+          />
 
-      <hr />
+          <hr />
 
-      <Input
-        value={vapidPublicKeyInput}
-        onChange={(e) => setVapidPublicKeyInput(e.target.value)}
-        placeholder="Public key string..."
-        label="VAPID Public Key"
-        fullWidth
-        disabled={loading}
-        autoCapitalize="none"
-        spellCheck={false}
-        autoCorrect="off"
-        autoComplete="off"
-      />
+          <Input
+            value={vapidPublicKeyInput}
+            onChange={(e) => setVapidPublicKeyInput(e.target.value)}
+            placeholder="Public key string..."
+            label="VAPID Public Key"
+            fullWidth
+            disabled={loading}
+            autoCapitalize="none"
+            spellCheck={false}
+            autoCorrect="off"
+            autoComplete="off"
+          />
 
-      <Button
-        variant="contained"
-        fullWidth
-        disabled={loading || buttonDisabled}
-        disableElevation
-        onClick={submit}
-      >
-        {loading ? 'Loading...' : 'Connect'}
-      </Button>
-    </Container>
+          <Button
+            variant="contained"
+            fullWidth
+            disabled={loading || buttonDisabled}
+            disableElevation
+            onClick={submit}
+          >
+            {loading ? 'Loading...' : 'Connect'}
+          </Button>
+        </Container>
+      )}
+    </AnimatePresence>
   )
 }
 

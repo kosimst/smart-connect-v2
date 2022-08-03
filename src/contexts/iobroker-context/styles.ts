@@ -1,7 +1,8 @@
 import styled from '@emotion/styled'
 import { Button as MuiButton, TextField, Typography } from '@mui/material'
+import { motion } from 'framer-motion'
 
-export const Container = styled.div`
+export const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
