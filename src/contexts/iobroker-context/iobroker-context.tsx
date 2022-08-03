@@ -114,12 +114,8 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
   )
 
   const [urlInput, setUrlInput] = useState('iobroker-steindl.ml')
-  const [cfIdInput, setCfIdInput] = useState(
-    '7ea8d4b680d2a37bd00df5fc6063c009.access'
-  )
-  const [cfSecretInput, setCfSecretInput] = useState(
-    'a3bdff4f95c7ee6ad93f085fc77d83b92b8a50f4b4832960bd5ea15532901289'
-  )
+  const [cfIdInput, setCfIdInput] = useState('')
+  const [cfSecretInput, setCfSecretInput] = useState('')
 
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
