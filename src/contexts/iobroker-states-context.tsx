@@ -121,7 +121,7 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     }
 
     fetchStates()
-    const interval = setInterval(fetchStates, 5000)
+    const interval = setInterval(fetchStates, 2000)
 
     return () => {
       clearInterval(interval)
