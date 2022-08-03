@@ -27,7 +27,7 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
   const { vapidPublicKey, setVapidPublicKey, pushSubscriptionDetails } =
     useIoBroker()
 
-  const [opened, setOpened] = useState(true)
+  const [opened, setOpened] = useState(false)
 
   const [vapidPublicKeyInput, setVapidPublicKeyInput] = useState('')
 
