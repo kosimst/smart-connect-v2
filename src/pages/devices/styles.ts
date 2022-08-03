@@ -27,22 +27,14 @@ export const Chips = styled.section`
   flex-wrap: wrap;
 `
 
-export const Hr = styled.hr`
-  margin: 24px 0;
-  margin-bottom: 16px;
-  width: 80%;
-  position: relative;
-  left: 10%;
-  border-bottom: 1px solid black;
-  opacity: 0.5;
-`
-
-export const LinksGrid = styled.div`
+export const LinksGrid = styled(motion.div)`
+  margin-top: 40px;
+  margin-bottom: 4px;
   display: grid;
   grid-template-columns: repeat(auto-fit, 1fr);
   gap: 16px;
-  align-items: center;
   justify-items: center;
+  font-weight: 500;
 `
 
 export const Link = styled.span`

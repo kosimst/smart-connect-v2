@@ -102,7 +102,7 @@ const DevicesPage: FC = () => {
         </Room>
       ))}
 
-      <motion.div
+      <LinksGrid
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{
@@ -116,15 +116,11 @@ const DevicesPage: FC = () => {
         }}
         layout
       >
-        <Hr />
-
-        <LinksGrid>
-          <Link onClick={openSettings}>
-            <Icon icon="settings" />
-            <span>Settings</span>
-          </Link>
-        </LinksGrid>
-      </motion.div>
+        <Link onClick={openSettings}>
+          <Icon icon="settings" filled />
+          <span>Settings</span>
+        </Link>
+      </LinksGrid>
     </>
   )
 }
