@@ -4,6 +4,7 @@ import baseTheme, { lightTheme } from '../constants/theme'
 import { DeviceDetailsProvider } from '../contexts/device-details/device-details'
 import { IoBrokerProvider } from '../contexts/iobroker-context'
 import { IoBrokerStatesProvider } from '../contexts/iobroker-states-context'
+import { SettingsProvider } from '../contexts/settings'
 import ErrorBoundary from '../helpers/error-boundary'
 import useNoContextMenu from '../hooks/use-no-context-menu'
 import usePreventAlert from '../hooks/use-prevent-alert'
@@ -18,11 +19,11 @@ const Shell: FC = () => {
       <ErrorBoundary>
         <IoBrokerProvider>
           <IoBrokerStatesProvider>
-            <ThemeProvider theme={lightTheme}>
+            <SettingsProvider>
               <DeviceDetailsProvider>
                 <App />
               </DeviceDetailsProvider>
-            </ThemeProvider>
+            </SettingsProvider>
           </IoBrokerStatesProvider>
         </IoBrokerProvider>
       </ErrorBoundary>

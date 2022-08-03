@@ -3,10 +3,21 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
 import DeviceGrid from '../../components/device-grid'
+import Icon from '../../components/icon'
 import deviceDefinitions from '../../constants/device-definitions'
 import { useIoBrokerStates } from '../../contexts/iobroker-states-context'
+import { useSettings } from '../../contexts/settings'
+import greeting from '../../helpers/greeting'
 import groupBy from '../../helpers/group-by'
-import { Chips, Room, RoomTitle } from './styles'
+import {
+  Chips,
+  Hr,
+  Link,
+  LinksGrid,
+  PageTitle,
+  Room,
+  RoomTitle,
+} from './styles'
 
 const DevicesPage: FC = () => {
   const { devices } = useIoBrokerStates()
@@ -40,6 +51,8 @@ const DevicesPage: FC = () => {
     () => groupBy(selectedDevices, 'roomName', 'Other devices'),
     [selectedDevices]
   )
+
+  const { open: openSettings } = useSettings()
 
   return (
     <>
@@ -88,6 +101,15 @@ const DevicesPage: FC = () => {
           </DeviceGrid>
         </Room>
       ))}
+
+      <Hr />
+
+      <LinksGrid>
+        <Link onClick={openSettings}>
+          <Icon icon="settings" />
+          <span>Settings</span>
+        </Link>
+      </LinksGrid>
     </>
   )
 }

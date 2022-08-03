@@ -81,3 +81,31 @@ self.addEventListener('message', async ({ data }) => {
     }
   }
 })
+
+// push listener
+self.addEventListener('push', (event) => {
+  let msg = event.data?.text()
+
+  if (!msg) {
+    return
+  }
+
+  try {
+    msg = JSON.parse(msg)
+  } catch {
+    return
+  }
+
+  const { title, options } = msg as any as {
+    title: string
+    options: NotificationOptions
+  }
+
+  self.registration.showNotification(title, options)
+})
+
+// on action click
+self.addEventListener('notificationclick', (event) => {
+  console.log(event)
+  event.notification.close()
+})
