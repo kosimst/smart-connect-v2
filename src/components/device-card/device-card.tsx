@@ -45,15 +45,7 @@ const DeviceCard: FC<DeviceCardProps> = ({ device }) => {
   const definition = useDeviceDefinition(device)
 
   return (
-    <Suspense
-      fallback={
-        <PureDeviceCard
-          {...definition}
-          texts={[{ text: 'Loading...', id: 'loading' }]}
-          name={device.name || definition.name}
-        ></PureDeviceCard>
-      }
-    >
+    <Suspense fallback={null}>
       <SuspendedDeviceCard device={device} />
     </Suspense>
   )

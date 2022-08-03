@@ -1,32 +1,14 @@
 import Device from '../../../types/device'
-import DataHook from './data-hook'
-
-const cache = new Map<string, DataHook>()
-const errorCache = new Map<string, Error>()
+import dataHooks from '../data-hooks'
 
 const useDataHook = ({ type: deviceType }: Device) => {
-  const cachedDataHook = cache.get(deviceType)
-  const cachedError = errorCache.get(deviceType)
-
-  if (cachedDataHook) {
-    return cachedDataHook
+  // @ts-ignore
+  if (!dataHooks[deviceType]) {
+    throw new Error(`No data hook for device type ${deviceType}`)
   }
 
-  if (cachedError) {
-    throw cachedError
-  }
-
-  throw import(`../data-hooks/${deviceType}`)
-    .then(({ default: dataHook }) => {
-      cache.set(deviceType, dataHook)
-      return dataHook as DataHook
-    })
-    .catch(() => {
-      const error = new Error(`Failed to load device type "${deviceType}"`)
-
-      errorCache.set(deviceType, error)
-      throw error
-    })
+  // @ts-ignore
+  return dataHooks[deviceType]
 }
 
 export default useDataHook
