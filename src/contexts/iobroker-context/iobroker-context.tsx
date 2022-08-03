@@ -194,6 +194,10 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
         InputProps={{
           startAdornment: 'https://',
         }}
+        autoCapitalize="none"
+        spellCheck={false}
+        autoCorrect="off"
+        autoComplete="off"
       />
 
       <hr />
@@ -206,6 +210,10 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
         fullWidth
         error={!!error}
         disabled={loading}
+        autoCapitalize="none"
+        spellCheck={false}
+        autoCorrect="off"
+        autoComplete="off"
       />
 
       <Input
@@ -216,6 +224,10 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
         fullWidth
         error={!!error}
         disabled={loading}
+        autoCapitalize="none"
+        spellCheck={false}
+        autoCorrect="off"
+        autoComplete="off"
       />
 
       <Button
