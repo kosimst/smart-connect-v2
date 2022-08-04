@@ -8,27 +8,38 @@ const useData: DataHook = (device) => {
     'opened-level',
     -0.5
   )
+  const [direction, setDirection] = useDeviceState(device, 'direction', 0)
+  const [stop, setStop] = useDeviceState(device, 'stop', true)
 
   const texts = useMemo(
     () => [
-      {
-        id: 'opened-state',
-        text:
-          openedLevel === -0.5
-            ? 'Locked'
-            : openedLevel === 100
-            ? 'Opened'
-            : `${openedLevel}% opened`,
-      },
+      direction
+        ? {
+            id: 'direction',
+            text: direction === 1 ? 'Opening...' : 'Closing...',
+          }
+        : {
+            id: 'opened-state',
+            text:
+              openedLevel === -0.5
+                ? 'Locked'
+                : openedLevel === 100
+                ? 'Opened'
+                : `${openedLevel}% opened`,
+          },
     ],
-    [openedLevel]
+    [openedLevel, direction]
   )
 
   const onToggleChange = useCallback(
-    (value: boolean) => {
-      setOpenedLevel(value ? 100 : -0.5)
+    (newToggle: boolean) => {
+      if (direction === 0) {
+        setOpenedLevel(newToggle ? -0.5 : 100)
+      } else {
+        setStop(true)
+      }
     },
-    [setOpenedLevel]
+    [direction, setOpenedLevel, setStop]
   )
 
   const toggleValue = useMemo(() => openedLevel > -0.5, [openedLevel])
