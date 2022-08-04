@@ -24,8 +24,8 @@ const useData: DataHook = (device) => {
               openedLevel === -0.5
                 ? 'Locked'
                 : openedLevel === 100
-                ? 'Opened'
-                : `${openedLevel}% opened`,
+                ? 'Tilted'
+                : `${openedLevel}% tilted`,
           },
     ],
     [openedLevel, direction]
