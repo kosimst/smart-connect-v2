@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { FC, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
@@ -7,7 +7,6 @@ import Icon from '../../components/icon'
 import deviceDefinitions from '../../constants/device-definitions'
 import { useIoBrokerStates } from '../../contexts/iobroker-states-context'
 import { useSettings } from '../../contexts/settings'
-import greeting from '../../helpers/greeting'
 import groupBy from '../../helpers/group-by'
 import { Chips, Link, LinksGrid, Room, RoomTitle } from './styles'
 
@@ -23,13 +22,26 @@ const DevicesPage: FC = () => {
         .sort(),
     [devices]
   )
-  const [selectedDeviceTypes, setSelectedDeviceTypes] = useState(
-    deviceTypes.map((type) => type)
-  )
-
+  const [selectedDeviceTypes, setSelectedDeviceTypes] = useState([] as string[])
   useEffect(() => {
-    setSelectedDeviceTypes(deviceTypes.map((type) => type))
+    const storedSelectedDeviceTypes = localStorage.getItem(
+      'selectedDeviceTypes'
+    )
+    if (storedSelectedDeviceTypes) {
+      setSelectedDeviceTypes(JSON.parse(storedSelectedDeviceTypes))
+    } else {
+      setSelectedDeviceTypes(deviceTypes)
+    }
   }, [deviceTypes])
+
+  const [favoriteRoom, setFavoriteRoom] = useState('Simon')
+  useEffect(() => {
+    const storedFavoriteRoom = localStorage.getItem('favoriteRoom')
+
+    if (storedFavoriteRoom) {
+      setFavoriteRoom(storedFavoriteRoom)
+    }
+  }, [])
 
   const selectedDevices = useMemo(
     () =>
@@ -39,10 +51,18 @@ const DevicesPage: FC = () => {
     [devices, selectedDeviceTypes]
   )
 
-  const groupedByRoom = useMemo(
-    () => groupBy(selectedDevices, 'roomName', 'Other devices'),
-    [selectedDevices]
-  )
+  const groupedByRoom = useMemo(() => {
+    const sorted = Object.entries(
+      groupBy(selectedDevices, 'roomName', 'Other devices')
+    ).sort(([a], [b]) => a.localeCompare(b))
+
+    const withoutFavorite = sorted.filter(
+      ([roomName]) => roomName !== favoriteRoom
+    )
+    const favorite = sorted.filter(([roomName]) => roomName === favoriteRoom)
+
+    return [...favorite, ...withoutFavorite]
+  }, [selectedDevices, favoriteRoom])
 
   const { open: openSettings } = useSettings()
 
@@ -55,24 +75,42 @@ const DevicesPage: FC = () => {
             selected={selectedDeviceTypes.includes(type)}
             onClick={() => {
               if (selectedDeviceTypes.includes(type)) {
-                setSelectedDeviceTypes(
-                  selectedDeviceTypes.filter((t) => t !== type)
-                )
+                setSelectedDeviceTypes((prev) => {
+                  const newVal = prev.filter((t) => t !== type)
+                  localStorage.setItem(
+                    'selectedDeviceTypes',
+                    JSON.stringify(newVal)
+                  )
+                  return newVal
+                })
               } else {
-                setSelectedDeviceTypes([...selectedDeviceTypes, type])
+                setSelectedDeviceTypes((prev) => {
+                  const newVal = [...prev, type]
+                  localStorage.setItem(
+                    'selectedDeviceTypes',
+                    JSON.stringify(newVal)
+                  )
+                  return newVal
+                })
               }
             }}
             onContextMenu={() => {
-              setSelectedDeviceTypes((prev) =>
-                prev.length === 1 && prev[0] === type ? deviceTypes : [type]
-              )
+              setSelectedDeviceTypes((prev) => {
+                const newVal =
+                  prev.length === 1 && prev[0] === type ? deviceTypes : [type]
+                localStorage.setItem(
+                  'selectedDeviceTypes',
+                  JSON.stringify(newVal)
+                )
+                return newVal
+              })
             }}
           >
             {type}
           </Chip>
         ))}
       </Chips>
-      {Object.entries(groupedByRoom).map(([roomName, devices]) => (
+      {groupedByRoom.map(([roomName, devices]) => (
         <Room
           key={roomName}
           transition={{
@@ -82,7 +120,14 @@ const DevicesPage: FC = () => {
           }}
           layout
         >
-          <RoomTitle>{roomName}</RoomTitle>
+          <RoomTitle
+            onContextMenu={() => {
+              setFavoriteRoom(roomName)
+              localStorage.setItem('favoriteRoom', roomName)
+            }}
+          >
+            {roomName}
+          </RoomTitle>
 
           <DeviceGrid>
             <AnimatePresence>

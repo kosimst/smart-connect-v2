@@ -11,6 +11,7 @@ import wirelessSwitch from './wireless-switch'
 import fan from './fan'
 import plug from './plug'
 import brightnessSensor from './brightness-sensor'
+import speedTest from './speed-test'
 
 const dataHooks = {
   'bed-occupancy-sensor': bedOccupancySensor,
@@ -26,6 +27,7 @@ const dataHooks = {
   fan,
   plug,
   'brightness-sensor': brightnessSensor,
+  'speed-test': speedTest,
 }
 
 export default dataHooks

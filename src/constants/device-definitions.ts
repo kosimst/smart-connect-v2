@@ -90,6 +90,12 @@ const deviceDefinitions = {
     name: 'Fan',
     fullName: 'Fan',
   },
+  'speed-test': {
+    icon: 'speed',
+    color: '#1565C0',
+    bgColor: '#CCE4FC',
+    name: 'Internet speed',
+  },
 } as const
 
 export const supportedDeviceTypes = Object.keys(
