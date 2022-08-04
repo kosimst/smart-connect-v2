@@ -1,4 +1,5 @@
-import { Typography } from '@mui/material'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   createContext,
   FC,
@@ -6,15 +7,11 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from 'react'
-import { Button, Container, Input, OfflineContainer, Title } from './styles'
-import ioBrokerDb from '../../db/iobroker-db'
-import { useLiveQuery } from 'dexie-react-hooks'
-import { AnimatePresence, motion } from 'framer-motion'
 import Icon from '../../components/icon'
-import { PageTitle, RoomTitle } from '../../pages/devices/styles'
+import ioBrokerDb from '../../db/iobroker-db'
+import { Button, Container, Input, OfflineContainer, Title } from './styles'
 
 const ALIVE_STATE = 'system.adapter.admin.0.alive'
 
@@ -22,11 +19,6 @@ export const IoBrokerContext = createContext({
   fetchIoBroker: (path: string): Promise<any> =>
     Promise.reject(new Error('ioBroker not connected yet')),
   connected: false,
-  pushSubscriptionDetails: null as PushSubscriptionJSON | null,
-  setVapidPublicKey: (val: string): void => {
-    throw new Error('Not initialized yet')
-  },
-  vapidPublicKey: '',
 })
 
 export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
@@ -39,16 +31,6 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
       url: '',
     },
   ] = useLiveQuery(() => ioBrokerDb.credentials.limit(1).toArray(), [], [])
-
-  const [vapidPublicKey, setVapidPublicKey] = useState('')
-
-  useEffect(() => {
-    const savedVapidPublicKey = localStorage.getItem('vapidPublicKey')
-
-    if (savedVapidPublicKey) {
-      setVapidPublicKey(savedVapidPublicKey)
-    }
-  }, [])
 
   const [connected, setConnected] = useState(false)
   const [ready, setReady] = useState(false)
@@ -133,20 +115,13 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
   }, [])
 
   const setAccess = useCallback(
-    async (
-      newUrl: string,
-      newCfClient: string,
-      newCfSecret: string,
-      newVapidPublicKey: string
-    ) => {
+    async (newUrl: string, newCfClient: string, newCfSecret: string) => {
       await ioBrokerDb.credentials.clear()
       await ioBrokerDb.credentials.add({
         url: newUrl,
         cfClientId: newCfClient,
         cfClientSecret: newCfSecret,
       })
-      setVapidPublicKey(newVapidPublicKey)
-      localStorage.setItem('vapidPublicKey', newVapidPublicKey)
     },
     []
   )
@@ -154,7 +129,6 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
   const [urlInput, setUrlInput] = useState('')
   const [cfIdInput, setCfIdInput] = useState('')
   const [cfSecretInput, setCfSecretInput] = useState('')
-  const [vapidPublicKeyInput, setVapidPublicKeyInput] = useState('')
 
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -176,7 +150,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
     setLoading(true)
     setError('')
 
-    await setAccess(urlInput, cfIdInput, cfSecretInput, vapidPublicKeyInput)
+    await setAccess(urlInput, cfIdInput, cfSecretInput)
 
     if (await heartbeat(urlInput, cfIdInput, cfSecretInput)) {
       setLoading(false)
@@ -186,39 +160,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
       setLoading(false)
       setError('Failed to connect')
     }
-  }, [urlInput, cfIdInput, cfSecretInput, vapidPublicKeyInput])
-
-  const [pushSubscriptionDetails, setPushSubscriptionDetails] =
-    useState<PushSubscriptionJSON | null>(null)
-
-  useEffect(() => {
-    if (!vapidPublicKey) {
-      return
-    }
-
-    navigator.serviceWorker.getRegistration().then((registration) => {
-      if (!registration) {
-        return
-      }
-
-      registration.pushManager
-        .subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: vapidPublicKey,
-        })
-        .then((subscription) => {
-          setPushSubscriptionDetails(subscription.toJSON())
-        })
-    })
-  }, [vapidPublicKey])
-
-  const setVapidPublicKeyPersistently = useCallback(
-    (vapidPublicKey: string) => {
-      setVapidPublicKey(vapidPublicKey)
-      localStorage.setItem('vapidPublicKey', vapidPublicKey)
-    },
-    [setVapidPublicKey]
-  )
+  }, [urlInput, cfIdInput, cfSecretInput])
 
   return (
     <AnimatePresence>
@@ -234,9 +176,6 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
                 value={{
                   fetchIoBroker,
                   connected,
-                  pushSubscriptionDetails,
-                  setVapidPublicKey: setVapidPublicKeyPersistently,
-                  vapidPublicKey,
                 }}
               >
                 {children}
@@ -306,9 +245,6 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
               startAdornment: 'https://',
             }}
             autoCapitalize="none"
-            spellCheck={false}
-            autoCorrect="off"
-            autoComplete="off"
           />
 
           <hr />
@@ -322,9 +258,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
             error={!!error}
             disabled={loading}
             autoCapitalize="none"
-            spellCheck={false}
-            autoCorrect="off"
-            autoComplete="off"
+            type="text"
           />
 
           <Input
@@ -336,24 +270,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
             error={!!error}
             disabled={loading}
             autoCapitalize="none"
-            spellCheck={false}
-            autoCorrect="off"
-            autoComplete="off"
-          />
-
-          <hr />
-
-          <Input
-            value={vapidPublicKeyInput}
-            onChange={(e) => setVapidPublicKeyInput(e.target.value)}
-            placeholder="Public key string..."
-            label="VAPID Public Key"
-            fullWidth
-            disabled={loading}
-            autoCapitalize="none"
-            spellCheck={false}
-            autoCorrect="off"
-            autoComplete="off"
+            type="password"
           />
 
           <Button

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import { AnimatePresence } from 'framer-motion'
 import {
   createContext,
@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import Icon from '../../components/icon'
@@ -24,12 +25,27 @@ const SettingsContext = createContext({
 export const SettingsProvider: FC<{ children?: ReactNode }> = ({
   children,
 }) => {
-  const { vapidPublicKey, setVapidPublicKey, pushSubscriptionDetails } =
-    useIoBroker()
-
   const [opened, setOpened] = useState(false)
 
   const [vapidPublicKeyInput, setVapidPublicKeyInput] = useState('')
+  const [vapidPublicKey, setVapidPublicKey] = useState('')
+  const [pushSubscriptionDetails, setPushSubscriptionDetails] =
+    useState<PushSubscriptionJSON | null>(null)
+
+  const setVapidPublicKeyPersistently = useCallback(
+    (vapidPublicKey: string) => {
+      localStorage.setItem('vapidPublicKey', vapidPublicKey)
+      setVapidPublicKey(vapidPublicKey)
+    },
+    [setVapidPublicKey]
+  )
+
+  useEffect(() => {
+    const vapidPublicKey = localStorage.getItem('vapidPublicKey')
+    if (vapidPublicKey) {
+      setVapidPublicKey(vapidPublicKey)
+    }
+  }, [])
 
   useEffect(() => {
     setVapidPublicKeyInput(vapidPublicKey)
@@ -40,7 +56,7 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
   }, [setOpened])
 
   const save = useCallback(() => {
-    setVapidPublicKey(vapidPublicKeyInput)
+    setVapidPublicKeyPersistently(vapidPublicKeyInput)
   }, [setVapidPublicKey])
 
   const copyDetails = useCallback(() => {
@@ -48,6 +64,32 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
       JSON.stringify(pushSubscriptionDetails, null, 2)
     )
   }, [pushSubscriptionDetails])
+
+  useEffect(() => {
+    if (!vapidPublicKey) {
+      return
+    }
+
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      if (!registration) {
+        return
+      }
+
+      registration.pushManager
+        .subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: vapidPublicKey,
+        })
+        .then((subscription) => {
+          setPushSubscriptionDetails(subscription.toJSON())
+        })
+    })
+  }, [vapidPublicKey])
+
+  const hasChanged = useMemo(
+    () => vapidPublicKey !== vapidPublicKeyInput,
+    [vapidPublicKey, vapidPublicKeyInput]
+  )
 
   return (
     <SettingsContext.Provider
@@ -68,8 +110,13 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
             }}
           >
             <Icons>
-              <Icon onClick={save} icon="save" filled />
-              <Icon onClick={() => setOpened(false)} icon="close" />
+              <IconButton onClick={save} disabled={!hasChanged}>
+                <Icon icon="save" filled />
+              </IconButton>
+
+              <IconButton onClick={() => setOpened(false)}>
+                <Icon icon="close" />
+              </IconButton>
             </Icons>
 
             <RoomTitle>Push notifications</RoomTitle>

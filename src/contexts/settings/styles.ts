@@ -20,7 +20,6 @@ export const Icons = styled.div`
   position: absolute;
   top: 16px;
   right: 16px;
-  opacity: 0.75;
 `
 
 export const PushDetails = styled(motion.div)`
