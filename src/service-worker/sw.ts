@@ -154,7 +154,7 @@ self.addEventListener('push', (event) => {
 
   self.registration.showNotification(title, {
     icon: `/notify/icons/${icon}.png`,
-    badge: `/notify/icons/${badge}.png`,
+    badge: `/notify/badges/${badge}.png`,
     body,
     silent,
     tag,
