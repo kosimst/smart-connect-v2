@@ -91,8 +91,8 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
             </h2>
             <Subtitle>
               <span>
-                {deviceDefinition.fullName} (
-                {openedDevice.roomName || 'unset room'})
+                {deviceDefinition.name} ({openedDevice.roomName || 'unset room'}
+                )
               </span>
             </Subtitle>
           </Card>
