@@ -138,12 +138,27 @@ self.addEventListener('push', (event) => {
     return
   }
 
-  const { title, options } = msg as any as {
+  const {
+    title,
+    options: { badge = 'default', icon = 'default', body, silent, tag } = {},
+  } = msg as any as {
     title: string
-    options: NotificationOptions
+    options?: {
+      icon: string
+      badge: string
+      body?: string
+      silent?: boolean
+      tag?: string
+    }
   }
 
-  self.registration.showNotification(title, options)
+  self.registration.showNotification(title, {
+    icon: `/notify/icons/${icon}.png`,
+    badge: `/notify/icons/${badge}.png`,
+    body,
+    silent,
+    tag,
+  })
 })
 
 // on action click
