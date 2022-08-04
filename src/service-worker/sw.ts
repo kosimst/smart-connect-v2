@@ -144,8 +144,8 @@ self.addEventListener('push', (event) => {
   } = msg as any as {
     title: string
     options?: {
-      icon: string
-      badge: string
+      icon?: string
+      badge?: string
       body?: string
       silent?: boolean
       tag?: string
