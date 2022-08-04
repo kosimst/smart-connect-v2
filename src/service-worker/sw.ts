@@ -122,6 +122,17 @@ self.addEventListener('message', async ({ data }) => {
     }
 
     await ioBrokerDb.devices.bulkPut(newDevices)
+
+    const devices = await ioBrokerDb.devices.toArray()
+    const devicesToRemove = devices
+      .filter(
+        (device) => !newDevices.some((newDevice) => newDevice.id == device.id)
+      )
+      .map((device) => device.id)
+
+    if (devicesToRemove.length) {
+      await ioBrokerDb.devices.bulkDelete(devicesToRemove)
+    }
   }
 })
 
@@ -184,7 +195,6 @@ self.addEventListener('push', (event) => {
   })
 })
 
-// on action click
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
 
