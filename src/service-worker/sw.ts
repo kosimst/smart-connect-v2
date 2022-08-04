@@ -140,7 +140,14 @@ self.addEventListener('push', (event) => {
 
   const {
     title,
-    options: { badge = 'default', icon = 'default', body, silent, tag } = {},
+    options: {
+      badge = 'default',
+      icon = 'default',
+      body,
+      silent,
+      tag,
+      actions,
+    } = {},
   } = msg as any as {
     title: string
     options?: {
@@ -149,6 +156,11 @@ self.addEventListener('push', (event) => {
       body?: string
       silent?: boolean
       tag?: string
+      actions?: {
+        title: string
+        state: string
+        value: any
+      }[]
     }
   }
 
@@ -158,11 +170,46 @@ self.addEventListener('push', (event) => {
     body,
     silent,
     tag,
+    ...(actions
+      ? {
+          actions: actions.map((action) => ({
+            action: JSON.stringify({
+              state: action.state,
+              value: action.value,
+            }),
+            title: action.title,
+          })),
+        }
+      : {}),
   })
 })
 
 // on action click
 self.addEventListener('notificationclick', (event) => {
-  console.log(event)
   event.notification.close()
+
+  const action = event.action
+
+  if (!action) {
+    return
+  }
+
+  const { state, value } = JSON.parse(action)
+
+  if (!credentials) return
+
+  const { url, cfClientId, cfClientSecret } = credentials
+
+  fetch(`https://${url}/set/${state}?value=${value}`, {
+    headers: {
+      'CF-Access-Client-Id': cfClientId,
+      'CF-Access-Client-Secret': cfClientSecret,
+    },
+  }).catch((e) => {
+    self.registration.showNotification('Failed execute action', {
+      body: e.message,
+      icon: '/notify/icons/alert.png',
+      badge: '/notify/badges/default.png',
+    })
+  })
 })
