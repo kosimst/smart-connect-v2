@@ -8,10 +8,11 @@ import deviceDefinitions from '../../constants/device-definitions'
 import { useIoBrokerStates } from '../../contexts/iobroker-states-context'
 import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
+import useDevices from '../../hooks/use-devices'
 import { Chips, Link, LinksGrid, Room, RoomTitle } from './styles'
 
 const DevicesPage: FC = () => {
-  const { devices } = useIoBrokerStates()
+  const devices = useDevices()
 
   const deviceTypes = useMemo(
     () =>
@@ -54,7 +55,15 @@ const DevicesPage: FC = () => {
   const groupedByRoom = useMemo(() => {
     const sorted = Object.entries(
       groupBy(selectedDevices, 'roomName', 'Other devices')
-    ).sort(([a], [b]) => a.localeCompare(b))
+    )
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(
+        ([roomName, devices]) =>
+          [
+            roomName,
+            devices.sort((a, b) => b.type.localeCompare(a.type)),
+          ] as const
+      )
 
     const withoutFavorite = sorted.filter(
       ([roomName]) => roomName !== favoriteRoom

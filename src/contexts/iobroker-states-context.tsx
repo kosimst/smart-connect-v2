@@ -17,7 +17,6 @@ import useIoBroker from './iobroker-context'
 type IoBrokerStates = {
   subscribeState(id: string): () => void
   updateState(id: string, val: any): void
-  devices: Device[]
 }
 
 const IoBrokerStatesContext = createContext<IoBrokerStates>({
@@ -27,53 +26,23 @@ const IoBrokerStatesContext = createContext<IoBrokerStates>({
   updateState: () => {
     throw new Error('State provider not initialized yet')
   },
-  devices: [],
 })
 
 export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [devices, setDevices] = useState<Device[]>([])
-
-  useEffect(() => {
-    const devices = localStorage.getItem('devices')
-    if (devices) {
-      setDevices(JSON.parse(devices))
-    }
-  }, [])
-
   const { fetchIoBroker, connected } = useIoBroker()
 
   const fetchDevices = useCallback(async () => {
-    const deviceStates = await fetchIoBroker(
-      '/objects?pattern=alias.0.*&type=channel'
-    )
+    const serviceWorker = navigator.serviceWorker.controller
 
-    const newDevices = Array<Device>()
-
-    for (const {
-      common: { name, role },
-      _id: id,
-      enums,
-    } of Object.values<any>(deviceStates)) {
-      if (!isSupportedDeviceType(role)) {
-        continue
-      }
-
-      const roomName = Object.entries(enums).find(
-        ([k, v]) => k.startsWith('enum.rooms.') && v
-      )?.[1] as string | undefined
-
-      newDevices.push({
-        id,
-        name,
-        type: role,
-        roomName,
-      })
+    if (!serviceWorker) {
+      return
     }
 
-    setDevices(newDevices)
-    localStorage.setItem('devices', JSON.stringify(newDevices))
+    serviceWorker.postMessage({
+      type: 'fetch-devices',
+    })
   }, [fetchIoBroker])
 
   const fetchStates = useCallback(async () => {
@@ -108,7 +77,7 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     }
 
     fetchDevices()
-    const interval = setInterval(fetchDevices, 2 * 60 * 1000)
+    const interval = setInterval(fetchDevices, 30 * 1000)
 
     return () => {
       clearInterval(interval)
@@ -142,7 +111,6 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     <IoBrokerStatesContext.Provider
       value={{
         subscribeState,
-        devices,
         updateState,
       }}
     >
