@@ -56,7 +56,7 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
 
   const save = useCallback(() => {
     setVapidPublicKeyPersistently(vapidPublicKeyInput)
-  }, [setVapidPublicKey])
+  }, [setVapidPublicKeyPersistently, vapidPublicKeyInput])
 
   const copyDetails = useCallback(() => {
     navigator.clipboard.writeText(
