@@ -1,17 +1,17 @@
 import bedOccupancySensor from './bed-occupancy-sensor'
+import brightnessSensor from './brightness-sensor'
 import climateSensor from './climate-sensor'
 import doorSensor from './door-sensor'
+import fan from './fan'
 import light from './light'
+import plug from './plug'
 import presenceSensor from './presence-sensor'
 import roomLight from './room-light'
 import shutter from './shutter'
+import speedTest from './speed-test'
 import valve from './valve'
 import windowOpener from './window-opener'
 import wirelessSwitch from './wireless-switch'
-import fan from './fan'
-import plug from './plug'
-import brightnessSensor from './brightness-sensor'
-import speedTest from './speed-test'
 
 const dataHooks = {
   'bed-occupancy-sensor': bedOccupancySensor,

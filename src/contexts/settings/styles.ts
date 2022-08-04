@@ -1,6 +1,5 @@
 import styled from '@emotion/styled'
 import { motion } from 'framer-motion'
-import Icon from '../../components/icon'
 
 export const Container = styled(motion.div)`
   background-color: #fff;

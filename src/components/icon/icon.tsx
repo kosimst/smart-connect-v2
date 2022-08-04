@@ -1,4 +1,3 @@
-import { MotionProps } from 'framer-motion'
 import { HTMLMotionProps } from 'framer-motion/types'
 import { FC } from 'react'
 import clsx from '../../helpers/clsx'

@@ -5,13 +5,9 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useState,
 } from 'react'
-import { isSupportedDeviceType } from '../constants/device-definitions'
 import ioBrokerDb from '../db/iobroker-db'
-import nSizedChunks from '../helpers/n-sized-chunks'
 import randomUUID from '../helpers/randomUUID'
-import Device from '../types/device'
 import useIoBroker from './iobroker-context'
 
 type IoBrokerStates = {

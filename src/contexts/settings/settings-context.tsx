@@ -12,7 +12,6 @@ import {
 } from 'react'
 import Icon from '../../components/icon'
 import { RoomTitle } from '../../pages/devices/styles'
-import useIoBroker from '../iobroker-context'
 import { Input } from '../iobroker-context/styles'
 import { Container, Icons, PushDetails } from './styles'
 

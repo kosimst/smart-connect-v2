@@ -1,4 +1,4 @@
-import { RefObject, useState, useEffect, useCallback } from 'react'
+import { RefObject, useCallback, useEffect, useState } from 'react'
 
 const useRect = (ref: RefObject<HTMLElement>) => {
   const [rect, setRect] = useState<DOMRect | null>(null)

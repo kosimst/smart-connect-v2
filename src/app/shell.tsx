@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react'
 import { FC } from 'react'
-import baseTheme, { lightTheme } from '../constants/theme'
+import baseTheme from '../constants/theme'
 import { DeviceDetailsProvider } from '../contexts/device-details/device-details'
 import { IoBrokerProvider } from '../contexts/iobroker-context'
 import { IoBrokerStatesProvider } from '../contexts/iobroker-states-context'

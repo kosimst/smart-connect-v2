@@ -9,7 +9,6 @@ import {
   useState,
 } from 'react'
 import preventDefault from '../../helpers/prevent-default'
-import useIsOffline from '../../hooks/use-is-offline'
 import useSpring from '../../hooks/use-spring'
 import Icon from '../icon'
 import { AvailableIcon } from '../icon/available-icons'

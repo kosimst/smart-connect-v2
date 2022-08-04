@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import Toast from '../components/toast'
 import DevicesPage from '../pages/devices'
 import { Main } from './app-styles'
 

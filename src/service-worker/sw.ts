@@ -1,13 +1,13 @@
 /// <reference lib="webworker" />
 declare const self: ServiceWorkerGlobalScope
 
-import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
-import { clientsClaim } from 'workbox-core'
 import { liveQuery } from 'dexie'
+import { clientsClaim } from 'workbox-core'
+import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
+import { isSupportedDeviceType } from '../constants/device-definitions'
 import ioBrokerDb from '../db/iobroker-db'
 import nSizedChunks from '../helpers/n-sized-chunks'
 import Device from '../types/device'
-import { isSupportedDeviceType } from '../constants/device-definitions'
 
 self.skipWaiting()
 clientsClaim()
