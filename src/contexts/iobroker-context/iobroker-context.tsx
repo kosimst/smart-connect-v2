@@ -9,10 +9,12 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Button, Container, Input, Title } from './styles'
+import { Button, Container, Input, OfflineContainer, Title } from './styles'
 import ioBrokerDb from '../../db/iobroker-db'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import Icon from '../../components/icon'
+import { PageTitle, RoomTitle } from '../../pages/devices/styles'
 
 const ALIVE_STATE = 'system.adapter.admin.0.alive'
 
@@ -223,22 +225,62 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
       {url && !loading ? (
         ready ? (
           connected ? (
-            <IoBrokerContext.Provider
-              value={{
-                fetchIoBroker,
-                connected,
-                pushSubscriptionDetails,
-                setVapidPublicKey: setVapidPublicKeyPersistently,
-                vapidPublicKey,
-              }}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
-              {children}
-            </IoBrokerContext.Provider>
+              <IoBrokerContext.Provider
+                value={{
+                  fetchIoBroker,
+                  connected,
+                  pushSubscriptionDetails,
+                  setVapidPublicKey: setVapidPublicKeyPersistently,
+                  vapidPublicKey,
+                }}
+              >
+                {children}
+              </IoBrokerContext.Provider>
+            </motion.div>
           ) : (
-            <span>not connected</span>
+            <OfflineContainer
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.75 }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 0.5,
+                  ease: 'easeInOut',
+                  repeatType: 'reverse',
+                }}
+              >
+                <Icon icon="cloud_off" />
+              </motion.span>
+            </OfflineContainer>
           )
         ) : (
-          <></>
+          <OfflineContainer
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.75 }}
+              transition={{
+                repeat: Infinity,
+                duration: 0.5,
+                ease: 'easeInOut',
+                repeatType: 'reverse',
+              }}
+            >
+              <Icon icon="cloud_sync" />
+            </motion.span>
+          </OfflineContainer>
         )
       ) : (
         <Container

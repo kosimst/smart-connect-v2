@@ -26,3 +26,16 @@ export const Title = styled(Typography)`
 `
 
 export const Subtitle = styled.h2``
+
+export const OfflineContainer = styled(motion.div)`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > span > span {
+    font-size: 64px;
+    display: block;
+  }
+`
