@@ -1,11 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const useScrollLock = (locked: boolean) => {
+  const element = useMemo(() => document.getElementById('scroll-lock')!, [])
+
   useEffect(() => {
     if (locked) {
-      document.body.style.overflow = 'hidden'
+      element.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = 'auto'
+      element.style.overflow = 'auto'
     }
   }, [locked])
 }

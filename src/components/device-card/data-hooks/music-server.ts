@@ -7,11 +7,8 @@ const useData: DataHook = (device) => {
   const [active] = useDeviceState(device, 'active', false)
   const [paused, setPaused] = useDeviceState(device, 'paused', false)
   const [volume, setVolume] = useDeviceState(device, 'volume', 0)
-  const [player, setPlayer] = useDeviceState(device, 'player', '')
+  const [player] = useDeviceState(device, 'player', '')
   const [title] = useDeviceState(device, 'title', '')
-  const [artist] = useDeviceState(device, 'artist', '')
-
-  console.log(active)
 
   const texts = useMemo<DataText[]>(
     () =>

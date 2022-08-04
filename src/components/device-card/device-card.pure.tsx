@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 import preventDefault from '../../helpers/prevent-default'
+import useScrollLock from '../../hooks/use-scoll-lock'
 import useSpring from '../../hooks/use-spring'
 import Icon from '../icon'
 import { AvailableIcon } from '../icon/available-icons'
@@ -145,6 +146,8 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
   }, [sliderValue])
 
   const sliderValueSpring = useSpring(actualSliderValue, !isSliding)
+
+  useScrollLock(isSliding)
 
   return (
     <>
