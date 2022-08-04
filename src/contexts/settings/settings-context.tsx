@@ -24,7 +24,7 @@ const SettingsContext = createContext({
 export const SettingsProvider: FC<{ children?: ReactNode }> = ({
   children,
 }) => {
-  const [opened, setOpened] = useState(true)
+  const [opened, setOpened] = useState(false)
 
   const [vapidPublicKeyInput, setVapidPublicKeyInput] = useState('')
   const [vapidPublicKey, setVapidPublicKey] = useState('')
