@@ -17,10 +17,11 @@ const useData: DataHook = (device) => {
           text: on ? 'On' : 'Off',
           id: 'on',
         },
-        brightnessExists && {
-          text: `${brightness}%`,
-          id: 'level',
-        },
+        brightnessExists &&
+          on && {
+            text: `${brightness}%`,
+            id: 'level',
+          },
       ].filter(Boolean) as DataText[],
     [brightness, on]
   )

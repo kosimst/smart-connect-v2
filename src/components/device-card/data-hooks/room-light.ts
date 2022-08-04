@@ -13,7 +13,7 @@ const useData: DataHook = (device) => {
           text: on ? 'On' : 'Off',
           id: 'on',
         },
-        {
+        on && {
           text: `${brightness}%`,
           id: 'level',
         },
