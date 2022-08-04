@@ -1,5 +1,5 @@
 import { Button, IconButton } from '@mui/material'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   createContext,
   FC,
@@ -24,7 +24,7 @@ const SettingsContext = createContext({
 export const SettingsProvider: FC<{ children?: ReactNode }> = ({
   children,
 }) => {
-  const [opened, setOpened] = useState(false)
+  const [opened, setOpened] = useState(true)
 
   const [vapidPublicKeyInput, setVapidPublicKeyInput] = useState('')
   const [vapidPublicKey, setVapidPublicKey] = useState('')
@@ -64,8 +64,16 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
     )
   }, [pushSubscriptionDetails])
 
+  const [pushPermission, setPushPermission] = useState(Notification.permission)
+
   useEffect(() => {
-    if (!vapidPublicKey) {
+    if (!vapidPublicKey || pushPermission !== 'granted') {
+      return
+    }
+
+    const permissionState = Notification.permission
+
+    if (permissionState === 'denied') {
       return
     }
 
@@ -83,12 +91,22 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
           setPushSubscriptionDetails(subscription.toJSON())
         })
     })
-  }, [vapidPublicKey])
+  }, [vapidPublicKey, pushPermission])
 
   const hasChanged = useMemo(
     () => vapidPublicKey !== vapidPublicKeyInput,
     [vapidPublicKey, vapidPublicKeyInput]
   )
+
+  const askPush = useCallback(() => {
+    Notification.requestPermission()
+      .then((permissionState) => {
+        setPushPermission(permissionState)
+      })
+      .catch(() => {
+        setPushPermission('denied')
+      })
+  }, [])
 
   return (
     <SettingsContext.Provider
@@ -132,13 +150,25 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
               autoComplete="off"
             />
 
-            {pushSubscriptionDetails && (
-              <PushDetails initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <Button variant="contained" onClick={copyDetails}>
-                  Copy details
-                </Button>
-              </PushDetails>
-            )}
+            <PushDetails>
+              <Button
+                variant="contained"
+                disabled={pushPermission !== 'default'}
+                onClick={askPush}
+              >
+                {pushPermission === 'default'
+                  ? 'Ask for push'
+                  : pushPermission === 'granted'
+                  ? 'Push allowed'
+                  : 'Push denied'}
+              </Button>
+
+              {pushSubscriptionDetails && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <Button onClick={copyDetails}>Copy details</Button>
+                </motion.div>
+              )}
+            </PushDetails>
           </Container>
         )}
       </AnimatePresence>

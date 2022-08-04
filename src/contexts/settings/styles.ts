@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Button } from '@mui/material'
 import { motion } from 'framer-motion'
 
 export const Container = styled(motion.div)`
@@ -21,6 +22,9 @@ export const Icons = styled.div`
   right: 16px;
 `
 
-export const PushDetails = styled(motion.div)`
+export const PushDetails = styled.div`
   margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 `

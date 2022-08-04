@@ -125,7 +125,6 @@ self.addEventListener('message', async ({ data }) => {
   }
 })
 
-// push listener
 self.addEventListener('push', (event) => {
   let msg = event.data?.text()
 
