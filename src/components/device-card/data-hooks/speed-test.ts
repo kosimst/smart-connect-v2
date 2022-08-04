@@ -10,11 +10,11 @@ const useData: DataHook = (device) => {
     () => [
       {
         id: 'download',
-        text: `${download.toFixed(0)} Mbps`,
+        text: `${download.toFixed(0)}Mbps`,
       },
       {
         id: 'upload',
-        text: `${upload.toFixed(0)} Mbps`,
+        text: `${upload.toFixed(0)}Mbps`,
       },
     ],
     [download, upload]
