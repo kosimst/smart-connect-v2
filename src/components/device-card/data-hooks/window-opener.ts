@@ -34,7 +34,7 @@ const useData: DataHook = (device) => {
   const onToggleChange = useCallback(
     (newToggle: boolean) => {
       if (direction === 0) {
-        setOpenedLevel(newToggle ? -0.5 : 100)
+        setOpenedLevel(newToggle ? 100 : -0.5)
       } else {
         setStop(true)
       }
