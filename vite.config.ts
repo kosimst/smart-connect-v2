@@ -26,7 +26,7 @@ export default defineConfig({
         start_url: '/',
         theme_color: '#fff',
         lang: 'en',
-        categories: ['connectivity', 'smart home', 'iot'],
+        categories: ['connectivity', 'utilities'],
         prefer_related_applications: true,
         related_applications: [],
         icons: [
