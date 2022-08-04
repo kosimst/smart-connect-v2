@@ -12,6 +12,7 @@ import speedTest from './speed-test'
 import valve from './valve'
 import windowOpener from './window-opener'
 import wirelessSwitch from './wireless-switch'
+import musicServer from './music-server'
 
 const dataHooks = {
   'bed-occupancy-sensor': bedOccupancySensor,
@@ -28,6 +29,7 @@ const dataHooks = {
   plug,
   'brightness-sensor': brightnessSensor,
   'speed-test': speedTest,
+  'music-server': musicServer,
 }
 
 export default dataHooks

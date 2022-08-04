@@ -94,7 +94,15 @@ const deviceDefinitions = {
     icon: 'speed',
     color: '#1565C0',
     bgColor: '#CCE4FC',
-    name: 'Internet speed',
+    name: 'Speed test',
+    fullName: 'Internet speed',
+  },
+  'music-server': {
+    icon: 'album',
+    color: '#1565C0',
+    bgColor: '#CCE4FC',
+    name: 'Music',
+    fullName: 'Music server',
   },
 } as const
 

@@ -38,7 +38,7 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   }, [setOpenedDevice])
 
   const deviceDefinition = useMemo(
-    () => openedDevice && deviceDefinitions[openedDevice.type],
+    () => !!openedDevice && deviceDefinitions[openedDevice.type],
     [openedDevice]
   )
 
@@ -91,8 +91,8 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
             </h2>
             <Subtitle>
               <span>
-                {deviceDefinition.name} ({openedDevice.roomName || 'unset room'}
-                )
+                {deviceDefinition.fullName} (
+                {openedDevice.roomName || 'unset room'})
               </span>
             </Subtitle>
           </Card>
