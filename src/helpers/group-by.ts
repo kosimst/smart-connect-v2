@@ -15,7 +15,7 @@ const groupBy = <T extends any, K extends keyof T>(
 
     if (value === undefined) {
       if (defaultValue === undefined) {
-        throw new Error(`Missing key: ${key}`)
+        throw new Error(`Missing key: ${String(key)}`)
       }
       value = defaultValue
     } else {
