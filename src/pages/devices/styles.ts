@@ -31,10 +31,13 @@ export const LinksGrid = styled(motion.div)`
   margin-top: 40px;
   margin-bottom: 4px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, 1fr);
+  grid-template-columns: 1fr;
   gap: 16px;
   justify-items: center;
   font-weight: 500;
+  position: absolute;
+  bottom: 16px;
+  width: calc(100vw - 32px);
 `
 
 export const Link = styled.span`
