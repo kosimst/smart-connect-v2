@@ -23,6 +23,10 @@ const colors = {
     color: '#1565C0',
     bgColor: '#CCE4FC',
   },
+  media: {
+    color: '#3F51B5',
+    bgColor: '#C5CAE9',
+  },
 }
 
 const deviceDefinitions = {
@@ -114,7 +118,7 @@ const deviceDefinitions = {
     icon: 'album',
     name: 'Music',
     fullName: 'Music server',
-    ...colors.default,
+    ...colors.media,
   },
   'window-tilted-sensor': {
     icon: 'window_sensor',
