@@ -2202,6 +2202,7 @@ const availableIcons = [
   'nest_thermostat_sensor_eu',
   'nest_connect',
   'nest_tag',
+  'window_sensor',
 ] as const
 
 export type AvailableIcon = typeof availableIcons[number]
