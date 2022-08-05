@@ -29,7 +29,7 @@ const deviceDefinitions = {
   'room-light': {
     icon: 'light',
     name: 'Lights',
-    fullName: 'Room lights',
+    fullName: 'Room light',
     ...colors.light,
   },
   light: {
@@ -118,8 +118,20 @@ const deviceDefinitions = {
   },
   'window-tilted-sensor': {
     icon: 'window_sensor',
-    name: 'Window tilted',
+    name: 'Window sensor',
     fullName: 'Window tilted sensor',
+    ...colors.security,
+  },
+  'window-opened-sensor': {
+    icon: 'window_sensor',
+    name: 'Window sensor',
+    fullName: 'Window opened sensor',
+    ...colors.security,
+  },
+  'window-sensor': {
+    icon: 'window_sensor',
+    name: 'Window sensor',
+    fullName: 'Window sensor',
     ...colors.security,
   },
   routine: {

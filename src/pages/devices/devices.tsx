@@ -17,7 +17,7 @@ const DevicesPage: FC = () => {
     () =>
       devices
         .map((device) => device.type)
-        .map((type) => deviceDefinitions[type].name)
+        .map((type) => deviceDefinitions[type].fullName)
         .filter((type, index, types) => types.indexOf(type) === index)
         .sort(),
     [devices]
