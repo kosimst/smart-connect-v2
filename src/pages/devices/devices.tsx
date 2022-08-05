@@ -46,7 +46,7 @@ const DevicesPage: FC = () => {
   const selectedDevices = useMemo(
     () =>
       devices.filter((device) =>
-        selectedDeviceTypes.includes(deviceDefinitions[device.type].name)
+        selectedDeviceTypes.includes(deviceDefinitions[device.type].fullName)
       ),
     [devices, selectedDeviceTypes]
   )
