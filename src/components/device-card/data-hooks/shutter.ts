@@ -17,12 +17,12 @@ const useData: DataHook = (device) => {
             usedLevel === 100
               ? 'Opened'
               : level === 0
-              ? 'Closed'
-              : `${100 - usedLevel}% closed`,
+              ? 'Shut'
+              : `${100 - usedLevel}% shut`,
           id: 'level',
         },
         direction && {
-          text: direction === 1 ? 'Opening...' : 'Closing...',
+          text: direction === 1 ? 'Opening...' : 'Shutting...',
           id: 'direction',
         },
       ].filter(Boolean) as DataText[],
