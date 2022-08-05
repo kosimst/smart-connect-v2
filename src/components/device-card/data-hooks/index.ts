@@ -14,6 +14,7 @@ import windowOpener from './window-opener'
 import wirelessSwitch from './wireless-switch'
 import musicServer from './music-server'
 import windowTiltedSensor from './window-tilted-sensor'
+import routine from './routine'
 
 const dataHooks = {
   'bed-occupancy-sensor': bedOccupancySensor,
@@ -32,6 +33,7 @@ const dataHooks = {
   'speed-test': speedTest,
   'music-server': musicServer,
   'window-tilted-sensor': windowTiltedSensor,
+  routine,
 }
 
 export default dataHooks

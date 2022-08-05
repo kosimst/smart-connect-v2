@@ -15,7 +15,7 @@ const colors = {
     color: '#00695C',
     bgColor: '#B2DFDB',
   },
-  misc: {
+  routine: {
     color: '#AD1457',
     bgColor: '#F8BBD0',
   },
@@ -90,7 +90,7 @@ const deviceDefinitions = {
     icon: 'switch',
     name: 'Wireless switch',
     fullName: 'Wireless switch',
-    ...colors.misc,
+    ...colors.default,
   },
   valve: {
     icon: 'valve',
@@ -108,7 +108,7 @@ const deviceDefinitions = {
     icon: 'speed',
     name: 'Speed test',
     fullName: 'Internet speed',
-    ...colors.misc,
+    ...colors.default,
   },
   'music-server': {
     icon: 'album',
@@ -121,6 +121,12 @@ const deviceDefinitions = {
     name: 'Window tilted',
     fullName: 'Window tilted sensor',
     ...colors.security,
+  },
+  routine: {
+    icon: 'routine',
+    name: 'Routine',
+    fullName: 'Routine',
+    ...colors.routine,
   },
 } as const
 
