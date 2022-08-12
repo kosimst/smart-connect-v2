@@ -3,6 +3,10 @@ declare const self: ServiceWorkerGlobalScope
 
 import { liveQuery } from 'dexie'
 import { clientsClaim } from 'workbox-core'
+import { registerRoute } from 'workbox-routing'
+import { CacheFirst } from 'workbox-strategies'
+import { ExpirationPlugin } from 'workbox-expiration'
+import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { isSupportedDeviceType } from '../constants/device-definitions'
 import ioBrokerDb from '../db/iobroker-db'
@@ -15,6 +19,21 @@ clientsClaim()
 cleanupOutdatedCaches()
 
 precacheAndRoute(self.__WB_MANIFEST)
+
+registerRoute(
+  new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)'),
+  new CacheFirst({
+    cacheName: 'google-fonts',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 30,
+      }),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+    ],
+  })
+)
 
 const credentialsObservable = liveQuery(() =>
   ioBrokerDb.credentials.limit(1).toArray()
