@@ -144,6 +144,12 @@ const deviceDefinitions = {
     fullName: 'Routine',
     ...colors.routine,
   },
+  'nuki-opener': {
+    icon: 'doorbell_3p',
+    name: 'Opener',
+    fullName: 'Nuki opener',
+    ...colors.security,
+  },
 } as const
 
 export const supportedDeviceTypes = Object.keys(

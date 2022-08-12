@@ -5,6 +5,7 @@ import doorSensor from './door-sensor'
 import fan from './fan'
 import light from './light'
 import musicServer from './music-server'
+import nukiOpener from './nuki-opener'
 import plug from './plug'
 import presenceSensor from './presence-sensor'
 import roomLight from './room-light'
@@ -24,6 +25,7 @@ const dataHooks = {
   'climate-sensor': climateSensor,
   'door-sensor': doorSensor,
   'music-server': musicServer,
+  'nuki-opener': nukiOpener,
   'presence-sensor': presenceSensor,
   'room-light': roomLight,
   'speed-test': speedTest,
