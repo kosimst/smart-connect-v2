@@ -235,8 +235,20 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
                   }}
                   exit={{ opacity: 0 }}
                 >
-                  {!isSliding
-                    ? texts.map(({ text, id }) => (
+                  {!isSliding ? (
+                    notAvailable ? (
+                      <motion.span
+                        key="not-available"
+                        initial={{ opacity: 0 }}
+                        animate={{
+                          opacity: 1,
+                        }}
+                        exit={{ opacity: 0 }}
+                      >
+                        Not available
+                      </motion.span>
+                    ) : (
+                      texts.map(({ text, id }) => (
                         <motion.span
                           key={id}
                           initial={{ opacity: 0 }}
@@ -248,7 +260,19 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
                           {text}
                         </motion.span>
                       ))
-                    : `${actualSliderValue}%`}
+                    )
+                  ) : (
+                    <motion.span
+                      key="sliding"
+                      initial={{ opacity: 0 }}
+                      animate={{
+                        opacity: 1,
+                      }}
+                      exit={{ opacity: 0 }}
+                    >
+                      {`${actualSliderValue}%`}
+                    </motion.span>
+                  )}
                 </State>
               </PresenceContainer>
             </AnimatePresence>
