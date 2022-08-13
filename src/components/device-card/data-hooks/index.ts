@@ -12,6 +12,7 @@ import roomLight from './room-light'
 import routine from './routine'
 import shutter from './shutter'
 import speedTest from './speed-test'
+import switchHook from './switch'
 import valve from './valve'
 import windowOpenedSensor from './window-opened-sensor'
 import windowOpener from './window-opener'
@@ -39,6 +40,7 @@ const dataHooks = {
   plug,
   routine,
   shutter,
+  switch: switchHook,
   valve,
 }
 

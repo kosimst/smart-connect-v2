@@ -150,6 +150,12 @@ const deviceDefinitions = {
     fullName: 'Nuki opener',
     ...colors.security,
   },
+  switch: {
+    icon: 'toggle_on',
+    name: 'Switch',
+    fullName: 'Switch',
+    ...colors.default,
+  },
 } as const
 
 export const supportedDeviceTypes = Object.keys(
