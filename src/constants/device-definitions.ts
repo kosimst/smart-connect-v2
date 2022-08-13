@@ -31,7 +31,7 @@ const colors = {
 
 const deviceDefinitions = {
   'room-light': {
-    icon: 'light',
+    icon: 'light_group',
     name: 'Lights',
     fullName: 'Room light',
     ...colors.light,
