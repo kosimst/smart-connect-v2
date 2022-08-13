@@ -11,8 +11,16 @@ import {
 } from 'react'
 import deviceDefinitions from '../../constants/device-definitions'
 import Device from '../../types/device'
+import controls from './controls'
 import Indicators from './indicators'
-import { Backdrop, Card, FixedChildren, Subtitle } from './styles'
+import {
+  Backdrop,
+  Card,
+  DetailsSeparator,
+  FixedChildren,
+  Section,
+  Subtitle,
+} from './styles'
 
 type DeviceDetailsProviderProps = {
   children?: ReactNode
@@ -27,7 +35,11 @@ export const DeviceDetailsContext = createContext<{
 export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   children,
 }) => {
-  const [openedDevice, setOpenedDevice] = useState<Device | null>(null)
+  const [openedDevice, setOpenedDevice] = useState<Device | null>({
+    id: 'alias.0.simon.light',
+    type: 'room-light',
+    roomName: 'Simon',
+  })
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)
@@ -42,6 +54,14 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
     () => !!openedDevice && deviceDefinitions[openedDevice.type],
     [openedDevice]
   )
+
+  const Controls = useMemo<FC<{ device: Device }> | null>(
+    //  @ts-ignore
+    () => (openedDevice ? controls[openedDevice.type] || null : null),
+    [openedDevice]
+  )
+
+  const hasHistory = false
 
   return (
     <>
@@ -92,10 +112,27 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
             </Typography>
             <Typography variant="subtitle1">
               <span>
-                {deviceDefinition.fullName} (
-                {openedDevice.roomName || 'unset room'})
+                {deviceDefinition.fullName}
+                <DetailsSeparator>•</DetailsSeparator>
+                {openedDevice.roomName || 'unset room'}
               </span>
             </Typography>
+
+            {Controls && (
+              <Section>
+                <Typography variant="h3">Controls</Typography>
+
+                <div>
+                  <Controls device={openedDevice} />
+                </div>
+              </Section>
+            )}
+
+            {hasHistory && (
+              <Section>
+                <Typography variant="h3">History</Typography>
+              </Section>
+            )}
           </Card>
         )}
       </AnimatePresence>

@@ -63,3 +63,12 @@ export const Subtitle = styled.div`
   opacity: 0.75;
   margin-top: 4px;
 `
+
+export const DetailsSeparator = styled.span`
+  display: inline-block;
+  margin: 0 4px;
+`
+
+export const Section = styled.div`
+  margin-top: 24px;
+`

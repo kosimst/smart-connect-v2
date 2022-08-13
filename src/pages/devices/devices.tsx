@@ -4,13 +4,14 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
 import DeviceGrid from '../../components/device-grid'
+import ExpandableChips from '../../components/expandable-chips'
 import Icon from '../../components/icon'
 import { AvailableIcon } from '../../components/icon/available-icons'
 import deviceDefinitions from '../../constants/device-definitions'
 import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
 import useDevices from '../../hooks/use-devices'
-import { Chips, Link, LinksGrid, Room, RoomTitle } from './styles'
+import { Link, LinksGrid, Room, RoomTitle } from './styles'
 
 const DevicesPage: FC = () => {
   const devices = useDevices()
@@ -82,9 +83,25 @@ const DevicesPage: FC = () => {
 
   const { open: openSettings } = useSettings()
 
+  const collapsedText = useMemo(() => {
+    const hiddenDeviceTypes = deviceTypes.filter(
+      (type) => !selectedDeviceTypes.includes(type)
+    ).length
+
+    if (hiddenDeviceTypes === 0) {
+      return 'All device types shown'
+    }
+
+    if (hiddenDeviceTypes === 1) {
+      return 'One device type hidden'
+    }
+
+    return `${hiddenDeviceTypes} device types are hidden`
+  }, [deviceTypes, selectedDeviceTypes])
+
   return (
     <>
-      <Chips>
+      <ExpandableChips collapsedText={collapsedText}>
         {deviceTypes.map((type) => (
           <Chip
             key={type}
@@ -126,7 +143,7 @@ const DevicesPage: FC = () => {
             {type}
           </Chip>
         ))}
-      </Chips>
+      </ExpandableChips>
       {groupedByRoom.map(([roomName, devices]) => (
         <Room
           key={roomName}

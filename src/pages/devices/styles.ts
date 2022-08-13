@@ -16,14 +16,6 @@ export const Room = styled(motion.section)`
   margin-top: 40px;
 `
 
-export const Chips = styled.section`
-  margin-top: 16px;
-  display: flex;
-  gap: 6px;
-  row-gap: 10px;
-  flex-wrap: wrap;
-`
-
 export const LinksGrid = styled(motion.div)`
   margin-top: 40px;
   margin-bottom: 4px;
