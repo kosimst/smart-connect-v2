@@ -29,7 +29,13 @@ export const StyledSlider = styled(Slider)<{
   & .MuiSlider-thumb {
     width: 16px;
     height: 16px;
-    box-sizing: border-box;
+
+    ${({ variant, value }) =>
+      variant === 'hue' && `background-color: hsl(${value}, 100%, 50%);`}
+
+    ${({ variant, value }) =>
+      variant === 'color-temperature' &&
+      `background-color: ${temperatureToRgb(ctModifier(value as number))};`}
 
     &:focus,
     &:hover,
