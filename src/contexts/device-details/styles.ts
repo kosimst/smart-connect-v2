@@ -18,7 +18,7 @@ export const Card = styled(motion.div)`
     transform: translateX(-50%);
     width: 25%;
     background: black;
-    height: 4px;
+    height: 3px;
     border-radius: 99px;
     opacity: 0.75;
   }

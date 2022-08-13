@@ -30,7 +30,7 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   const { fetchIoBroker, connected } = useIoBroker()
 
   const fetchDevices = useCallback(async () => {
-    const serviceWorker = navigator.serviceWorker.controller
+    const serviceWorker = navigator.serviceWorker?.controller
 
     if (!serviceWorker) {
       return
@@ -42,7 +42,7 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   }, [fetchIoBroker])
 
   const fetchStates = useCallback(async () => {
-    const serviceWorker = navigator.serviceWorker.controller
+    const serviceWorker = navigator.serviceWorker?.controller
 
     if (!serviceWorker) {
       return

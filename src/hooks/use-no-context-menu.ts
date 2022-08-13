@@ -3,10 +3,21 @@ import preventDefault from '../helpers/prevent-default'
 
 const useNoContextMenu = () => {
   useEffect(() => {
-    document.addEventListener('contextmenu', preventDefault)
+    const handler = (e: MouseEvent) => {
+      if (
+        e.target instanceof Element &&
+        e.target.matches('input:not([type="range"]) ,textarea')
+      ) {
+        return
+      }
+
+      e.preventDefault()
+    }
+
+    document.addEventListener('contextmenu', handler)
 
     return () => {
-      document.removeEventListener('contextmenu', preventDefault)
+      document.removeEventListener('contextmenu', handler)
     }
   }, [])
 }

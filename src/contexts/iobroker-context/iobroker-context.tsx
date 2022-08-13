@@ -248,8 +248,6 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
             autoCapitalize="none"
           />
 
-          <hr />
-
           <Input
             value={cfIdInput}
             onChange={(e) => setCfIdInput(e.target.value)}

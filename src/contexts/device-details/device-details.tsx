@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material'
 import { AnimatePresence } from 'framer-motion'
 import {
   createContext,
@@ -85,16 +86,16 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
               duration: 0.2,
             }}
           >
-            <h2>
+            <Typography variant="h2">
               <span>{openedDevice.name || deviceDefinition.name}</span>
               <Indicators device={openedDevice} />
-            </h2>
-            <Subtitle>
+            </Typography>
+            <Typography variant="subtitle1">
               <span>
                 {deviceDefinition.fullName} (
                 {openedDevice.roomName || 'unset room'})
               </span>
-            </Subtitle>
+            </Typography>
           </Card>
         )}
       </AnimatePresence>
