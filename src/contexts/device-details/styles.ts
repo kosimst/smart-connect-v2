@@ -9,6 +9,7 @@ export const Card = styled(motion.div)`
   border-top-right-radius: 16px;
   background: white;
   padding: 32px 16px;
+  overflow-x: hidden;
 
   &::after {
     content: '';

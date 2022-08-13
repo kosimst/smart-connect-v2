@@ -11,9 +11,9 @@ const useScrollLock = (locked: boolean) => {
 
   useEffect(() => {
     if (locked) {
-      elements.forEach((el) => ((el as HTMLElement).style.overflow = 'hidden'))
+      elements.forEach((el) => ((el as HTMLElement).style.overflowY = 'hidden'))
     } else {
-      elements.forEach((el) => ((el as HTMLElement).style.overflow = 'auto'))
+      elements.forEach((el) => ((el as HTMLElement).style.overflowY = 'auto'))
     }
   }, [locked])
 }
