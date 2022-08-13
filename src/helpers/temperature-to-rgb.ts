@@ -4,8 +4,6 @@ import clamp from './clamp'
  * @source https://gist.github.com/paulkaplan/5184275
  */
 const temperatureToRgb = (kelvin: number) => {
-  console.log(kelvin)
-
   var temp = kelvin / 100
 
   var red, green, blue
