@@ -1,33 +1,51 @@
 import styled from '@emotion/styled'
 import { Slider, Stack } from '@mui/material'
 import { FC } from 'react'
+import CustomSlider from '../../../components/custom-slider'
 import Icon from '../../../components/icon'
+import useDeviceState from '../../../hooks/use-device-state'
 import Device from '../../../types/device'
-
-const SmallIcon = styled(Icon)`
-  font-size: 20px;
-`
-
-const BigIcon = styled(Icon)`
-  font-size: 28px;
-`
+import { SliderFlex } from './styles'
 
 const Controls: FC<{
   device: Device
-}> = () => {
+}> = ({ device }) => {
+  const [brightness, setBrightness] = useDeviceState(device, 'brightness', 0)
+  const [hue, setHue] = useDeviceState(device, 'hue', 0)
+  const [colorTemperature, setColorTemperature] = useDeviceState(
+    device,
+    'color-temperature',
+    2198
+  )
+
   return (
     <>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <SmallIcon icon="light_mode" />
-        <Slider step={1} />
-        <BigIcon icon="light_mode" />
-      </Stack>
+      <SliderFlex>
+        <CustomSlider
+          label="Brightness"
+          value={brightness}
+          onChange={setBrightness}
+        />
 
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Icon icon="ac_unit" />
-        <Slider step={1} />
-        <Icon icon="sunny" />
-      </Stack>
+        <CustomSlider
+          label="Color temperature"
+          min={2198}
+          max={6494}
+          unit="K"
+          variant="color-temperature"
+          value={colorTemperature}
+          onChange={setColorTemperature}
+        />
+
+        <CustomSlider
+          label="Hue"
+          unit="°"
+          max={360}
+          variant="hue"
+          value={hue}
+          onChange={setHue}
+        />
+      </SliderFlex>
     </>
   )
 }

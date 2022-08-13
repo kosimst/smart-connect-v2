@@ -10,12 +10,14 @@ import {
   useState,
 } from 'react'
 import deviceDefinitions from '../../constants/device-definitions'
+import useScrollLock from '../../hooks/use-scoll-lock'
 import Device from '../../types/device'
 import controls from './controls'
 import Indicators from './indicators'
 import {
   Backdrop,
   Card,
+  ControlsContainer,
   DetailsSeparator,
   FixedChildren,
   Section,
@@ -35,11 +37,13 @@ export const DeviceDetailsContext = createContext<{
 export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   children,
 }) => {
-  const [openedDevice, setOpenedDevice] = useState<Device | null>({
+  const [openedDevice, setOpenedDevice] = useState<Device | null>(
+    null /* {
     id: 'alias.0.simon.light',
     type: 'room-light',
     roomName: 'Simon',
-  })
+  } */
+  )
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)
@@ -97,7 +101,7 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
               marginTop: '100vh',
             }}
             animate={{
-              marginTop: '75vh',
+              marginTop: '66vh',
             }}
             exit={{
               marginTop: '100vh',
@@ -122,9 +126,9 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
               <Section>
                 <Typography variant="h3">Controls</Typography>
 
-                <div>
+                <ControlsContainer>
                   <Controls device={openedDevice} />
-                </div>
+                </ControlsContainer>
               </Section>
             )}
 

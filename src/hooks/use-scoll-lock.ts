@@ -4,7 +4,7 @@ const useScrollLock = (locked: boolean) => {
   const elements = useMemo(
     () =>
       document.querySelectorAll(
-        '#scroll-lock > div > main, #scroll-lock, body, html, #scroll-lock > div'
+        '#scroll-lock > div > main, #scroll-lock, #scroll-lock > div'
       ),
     []
   )

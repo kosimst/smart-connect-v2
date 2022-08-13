@@ -70,5 +70,9 @@ export const DetailsSeparator = styled.span`
 `
 
 export const Section = styled.div`
+  margin-top: 32px;
+`
+
+export const ControlsContainer = styled.div`
   margin-top: 24px;
 `

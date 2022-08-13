@@ -11,7 +11,7 @@ const Container = styled.span`
   line-height: 30px;
   position: relative;
   top: 2px;
-  margin-left: 2px;
+  margin-left: 6px;
 
   & > span {
     font-size: 18px;
