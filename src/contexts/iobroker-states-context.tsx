@@ -53,6 +53,10 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     })
   }, [fetchIoBroker])
 
+  useEffect(() => {
+    ioBrokerDb.subscribedStates.clear()
+  }, [])
+
   const updateState = useCallback(
     async (id: string, value: any) => {
       await fetchIoBroker(`/set/${id}?value=${value}`)
