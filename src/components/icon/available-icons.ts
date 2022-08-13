@@ -2203,6 +2203,7 @@ const availableIcons = [
   'nest_connect',
   'nest_tag',
   'window_sensor',
+  'light_group',
 ] as const
 
 export type AvailableIcon = typeof availableIcons[number]
