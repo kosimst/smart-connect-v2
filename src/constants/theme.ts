@@ -11,13 +11,16 @@ const baseTheme = createTheme({
       fontSize: '2.5rem',
     },
     h2: {
-      fontSize: 24,
-      fontWeight: 600,
+      fontSize: 22,
+      fontWeight: 500,
       marginBottom: 8,
     },
     h3: {
-      fontSize: 20,
-      fontWeight: 600,
+      fontSize: 19,
+      fontWeight: 500,
+    },
+    subtitle1: {
+      fontSize: 15,
     },
   },
   palette: {

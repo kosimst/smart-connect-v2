@@ -45,11 +45,11 @@ const CustomSlider: FC<CustomSliderProps> = ({
   return (
     <Container>
       <Texts>
-        <span>{label}</span>
-        <span>
+        <Typography variant="subtitle1">{label}</Typography>
+        <Typography variant="subtitle1">
           {value}
           {unit}
-        </span>
+        </Typography>
       </Texts>
       <StyledSlider
         value={value}
