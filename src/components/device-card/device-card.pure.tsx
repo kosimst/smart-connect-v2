@@ -1,7 +1,9 @@
+import TouchRipple from '@mui/material/ButtonBase/TouchRipple'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   FC,
   memo,
+  MouseEventHandler,
   useCallback,
   useEffect,
   useMemo,
@@ -37,7 +39,7 @@ export type PureDeviceCardProps = {
   sliderValue?: number
   onToggleChange?: (value: boolean) => void
   onSliderChange?: (value: number) => void
-  onContextMenu?: () => void
+  onContextMenu?: MouseEventHandler<HTMLDivElement>
   lowBattery?: boolean
   notAvailable?: boolean
 }

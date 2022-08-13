@@ -1,9 +1,11 @@
+import { Typography } from '@mui/material'
 import { AnimatePresence } from 'framer-motion'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
 import DeviceGrid from '../../components/device-grid'
 import Icon from '../../components/icon'
+import { AvailableIcon } from '../../components/icon/available-icons'
 import deviceDefinitions from '../../constants/device-definitions'
 import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
@@ -22,6 +24,12 @@ const DevicesPage: FC = () => {
         .sort(),
     [devices]
   )
+  const getIcon = useCallback((fullName: string): AvailableIcon => {
+    const deviceDefinition = Object.entries(deviceDefinitions).find(
+      ([, definition]) => definition.fullName === fullName
+    )
+    return deviceDefinition ? deviceDefinition[1].icon : 'home_iot_device'
+  }, [])
   const [selectedDeviceTypes, setSelectedDeviceTypes] = useState([] as string[])
   useEffect(() => {
     const storedSelectedDeviceTypes = localStorage.getItem(
@@ -80,6 +88,7 @@ const DevicesPage: FC = () => {
         {deviceTypes.map((type) => (
           <Chip
             key={type}
+            icon={getIcon(type)}
             selected={selectedDeviceTypes.includes(type)}
             onClick={() => {
               if (selectedDeviceTypes.includes(type)) {
@@ -133,6 +142,7 @@ const DevicesPage: FC = () => {
               setFavoriteRoom(roomName)
               localStorage.setItem('favoriteRoom', roomName)
             }}
+            variant="h2"
           >
             {roomName}
           </RoomTitle>

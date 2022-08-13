@@ -1,4 +1,4 @@
-import { FC, Suspense, useCallback } from 'react'
+import { FC, MouseEventHandler, Suspense, useCallback } from 'react'
 import useDeviceDetails from '../../contexts/device-details'
 import useDeviceDefinition from '../../hooks/use-device-definition'
 import useDeviceState from '../../hooks/use-device-state'
@@ -18,9 +18,14 @@ const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device }) => {
   const data = useData(device)
   const definition = useDeviceDefinition(device)
 
-  const onContextMenu = useCallback(() => {
-    open(device)
-  }, [open])
+  const onContextMenu = useCallback<MouseEventHandler<HTMLDivElement>>(
+    (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      open(device)
+    },
+    [open]
+  )
 
   const [battery, , batteryExists] = useDeviceState(device, 'battery', 100)
   const [available, , availableExists] = useDeviceState(
