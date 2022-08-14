@@ -1,6 +1,8 @@
 const withProps =
   <
-    Component extends React.FC,
+    Component extends
+      | keyof JSX.IntrinsicElements
+      | React.JSXElementConstructor<any>,
     PassedProps extends Partial<React.ComponentProps<Component>>
   >(
     Element: Component,
