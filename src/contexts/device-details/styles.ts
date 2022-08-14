@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Typography } from '@mui/material'
 import { motion } from 'framer-motion'
 
 export const Card = styled(motion.div)`
@@ -8,7 +9,7 @@ export const Card = styled(motion.div)`
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   background: white;
-  padding: 32px 16px;
+  padding: 40px 16px;
   overflow-x: hidden;
 
   &::after {
@@ -76,4 +77,10 @@ export const Section = styled.div`
 
 export const ControlsContainer = styled.div`
   margin-top: 24px;
+`
+
+export const TitleRow = styled(Typography)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `

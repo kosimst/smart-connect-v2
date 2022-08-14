@@ -56,7 +56,7 @@ const CustomSlider: FC<CustomSliderProps> = ({
         onChange={onChange}
         min={min}
         max={max}
-        track={variant === 'normal' ? 'normal' : false}
+        //track={variant === 'normal' ? 'normal' : false}
         variant={variant}
         onChangeCommitted={onChangeCommitted}
       />

@@ -22,6 +22,7 @@ import {
   FixedChildren,
   Section,
   Subtitle,
+  TitleRow,
 } from './styles'
 
 type DeviceDetailsProviderProps = {
@@ -110,10 +111,10 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
               duration: 0.2,
             }}
           >
-            <Typography variant="h2">
+            <TitleRow variant="h2">
               <span>{openedDevice.name || deviceDefinition.name}</span>
               <Indicators device={openedDevice} />
-            </Typography>
+            </TitleRow>
             <Typography variant="subtitle1">
               <span>
                 {deviceDefinition.fullName}

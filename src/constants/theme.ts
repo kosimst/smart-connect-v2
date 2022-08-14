@@ -26,6 +26,7 @@ const baseTheme = createTheme({
   palette: {
     primary: blueGrey,
   },
+  shadows: Array(10).fill('none') as Shadows,
 })
 
 export default baseTheme

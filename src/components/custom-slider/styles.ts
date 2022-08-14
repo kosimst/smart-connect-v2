@@ -9,15 +9,13 @@ export const Texts = styled.div`
 
 export const Container = styled.div``
 
-const ctModifier = (val: number) => val
-
 const ctGradientStops = Array(10)
   .fill(0)
   .map((_, i, { length }) => {
     const progress = i / length
     const val = 2198 + (6494 - 2198) * progress
 
-    return temperatureToRgb(ctModifier(val))
+    return temperatureToRgb(val)
   })
   .join(', ')
 
@@ -30,13 +28,6 @@ export const StyledSlider = styled(Slider)<{
     width: 16px;
     height: 16px;
 
-    ${({ variant, value }) =>
-      variant === 'hue' && `background-color: hsl(${value}, 100%, 50%);`}
-
-    ${({ variant, value }) =>
-      variant === 'color-temperature' &&
-      `background-color: ${temperatureToRgb(ctModifier(value as number))};`}
-
     &:focus,
     &:hover,
     &.Mui-active,
@@ -47,7 +38,12 @@ export const StyledSlider = styled(Slider)<{
 
   & .MuiSlider-rail,
   & .MuiSlider-track {
-    height: 8px;
+    height: 16px;
+  }
+
+  & .MuiSlider-track {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
 
   ${({ variant }) =>
@@ -75,4 +71,17 @@ export const StyledSlider = styled(Slider)<{
       );
     opacity: 1;
   }`}
+
+  ${({ variant }) =>
+    variant !== 'normal' &&
+    `& .MuiSlider-track, & .MuiSlider-thumb {
+    background-color: transparent;
+    border: none;
+  }
+
+  & .MuiSlider-thumb {
+    background-color: white;
+    box-shadow: inset 0 0 2px 0 rgba(0, 0, 0, 0.25) !important;
+  }
+  `}
 `
