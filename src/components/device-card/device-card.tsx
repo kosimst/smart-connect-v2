@@ -24,7 +24,7 @@ const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device }) => {
       e.stopPropagation()
       open(device)
     },
-    [open]
+    [open, device]
   )
 
   const [battery, , batteryExists] = useDeviceState(device, 'battery', 100)

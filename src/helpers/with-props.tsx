@@ -13,7 +13,6 @@ const withProps =
   > =>
   (props) => {
     return (
-      // @ts-ignore
       <Element
         {...({ ...passedProps, ...props } as React.ComponentProps<Component>)}
       />
