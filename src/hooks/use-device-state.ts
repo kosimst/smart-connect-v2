@@ -11,7 +11,6 @@ const useDeviceState = <T extends any>(
   defaultValue: T,
   priority: 'high' | 'normal' | 'low' = 'normal'
 ) => {
-  const { fetchIoBroker } = useIoBroker()
   const { subscribeState, updateState } = useIoBrokerStates()
 
   const path = `${device.id}.${state}`

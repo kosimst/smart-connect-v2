@@ -102,6 +102,12 @@ const DevicesPage: FC = () => {
   )
 
   const [filterExpanded, setFilterExpanded] = useState(false)
+  useEffect(() => {
+    const storedFilterExpanded = localStorage.getItem('filterExpanded')
+    if (storedFilterExpanded) {
+      setFilterExpanded(JSON.parse(storedFilterExpanded))
+    }
+  }, [])
 
   const devicesWithLowBattery = useLowBatteryDevices()
   const unavailableDevices = useUnavailableDevices()
@@ -135,7 +141,14 @@ const DevicesPage: FC = () => {
     <>
       <Title variant="h1">
         <span>My home</span>
-        <FilterIconButton onClick={() => setFilterExpanded((prev) => !prev)}>
+        <FilterIconButton
+          onClick={() =>
+            setFilterExpanded((prev) => {
+              localStorage.setItem('filterExpanded', JSON.stringify(!prev))
+              return !prev
+            })
+          }
+        >
           <Badge
             variant="standard"
             badgeContent={hiddenDeviceTypesCount}

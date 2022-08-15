@@ -1,4 +1,6 @@
 import { wrap } from 'comlink'
+import Dexie from 'dexie'
+import ioBrokerDb from '../../db/iobroker-db'
 import Device from '../../types/device'
 import IoBrokerSyncWorker from './iobroker-sync-worker?worker'
 

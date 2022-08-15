@@ -66,7 +66,7 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     (id, priority: 'high' | 'normal' | 'low' = 'normal') => {
       const subscriptionId = randomUUID()
 
-      ioBrokerDb.subscribedStates.put({ id, subscriptionId, priority })
+      ioBrokerDb.subscribedStates.add({ id, subscriptionId, priority })
 
       return () => {
         ioBrokerDb.subscribedStates.delete(subscriptionId)

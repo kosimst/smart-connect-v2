@@ -46,7 +46,7 @@ export const Link = styled.span`
     font-size: inherit;
   }
 
-  & > *:first-child {
+  & > *::first-of-type {
     position: relative;
     top: 1px;
   }

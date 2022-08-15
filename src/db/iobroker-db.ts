@@ -20,7 +20,7 @@ export class IoBrokerDb extends Dexie {
   constructor() {
     super('ioBrokerDb')
 
-    this.version(6).stores({
+    this.version(7).stores({
       credentials: 'url',
       states: 'id,role,ts',
       devices: 'id',

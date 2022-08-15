@@ -25,11 +25,11 @@ export const StatusText = styled.span`
   & > * {
     color: rgba(0, 0, 0, 0.54);
 
-    &:first-child {
+    &:first-of-type {
       justify-self: start;
     }
 
-    &:nth-child(2) {
+    &:nth-of-type(2) {
       display: grid;
       width: 100%;
       text-align: center;

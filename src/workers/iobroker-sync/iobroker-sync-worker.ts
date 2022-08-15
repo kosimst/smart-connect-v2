@@ -19,6 +19,7 @@ import sleep from '../../helpers/sleep'
 const data = {
   credentials: null,
   states: {
+    background: [],
     lowPriority: [],
     normalPriority: [],
     highPriority: [],
@@ -159,7 +160,7 @@ const start = async () => {
     DEVICES_REFETCH_INTERVAL
   )
   clearSyncLowPriorityInterval = setWaitingInterval(
-    () => fetchStates(data.states.lowPriority),
+    () => fetchStates([...data.states.lowPriority, ...data.states.background]),
     LOW_PRIORITY_REFETCH_INTERVAL
   )
   clearSyncNormalPriorityInterval = setWaitingInterval(
