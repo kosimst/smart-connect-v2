@@ -49,10 +49,7 @@ const fetchStates = async (stateIds: string[]) => {
       })
 
       if (response.status !== 200) {
-        console.warn(
-          `Failed to fetch states: ${response.status} (${response.statusText})`
-        )
-        throw new Error('Fetching states failed')
+        return
       }
 
       const json = await response.json()
