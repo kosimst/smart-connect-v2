@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
-import { Typography } from '@mui/material'
+import { IconButton, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
+import ExpandableChips from '../../components/expandable-chips'
 
 export const PageTitle = styled.h1`
   opacity: 0.9;
@@ -13,7 +14,11 @@ export const RoomTitle = styled(Typography)`
 `
 
 export const Room = styled(motion.section)`
-  margin-top: 40px;
+  margin-top: 16px;
+
+  & + & {
+    margin-top: 40px;
+  }
 `
 
 export const LinksGrid = styled(motion.div)`
@@ -48,4 +53,18 @@ export const Link = styled.span`
     position: relative;
     top: 1px;
   }
+`
+
+export const StyledExpandableChips = styled(ExpandableChips)`
+  margin-top: 16px;
+`
+
+export const FilterIconButton = styled(IconButton)``
+
+export const Title = styled(Typography)`
+  font-size: 32px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
 `

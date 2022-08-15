@@ -11,27 +11,7 @@ export const Chips = styled(motion.section)`
 `
 
 export const Container = styled(motion.div)`
-  margin-top: 16px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
-`
-
-export const CollapsedText = styled(Chip)`
-  position: relative;
-
-  & .MuiChip-icon {
-    position: absolute;
-    right: 16px;
-  }
-
-  & .MuiChip-label {
-    display: inline-grid;
-    width: 75%;
-    justify-items: center;
-
-    & > * {
-      grid-area: 1 / 1;
-    }
-  }
 `
