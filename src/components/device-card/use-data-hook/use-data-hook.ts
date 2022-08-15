@@ -1,5 +1,6 @@
 import Device from '../../../types/device'
 import dataHooks from '../data-hooks'
+import DataHook from './data-hook'
 
 const useDataHook = ({ type: deviceType }: Device) => {
   // @ts-ignore
@@ -8,7 +9,7 @@ const useDataHook = ({ type: deviceType }: Device) => {
   }
 
   // @ts-ignore
-  return dataHooks[deviceType]
+  return dataHooks[deviceType] as DataHook
 }
 
 export default useDataHook

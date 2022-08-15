@@ -28,6 +28,15 @@ import {
 const DevicesPage: FC = () => {
   const devices = useDevices()
 
+  const isHidden = useCallback(
+    (deviceFullName: string) =>
+      Object.values(deviceDefinitions).some(
+        // @ts-ignore
+        ({ fullName, hidden }) => fullName === deviceFullName && !!hidden
+      ),
+    []
+  )
+
   const deviceTypes = useMemo(
     () =>
       devices
@@ -66,8 +75,11 @@ const DevicesPage: FC = () => {
 
   const selectedDevices = useMemo(
     () =>
-      devices.filter((device) =>
-        selectedDeviceTypes.includes(deviceDefinitions[device.type].fullName)
+      devices.filter(
+        (device) =>
+          selectedDeviceTypes.includes(
+            deviceDefinitions[device.type].fullName
+          ) && !isHidden(deviceDefinitions[device.type].fullName)
       ),
     [devices, selectedDeviceTypes]
   )
@@ -164,47 +176,52 @@ const DevicesPage: FC = () => {
         marginBottom={16}
         marginTop={24}
       >
-        {deviceTypes.map((type) => (
-          <Chip
-            key={type}
-            icon={getIcon(type)}
-            selected={selectedDeviceTypes.includes(type)}
-            onClick={() => {
-              if (selectedDeviceTypes.includes(type)) {
-                setSelectedDeviceTypes((prev) => {
-                  const newVal = prev.filter((t) => t !== type)
-                  localStorage.setItem(
-                    'selectedDeviceTypes',
-                    JSON.stringify(newVal)
-                  )
-                  return newVal
-                })
-              } else {
-                setSelectedDeviceTypes((prev) => {
-                  const newVal = [...prev, type]
-                  localStorage.setItem(
-                    'selectedDeviceTypes',
-                    JSON.stringify(newVal)
-                  )
-                  return newVal
-                })
-              }
-            }}
-            onContextMenu={() => {
-              setSelectedDeviceTypes((prev) => {
-                const newVal =
-                  prev.length === 1 && prev[0] === type ? deviceTypes : [type]
-                localStorage.setItem(
-                  'selectedDeviceTypes',
-                  JSON.stringify(newVal)
-                )
-                return newVal
-              })
-            }}
-          >
-            {type}
-          </Chip>
-        ))}
+        {deviceTypes.map(
+          (type) =>
+            !isHidden(type) && (
+              <Chip
+                key={type}
+                icon={getIcon(type)}
+                selected={selectedDeviceTypes.includes(type)}
+                onClick={() => {
+                  if (selectedDeviceTypes.includes(type)) {
+                    setSelectedDeviceTypes((prev) => {
+                      const newVal = prev.filter((t) => t !== type)
+                      localStorage.setItem(
+                        'selectedDeviceTypes',
+                        JSON.stringify(newVal)
+                      )
+                      return newVal
+                    })
+                  } else {
+                    setSelectedDeviceTypes((prev) => {
+                      const newVal = [...prev, type]
+                      localStorage.setItem(
+                        'selectedDeviceTypes',
+                        JSON.stringify(newVal)
+                      )
+                      return newVal
+                    })
+                  }
+                }}
+                onContextMenu={() => {
+                  setSelectedDeviceTypes((prev) => {
+                    const newVal =
+                      prev.length === 1 && prev[0] === type
+                        ? deviceTypes
+                        : [type]
+                    localStorage.setItem(
+                      'selectedDeviceTypes',
+                      JSON.stringify(newVal)
+                    )
+                    return newVal
+                  })
+                }}
+              >
+                {type}
+              </Chip>
+            )
+        )}
       </StyledExpandableChips>
 
       <StatusContainer>

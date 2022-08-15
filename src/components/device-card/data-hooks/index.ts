@@ -14,10 +14,7 @@ import shutter from './shutter'
 import speedTest from './speed-test'
 import switchHook from './switch'
 import valve from './valve'
-import windowOpenedSensor from './window-opened-sensor'
 import windowOpener from './window-opener'
-import windowSensor from './window-sensor'
-import windowTiltedSensor from './window-tilted-sensor'
 import wirelessSwitch from './wireless-switch'
 
 const dataHooks = {
@@ -30,10 +27,7 @@ const dataHooks = {
   'presence-sensor': presenceSensor,
   'room-light': roomLight,
   'speed-test': speedTest,
-  'window-opened-sensor': windowOpenedSensor,
   'window-opener': windowOpener,
-  'window-sensor': windowSensor,
-  'window-tilted-sensor': windowTiltedSensor,
   'wireless-switch': wirelessSwitch,
   fan,
   light,

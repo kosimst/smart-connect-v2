@@ -124,18 +124,14 @@ const deviceDefinitions = {
     icon: 'window_sensor',
     name: 'Window sensor',
     fullName: 'Window tilted sensor',
+    hidden: true,
     ...colors.security,
   },
   'window-opened-sensor': {
     icon: 'window_sensor',
     name: 'Window sensor',
     fullName: 'Window opened sensor',
-    ...colors.security,
-  },
-  'window-sensor': {
-    icon: 'window_sensor',
-    name: 'Window sensor',
-    fullName: 'Window sensor',
+    hidden: true,
     ...colors.security,
   },
   routine: {
