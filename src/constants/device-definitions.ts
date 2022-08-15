@@ -130,8 +130,7 @@ const deviceDefinitions = {
   'window-opened-sensor': {
     icon: 'window_sensor',
     name: 'Window sensor',
-    fullName: 'Window opened sensor',
-    hidden: true,
+    fullName: 'Window sensor',
     ...colors.security,
   },
   routine: {

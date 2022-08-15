@@ -1,3 +1,4 @@
+import { capitalize } from '@mui/material'
 import { useCallback, useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'

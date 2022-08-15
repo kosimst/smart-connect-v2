@@ -15,6 +15,7 @@ import speedTest from './speed-test'
 import switchHook from './switch'
 import valve from './valve'
 import windowOpener from './window-opener'
+import windowOpenedSensor from './window-opened-sensor'
 import wirelessSwitch from './wireless-switch'
 
 const dataHooks = {
@@ -36,6 +37,7 @@ const dataHooks = {
   shutter,
   switch: switchHook,
   valve,
+  'window-opened-sensor': windowOpenedSensor,
 }
 
 export default dataHooks
