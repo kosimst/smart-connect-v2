@@ -78,6 +78,12 @@ const deviceDefinitions = {
     fullName: 'Door sensor',
     ...colors.security,
   },
+  'entrance-door-sensor': {
+    icon: 'door_back',
+    name: 'Door sensor',
+    fullName: 'Door sensor',
+    ...colors.security,
+  },
   'climate-sensor': {
     icon: 'thermostat',
     name: 'Climate',

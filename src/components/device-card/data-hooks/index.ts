@@ -38,6 +38,7 @@ const dataHooks = {
   switch: switchHook,
   valve,
   'window-opened-sensor': windowOpenedSensor,
+  'entrance-door-sensor': doorSensor,
 }
 
 export default dataHooks
