@@ -5,7 +5,9 @@ export const StyledSwitch = styled(Switch)`
   width: 45px;
   height: 24px;
   padding: 0;
-  margin: 10px 0;
+  margin: 6.5px 0;
+  overflow: hidden;
+  border-radius: 16px;
 
   & .MuiSwitch-track {
     width: 100%;

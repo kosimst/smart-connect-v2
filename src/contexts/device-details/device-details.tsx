@@ -9,7 +9,10 @@ import {
   useMemo,
   useState,
 } from 'react'
+import HistoryUi from '../../components/history-ui'
 import deviceDefinitions from '../../constants/device-definitions'
+import historyConfigs from '../../constants/history-configs'
+import useHistories from '../../hooks/use-histories'
 import useScrollLock from '../../hooks/use-scoll-lock'
 import Device from '../../types/device'
 import controls from './controls'
@@ -66,7 +69,8 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
     [openedDevice]
   )
 
-  const hasHistory = false
+  // @ts-ignore
+  const hasHistory = !!openedDevice && !!historyConfigs[openedDevice.type]
 
   return (
     <>
@@ -136,6 +140,10 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
             {hasHistory && (
               <Section>
                 <Typography variant="h3">History</Typography>
+
+                <ControlsContainer>
+                  <HistoryUi device={openedDevice} />
+                </ControlsContainer>
               </Section>
             )}
           </Card>

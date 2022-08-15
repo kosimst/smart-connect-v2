@@ -5,13 +5,15 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
 } from 'react'
 import ioBrokerDb from '../db/iobroker-db'
 import randomUUID from '../helpers/randomUUID'
 import useIoBroker from './iobroker-context'
+import IoBrokerSync from '../workers/iobroker-sync'
 
 type IoBrokerStates = {
-  subscribeState(id: string): () => void
+  subscribeState(id: string, priority: 'low' | 'normal' | 'high'): () => void
   updateState(id: string, val: any): void
 }
 
@@ -24,34 +26,20 @@ const IoBrokerStatesContext = createContext<IoBrokerStates>({
   },
 })
 
+const ioBrokerSync = new IoBrokerSync()
+
 export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { fetchIoBroker, connected } = useIoBroker()
 
-  const fetchDevices = useCallback(async () => {
-    const serviceWorker = navigator.serviceWorker?.controller
-
-    if (!serviceWorker) {
-      return
+  useEffect(() => {
+    if (connected) {
+      ioBrokerSync.start()
+    } else {
+      ioBrokerSync.stop()
     }
-
-    serviceWorker.postMessage({
-      type: 'fetch-devices',
-    })
-  }, [fetchIoBroker])
-
-  const fetchStates = useCallback(async () => {
-    const serviceWorker = navigator.serviceWorker?.controller
-
-    if (!serviceWorker) {
-      return
-    }
-
-    serviceWorker.postMessage({
-      type: 'fetch-states',
-    })
-  }, [fetchIoBroker])
+  }, [connected])
 
   useEffect(() => {
     ioBrokerDb.subscribedStates.clear()
@@ -65,47 +53,22 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
         id: id,
         value,
       })
-
-      fetchStates()
     },
-    [fetchIoBroker, fetchStates]
+    [fetchIoBroker]
   )
 
-  useEffect(() => {
-    if (!connected) {
-      return
-    }
+  const subscribeState = useCallback<IoBrokerStates['subscribeState']>(
+    (id, priority: 'high' | 'normal' | 'low' = 'normal') => {
+      const subscriptionId = randomUUID()
 
-    fetchDevices()
-    const interval = setInterval(fetchDevices, 15 * 1000)
+      ioBrokerDb.subscribedStates.put({ id, subscriptionId, priority })
 
-    return () => {
-      clearInterval(interval)
-    }
-  }, [connected, fetchDevices])
-
-  useEffect(() => {
-    if (!connected) {
-      return
-    }
-
-    fetchStates()
-    const interval = setInterval(fetchStates, 2000)
-
-    return () => {
-      clearInterval(interval)
-    }
-  }, [connected, fetchStates])
-
-  const subscribeState = useCallback<IoBrokerStates['subscribeState']>((id) => {
-    const subscriptionId = randomUUID()
-
-    ioBrokerDb.subscribedStates.put({ id, subscriptionId })
-
-    return () => {
-      ioBrokerDb.subscribedStates.delete(subscriptionId)
-    }
-  }, [])
+      return () => {
+        ioBrokerDb.subscribedStates.delete(subscriptionId)
+      }
+    },
+    []
+  )
 
   return (
     <IoBrokerStatesContext.Provider

@@ -8,7 +8,8 @@ import Device from '../types/device'
 const useDeviceState = <T extends any>(
   device: Device,
   state: string,
-  defaultValue: T
+  defaultValue: T,
+  priority: 'high' | 'normal' | 'low' = 'normal'
 ) => {
   const { fetchIoBroker } = useIoBroker()
   const { subscribeState, updateState } = useIoBrokerStates()
@@ -38,7 +39,7 @@ const useDeviceState = <T extends any>(
   }, [dbEntry])
 
   useEffect(() => {
-    const unsubscribe = subscribeState(path)
+    const unsubscribe = subscribeState(path, priority)
 
     return unsubscribe
   }, [subscribeState])

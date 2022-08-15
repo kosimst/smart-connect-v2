@@ -1,15 +1,10 @@
 import Dexie, { Table } from 'dexie'
+import Credentials from '../types/credentials'
 import Device from '../types/device'
+import SubscribedState from '../types/subscribed-state'
 
-class IoBrokerDb extends Dexie {
-  credentials!: Table<
-    {
-      url: string
-      cfClientId: string
-      cfClientSecret: string
-    },
-    string
-  >
+export class IoBrokerDb extends Dexie {
+  credentials!: Table<Credentials, string>
   states!: Table<
     {
       id: string
@@ -18,22 +13,16 @@ class IoBrokerDb extends Dexie {
     string
   >
   devices!: Table<Device, string>
-  subscribedStates!: Table<
-    {
-      subscriptionId: string
-      id: string
-    },
-    string
-  >
+  subscribedStates!: Table<SubscribedState, string>
 
   constructor() {
     super('ioBrokerDb')
 
-    this.version(2).stores({
+    this.version(4).stores({
       credentials: 'url',
       states: 'id',
       devices: 'id',
-      subscribedStates: 'subscriptionId,id',
+      subscribedStates: 'subscriptionId,id,priority',
     })
   }
 }
