@@ -11,13 +11,17 @@ import deviceDefinitions from '../../constants/device-definitions'
 import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
 import useDevices from '../../hooks/use-devices'
+import useLowBatteryDevices from '../../hooks/use-low-battery-devices'
+import useUnavailableDevices from '../../hooks/use-unavailable-devices'
 import {
   FilterIconButton,
   Link,
   LinksGrid,
   Room,
   RoomTitle,
+  StatusContainer,
   StyledExpandableChips,
+  StyledExpandableStatus,
   Title,
 } from './styles'
 
@@ -99,6 +103,34 @@ const DevicesPage: FC = () => {
 
   const [filterExpanded, setFilterExpanded] = useState(false)
 
+  const devicesWithLowBattery = useLowBatteryDevices()
+  const unavailableDevices = useUnavailableDevices()
+
+  const devicesHealthText = useMemo(() => {
+    const lowBatCount = devicesWithLowBattery.length
+    const unavailableCount = unavailableDevices.length
+
+    if (lowBatCount === 0 && unavailableCount === 0) {
+      return 'All devices are up and running'
+    }
+
+    if (lowBatCount > 0 && unavailableCount === 0) {
+      return `${lowBatCount} device${lowBatCount > 1 ? 's' : ''} ${
+        lowBatCount > 1 ? 'have' : 'has'
+      } low battery`
+    }
+
+    if (lowBatCount === 0 && unavailableCount > 0) {
+      return `${unavailableCount} device${unavailableCount > 1 ? 's' : ''} ${
+        unavailableCount > 1 ? 'are' : 'is'
+      } unavailable`
+    }
+
+    return `${unavailableCount} device${
+      unavailableCount > 1 ? 's' : ''
+    } unavailable • ${lowBatCount} low on battery`
+  }, [devicesWithLowBattery.length, unavailableDevices.length])
+
   return (
     <>
       <Title variant="h1">
@@ -114,7 +146,11 @@ const DevicesPage: FC = () => {
         </FilterIconButton>
       </Title>
 
-      <StyledExpandableChips expanded={filterExpanded}>
+      <StyledExpandableChips
+        expanded={filterExpanded}
+        marginBottom={16}
+        marginTop={24}
+      >
         {deviceTypes.map((type) => (
           <Chip
             key={type}
@@ -157,6 +193,19 @@ const DevicesPage: FC = () => {
           </Chip>
         ))}
       </StyledExpandableChips>
+
+      <StatusContainer>
+        {/* <StyledExpandableStatus
+          statusText="Alarm system active • no security breaches"
+          icon="security"
+        ></StyledExpandableStatus> */}
+
+        <StyledExpandableStatus
+          statusText={devicesHealthText}
+          icon="monitor_heart"
+        ></StyledExpandableStatus>
+      </StatusContainer>
+
       {groupedByRoom.map(([roomName, devices]) => (
         <Room
           key={roomName}

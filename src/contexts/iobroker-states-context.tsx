@@ -55,6 +55,8 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
       await ioBrokerDb.states.put({
         id: id,
         value,
+        role: id.split('.').at(-1) as string,
+        ts: new Date(),
       })
     },
     [fetchIoBroker]

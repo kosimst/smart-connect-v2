@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { IconButton, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
 import ExpandableChips from '../../components/expandable-chips'
+import ExpandableStatus from '../../components/expandable-status'
 
 export const PageTitle = styled.h1`
   opacity: 0.9;
@@ -14,11 +15,7 @@ export const RoomTitle = styled(Typography)`
 `
 
 export const Room = styled(motion.section)`
-  margin-top: 16px;
-
-  & + & {
-    margin-top: 40px;
-  }
+  margin-top: 40px;
 `
 
 export const LinksGrid = styled(motion.div)`
@@ -55,9 +52,7 @@ export const Link = styled.span`
   }
 `
 
-export const StyledExpandableChips = styled(ExpandableChips)`
-  margin-top: 16px;
-`
+export const StyledExpandableChips = styled(ExpandableChips)``
 
 export const FilterIconButton = styled(IconButton)``
 
@@ -68,3 +63,12 @@ export const Title = styled(Typography)`
   justify-content: space-between;
   margin-top: 16px;
 `
+
+export const StatusContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 16px;
+`
+
+export const StyledExpandableStatus = styled(ExpandableStatus)``

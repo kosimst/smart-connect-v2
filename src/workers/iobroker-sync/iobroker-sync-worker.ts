@@ -59,9 +59,13 @@ const fetchStates = async (stateIds: string[]) => {
         .map(({ id, val: value }: any) => ({
           id,
           value,
+          ts: new Date(),
+          role: id.split('.').at(-1),
         })) as {
         id: string
         value: any
+        ts: Date
+        role: string
       }[]
 
       await ioBrokerDb.states.bulkPut(newStates)

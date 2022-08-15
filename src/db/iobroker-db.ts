@@ -9,6 +9,8 @@ export class IoBrokerDb extends Dexie {
     {
       id: string
       value: any
+      role: string
+      ts: Date
     },
     string
   >
@@ -18,9 +20,9 @@ export class IoBrokerDb extends Dexie {
   constructor() {
     super('ioBrokerDb')
 
-    this.version(4).stores({
+    this.version(6).stores({
       credentials: 'url',
-      states: 'id',
+      states: 'id,role,ts',
       devices: 'id',
       subscribedStates: 'subscriptionId,id,priority',
     })
