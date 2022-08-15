@@ -11,6 +11,7 @@ import ioBrokerDb from '../db/iobroker-db'
 import randomUUID from '../helpers/randomUUID'
 import useIoBroker from './iobroker-context'
 import IoBrokerSync from '../workers/iobroker-sync'
+import Device from '../types/device'
 
 type IoBrokerStates = {
   subscribeState(id: string, priority: 'low' | 'normal' | 'high'): () => void
@@ -46,8 +47,10 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   }, [])
 
   const updateState = useCallback(
-    async (id: string, value: any) => {
+    async function (id: string, value: any) {
       await fetchIoBroker(`/set/${id}?value=${value}`)
+
+      ioBrokerSync.refetchDevice(id.split('.').slice(0, -1).join('.'))
 
       await ioBrokerDb.states.put({
         id: id,

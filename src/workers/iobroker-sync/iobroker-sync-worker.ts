@@ -14,6 +14,7 @@ import Device from '../../types/device'
 import syncDb from './sync-db'
 import { expose } from 'comlink'
 import setWaitingInterval from '../../helpers/waiting-interval'
+import sleep from '../../helpers/sleep'
 
 const data = {
   credentials: null,
@@ -181,8 +182,20 @@ const stop = () => {
   clearSyncDevicesInterval()
 }
 
-const refetchDevice = async (state: string) => {
-  console.log('refetchState', state)
+const refetchDevice = async (deviceId: string) => {
+  console.log('refetchState', deviceId)
+
+  const deviceStates = (
+    await ioBrokerDb.states.where('id').startsWith(deviceId).toArray()
+  ).map((state) => state.id)
+
+  await fetchStates(deviceStates)
+  await sleep(250)
+  await fetchStates(deviceStates)
+  await sleep(250)
+  await fetchStates(deviceStates)
+  await sleep(250)
+  await fetchStates(deviceStates)
 }
 
 expose({

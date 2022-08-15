@@ -5,7 +5,7 @@ import IoBrokerSyncWorker from './iobroker-sync-worker?worker'
 type Methods = {
   start: () => Promise<void>
   stop: () => void
-  refetchDevice: (device: Device) => Promise<void>
+  refetchDevice: (deviceId: string) => Promise<void>
 }
 
 export default class IoBrokerSync {
@@ -21,7 +21,7 @@ export default class IoBrokerSync {
     await this.#proxy.stop()
   }
 
-  refetchState = async (device: Device) => {
-    await this.#proxy.refetchDevice(device)
+  refetchDevice = async (deviceId: string) => {
+    await this.#proxy.refetchDevice(deviceId)
   }
 }
