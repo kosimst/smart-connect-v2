@@ -30,7 +30,6 @@ const useUnavailableDevices = () => {
   const [infos, setInfos] = useState(
     Array<{
       device: Device
-      battery: number
     }>()
   )
 
@@ -43,7 +42,6 @@ const useUnavailableDevices = () => {
       setInfos(
         devices.map((d) => ({
           device: d,
-          battery: deviceIds.find((b) => b.deviceId === d.id)?.value ?? 0,
         }))
       )
     }

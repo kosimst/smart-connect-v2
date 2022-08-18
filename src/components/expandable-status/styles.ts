@@ -1,10 +1,11 @@
 import styled from '@emotion/styled'
+import { motion } from 'framer-motion'
 
-export const Container = styled.div`
+export const Container = styled(motion.div)`
   width: 100%;
-  height: 32px;
   background-color: rgba(0, 0, 0, 0.08);
   border-radius: 16px;
+  overflow: hidden;
 
   display: grid;
   grid-template-columns: 1fr;
@@ -38,5 +39,22 @@ export const StatusText = styled.span`
         grid-area: 1 / 1;
       }
     }
+  }
+`
+
+export const ChildrenContainer = styled.div`
+  padding: 16px;
+  opacity: 0.5;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  & > div > span {
+    line-height: 24px;
+    display: inline-block;
+    height: 24px;
+    margin-left: 6px;
+    font-size: 14px;
   }
 `

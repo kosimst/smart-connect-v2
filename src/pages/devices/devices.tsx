@@ -1,4 +1,4 @@
-import { Badge, IconButton, Typography } from '@mui/material'
+import { Badge, IconButton, Typography, Chip as MuiChip } from '@mui/material'
 import { AnimatePresence } from 'framer-motion'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
@@ -10,6 +10,7 @@ import { AvailableIcon } from '../../components/icon/available-icons'
 import deviceDefinitions, {
   SupportedDeviceType,
 } from '../../constants/device-definitions'
+import useDeviceDetails from '../../contexts/device-details'
 import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
 import useDevices from '../../hooks/use-devices'
@@ -164,6 +165,8 @@ const DevicesPage: FC = () => {
     return `${openedCount} security issue${openedCount > 1 ? 's' : ''}`
   }, [openedDevices.length])
 
+  const { open } = useDeviceDetails()
+
   return (
     <>
       <Title variant="h1">
@@ -240,15 +243,51 @@ const DevicesPage: FC = () => {
       </StyledExpandableChips>
 
       <StatusContainer>
-        <StyledExpandableStatus
-          statusText={securityText}
-          icon="security"
-        ></StyledExpandableStatus>
+        <StyledExpandableStatus statusText={securityText} icon="security">
+          {openedDevices.map(({ device, openedState }) => (
+            <div key={device.id}>
+              <MuiChip
+                label={device.name || deviceDefinitions[device.type].fullName}
+                size="small"
+                icon={<Icon icon={deviceDefinitions[device.type].icon} />}
+                onClick={() => open(device)}
+              />
+              <span>
+                {' '}
+                in {device.roomName} is{' '}
+                {openedState === 1 ? 'tilted' : 'opened'}
+              </span>
+            </div>
+          ))}
+        </StyledExpandableStatus>
 
         <StyledExpandableStatus
           statusText={devicesHealthText}
           icon="monitor_heart"
-        ></StyledExpandableStatus>
+        >
+          {devicesWithLowBattery.map(({ device, battery }) => (
+            <div key={device.id}>
+              <MuiChip
+                label={device.name || deviceDefinitions[device.type].fullName}
+                size="small"
+                icon={<Icon icon={deviceDefinitions[device.type].icon} />}
+                onClick={() => open(device)}
+              />
+              <span> is low on battery ({battery}%)</span>
+            </div>
+          ))}
+          {unavailableDevices.map(({ device }) => (
+            <div key={device.id}>
+              <MuiChip
+                label={device.name || deviceDefinitions[device.type].fullName}
+                size="small"
+                icon={<Icon icon={deviceDefinitions[device.type].icon} />}
+                onClick={() => open(device)}
+              />
+              <span> in {device.roomName} is unavailable</span>
+            </div>
+          ))}
+        </StyledExpandableStatus>
       </StatusContainer>
 
       {groupedByRoom.map(([roomName, devices]) => (
