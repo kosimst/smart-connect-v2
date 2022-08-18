@@ -8,7 +8,7 @@ export const DEVICES_REFETCH_INTERVAL = 30_000
 export const LOW_PRIORITY_REFETCH_INTERVAL = 7_500
 
 // How often high priority states will be fetched (ms)
-export const HIGH_PRIORITY_REFETCH_INTERVAL = 750
+export const HIGH_PRIORITY_REFETCH_INTERVAL = 500
 
 // How often states will be fetched (ms)
 export const STATE_REFETCH_INTERVAL = 3000

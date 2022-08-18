@@ -12,6 +12,7 @@ import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
 import useDevices from '../../hooks/use-devices'
 import useLowBatteryDevices from '../../hooks/use-low-battery-devices'
+import useOpenedDevices from '../../hooks/use-opened-devices'
 import useUnavailableDevices from '../../hooks/use-unavailable-devices'
 import {
   FilterIconButton,
@@ -148,6 +149,10 @@ const DevicesPage: FC = () => {
       unavailableCount > 1 ? 's' : ''
     } unavailable • ${lowBatCount} low on battery`
   }, [devicesWithLowBattery.length, unavailableDevices.length])
+
+  const openedDevices = useOpenedDevices()
+
+  //console.log(openedDevices)
 
   return (
     <>

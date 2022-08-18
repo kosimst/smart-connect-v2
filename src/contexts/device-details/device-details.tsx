@@ -41,13 +41,11 @@ export const DeviceDetailsContext = createContext<{
 export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   children,
 }) => {
-  const [openedDevice, setOpenedDevice] = useState<Device | null>(
-    null /* {
-    id: 'alias.0.simon.light',
-    type: 'room-light',
+  const [openedDevice, setOpenedDevice] = useState<Device | null>({
+    id: 'alias.0.simon.music-server',
+    type: 'music-server',
     roomName: 'Simon',
-  } */
-  )
+  })
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)

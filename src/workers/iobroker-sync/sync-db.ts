@@ -66,7 +66,7 @@ const syncDb = async (target: {
     setBackgroundStates(target.states.background)
   })
 
-  const sub = knownStatesObservable.subscribe((newKnownStates) => {
+  knownStatesObservable.subscribe((newKnownStates) => {
     const knownIds = newKnownStates.map((state) => state.id)
 
     setBackgroundStates(knownIds)

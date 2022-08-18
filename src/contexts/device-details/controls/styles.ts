@@ -5,3 +5,11 @@ export const SliderFlex = styled.div`
   flex-direction: column;
   gap: 16px;
 `
+
+export const Fix = styled.div`
+  display: inline-grid;
+
+  & > * {
+    grid-area: 1 / 1;
+  }
+`

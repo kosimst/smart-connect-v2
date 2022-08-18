@@ -56,8 +56,6 @@ const useHistories = (
 
       const json = await response.json()
 
-      console.log(json)
-
       //setHistory(json)
       setLoading(false)
       setError(false)

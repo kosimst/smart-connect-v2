@@ -17,8 +17,6 @@ const HistoryUi: FC<HistoryProps> = ({ device }) => {
 
   const histories = useHistories(device, Object.keys(historyConfig), from, to)
 
-  console.log(histories)
-
   return null
 }
 

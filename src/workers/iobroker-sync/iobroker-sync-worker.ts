@@ -188,8 +188,6 @@ const stop = () => {
 }
 
 const refetchDevice = async (deviceId: string) => {
-  console.log('refetchState', deviceId)
-
   const deviceStates = (
     await ioBrokerDb.states.where('id').startsWith(deviceId).toArray()
   ).map((state) => state.id)

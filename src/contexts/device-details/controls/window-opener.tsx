@@ -24,6 +24,7 @@ const Controls: FC<{
   const stop = useCallback(() => setStop(true), [setStop])
   const open = useCallback(() => setOpenedLevel(100), [setOpenedLevel])
   const close = useCallback(() => setOpenedLevel(0), [setOpenedLevel])
+  const lock = useCallback(() => setOpenedLevel(-0.5), [setOpenedLevel])
 
   return (
     <>
@@ -47,12 +48,19 @@ const Controls: FC<{
           <IconButton onClick={close}>
             <Icon icon="arrow_downward" />
           </IconButton>
+
+          <IconButton onClick={lock}>
+            <Icon icon="lock" />
+          </IconButton>
         </CustomActions>
 
         <CustomSlider
           label="Opened level"
           value={openedLevel}
           onChange={setOpenedLevel}
+          aliases={{
+            '-0.5': 'Locked',
+          }}
         />
       </SliderFlex>
     </>

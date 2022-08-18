@@ -6,7 +6,7 @@ import { StyledSwitch } from './styles'
 export type CustomToggleProps = {
   onChange: (value: boolean) => void
   value: boolean
-  label: string
+  label?: string
   trueLabel?: string
   falseLabel?: string
 }
@@ -14,7 +14,7 @@ export type CustomToggleProps = {
 const CustomToggle: FC<CustomToggleProps> = ({
   onChange,
   value,
-  label,
+  label = 'On/Off',
   trueLabel = 'On',
   falseLabel = 'Off',
 }) => {
