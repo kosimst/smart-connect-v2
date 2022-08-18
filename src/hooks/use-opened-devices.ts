@@ -1,9 +1,24 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useMemo, useState } from 'react'
+import { useIoBrokerStates } from '../contexts/iobroker-states-context'
 import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
+import useDevices from './use-devices'
 
 const useOpenedDevices = () => {
+  const { subscribeState } = useIoBrokerStates()
+
+  const devices = useDevices()
+  useEffect(() => {
+    const subscriptions = devices
+      .filter((device) => device.type === 'window-tilted-sensor')
+      .map((device) => subscribeState(`${device.id}.opened`, 'low'))
+
+    return () => {
+      subscriptions.forEach((unsubscribe) => unsubscribe())
+    }
+  }, [devices])
+
   const openedStates = useLiveQuery(
     () =>
       ioBrokerDb.states
@@ -47,34 +62,33 @@ const useOpenedDevices = () => {
           : 0) as 0 | 1 | 2,
       }))
 
-      const withoutWindowTiltedSensors = devicesWithState.filter(
-        (d) => d.device.type !== 'window-tilted-sensor'
+      const newInfos = devicesWithState.filter(
+        (d) =>
+          d.device.type !== 'window-tilted-sensor' &&
+          d.device.type !== 'door-sensor'
       )
       const windowTiltedSensors = devicesWithState.filter(
         (d) => d.device.type === 'window-tilted-sensor'
       )
 
-      for (const deviceEntry of withoutWindowTiltedSensors) {
-        if (deviceEntry.device.type !== 'window-opened-sensor') {
-          continue
-        }
-
-        const matchingWindowTiltedSensor = windowTiltedSensors.find(
+      for (const { device: windowTiltedSensor } of windowTiltedSensors) {
+        const matchingWindowOpenedSensor = newInfos.find(
           (d) =>
-            d.device.roomName === deviceEntry.device.roomName &&
-            d.device.name === deviceEntry.device.name
+            d.device.roomName === windowTiltedSensor.roomName &&
+            d.device.name === windowTiltedSensor.name
         )
 
-        if (!matchingWindowTiltedSensor) {
+        if (matchingWindowOpenedSensor) {
           continue
         }
 
-        deviceEntry.openedState ||= matchingWindowTiltedSensor.openedState
-          ? 1
-          : 0
+        newInfos.push({
+          device: windowTiltedSensor,
+          openedState: 1,
+        })
       }
 
-      setInfos(devicesWithState)
+      setInfos(newInfos)
     }
 
     getDevices()

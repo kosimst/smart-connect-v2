@@ -7,7 +7,9 @@ import DeviceGrid from '../../components/device-grid'
 import ExpandableChips from '../../components/expandable-chips'
 import Icon from '../../components/icon'
 import { AvailableIcon } from '../../components/icon/available-icons'
-import deviceDefinitions from '../../constants/device-definitions'
+import deviceDefinitions, {
+  SupportedDeviceType,
+} from '../../constants/device-definitions'
 import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
 import useDevices from '../../hooks/use-devices'
@@ -152,7 +154,15 @@ const DevicesPage: FC = () => {
 
   const openedDevices = useOpenedDevices()
 
-  //console.log(openedDevices)
+  const securityText = useMemo(() => {
+    const openedCount = openedDevices.length
+
+    if (openedCount === 0) {
+      return 'No security issues'
+    }
+
+    return `${openedCount} security issue${openedCount > 1 ? 's' : ''}`
+  }, [openedDevices.length])
 
   return (
     <>
@@ -230,10 +240,10 @@ const DevicesPage: FC = () => {
       </StyledExpandableChips>
 
       <StatusContainer>
-        {/* <StyledExpandableStatus
-          statusText="Alarm system active • no security breaches"
+        <StyledExpandableStatus
+          statusText={securityText}
           icon="security"
-        ></StyledExpandableStatus> */}
+        ></StyledExpandableStatus>
 
         <StyledExpandableStatus
           statusText={devicesHealthText}
