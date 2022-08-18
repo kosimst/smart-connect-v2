@@ -85,8 +85,9 @@ self.addEventListener('push', (event) => {
       tag?: string
       actions?: {
         title: string
-        state: string
-        value: any
+        tasks: {
+          [stateId: string]: any
+        }
       }[]
     }
   }
@@ -101,8 +102,7 @@ self.addEventListener('push', (event) => {
       ? {
           actions: actions.map((action) => ({
             action: JSON.stringify({
-              state: action.state,
-              value: action.value,
+              tasks: action.tasks,
             }),
             title: action.title,
           })),
@@ -120,22 +120,24 @@ self.addEventListener('notificationclick', (event) => {
     return
   }
 
-  const { state, value } = JSON.parse(action)
+  const { tasks } = JSON.parse(action)
 
   if (!credentials) return
 
   const { url, cfClientId, cfClientSecret } = credentials
 
-  fetch(`https://${url}/set/${state}?value=${value}`, {
-    headers: {
-      'CF-Access-Client-Id': cfClientId,
-      'CF-Access-Client-Secret': cfClientSecret,
-    },
-  }).catch((e) => {
-    self.registration.showNotification('Failed execute action', {
-      body: e.message,
-      icon: '/notify/icons/alert.png',
-      badge: '/notify/badges/default.png',
+  for (const [stateId, value] of Object.entries(tasks)) {
+    fetch(`https://${url}/set/${stateId}?value=${value}`, {
+      headers: {
+        'CF-Access-Client-Id': cfClientId,
+        'CF-Access-Client-Secret': cfClientSecret,
+      },
+    }).catch((e) => {
+      self.registration.showNotification('Failed execute action', {
+        body: e.message,
+        icon: '/notify/icons/alert.png',
+        badge: '/notify/badges/default.png',
+      })
     })
-  })
+  }
 })
