@@ -5,11 +5,17 @@ type State = {
   errors: ApplicationError[]
 }
 
+const isDev = process.env.NODE_ENV === 'development'
+
 // error boundary react component
 class ErrorBoundary extends Component<{ children: ReactNode }, State> {
   state: State = { errors: [] }
 
   static getDerivedStateFromError(error: any): State {
+    if (!isDev) {
+      location.reload()
+    }
+
     console.error(error)
 
     if (!ApplicationError.isApplicationError(error)) {
@@ -32,6 +38,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, State> {
 
   #promiseRejectionHandler = (e: PromiseRejectionEvent) => {
     e.preventDefault()
+
+    if (!isDev) {
+      location.reload()
+    }
 
     let error = e.reason
 
