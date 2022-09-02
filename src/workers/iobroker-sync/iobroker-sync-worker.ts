@@ -39,13 +39,27 @@ const getStatesWithPriority = (priority: SubscriptionPriority) => {
 
   const states = new Set<string>()
 
-  statesLoop: for (const [state, priorities] of subscriptions) {
+  for (const [state, priorities] of subscriptions) {
     for (const priorityEntry of priorityOrder) {
-      const hasPriorityEntry = !!priorities[priorityEntry]?.size
+      if (priorityEntry !== priority) {
+        continue
+      }
 
-      if (hasPriorityEntry && priorityEntry === priority) {
+      const higherPriorities = priorityOrder.slice(
+        0,
+        priorityOrder.indexOf(priorityEntry)
+      )
+      const hasHigherPriority = higherPriorities.some(
+        (higherPriority) => !!priorities[higherPriority]?.size
+      )
+
+      if (hasHigherPriority) {
+        break
+      }
+
+      if (priorityEntry === priority && priorities[priorityEntry]?.size) {
         states.add(state)
-        continue statesLoop
+        break
       }
     }
   }
@@ -183,6 +197,9 @@ const fetchStatesWithPriority =
   (priority: SubscriptionPriority) => async () => {
     const states = getStatesWithPriority(priority)
 
+    if (states.size)
+      console.log(`Fetching ${states.size} states with priority ${priority}`)
+
     await fetchStates(Array.from(states))
   }
 
@@ -225,6 +242,10 @@ const start = async () => {
 
       return !hasSubscriptions
     })
+
+    console.log(
+      `Fetching ${backgroundStates.size} background states and unsubscribed states (${unsubscribedStates.length})`
+    )
 
     await fetchStates([...backgroundStates, ...unsubscribedStates])
   }, BACKGROUND_PRIORITY_REFETCH_INTERVAL)
