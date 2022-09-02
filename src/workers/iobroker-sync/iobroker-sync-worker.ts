@@ -22,6 +22,8 @@ import sleep from '../../helpers/sleep'
 import { SubscriptionPriority } from '.'
 import randomUUID from '../../helpers/randomUUID'
 
+let highCount = 0
+
 const subscriptions = new Map<
   string,
   {
@@ -73,6 +75,10 @@ const getStatesWithPriority = (priority: SubscriptionPriority) => {
         break
       }
     }
+  }
+
+  if (priority === 'high') {
+    highCount = states.size
   }
 
   return states
@@ -206,7 +212,7 @@ let clearSyncDevicesInterval: () => void
 
 const fetchStatesWithPriority =
   (priority: SubscriptionPriority) => async () => {
-    if (getPaused()) {
+    if (getPaused() || (priority !== 'high' && highCount)) {
       return
     }
 
@@ -241,7 +247,7 @@ const start = async () => {
     HIGH_PRIORITY_REFETCH_INTERVAL
   )
   clearSyncBackgroundPriorityInterval = setWaitingInterval(async () => {
-    if (getPaused()) {
+    if (getPaused() || highCount) {
       return
     }
 

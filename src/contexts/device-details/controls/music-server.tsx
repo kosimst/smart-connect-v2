@@ -16,7 +16,6 @@ const Controls: FC<{
   device: Device
 }> = ({ device }) => {
   const [active] = useDeviceState(device, 'active', false, 'high')
-  const [album] = useDeviceState(device, 'album', '', 'high')
   const [artist] = useDeviceState(device, 'artist', '', 'high')
   const [title] = useDeviceState(device, 'title', '', 'high')
   const [progress, setProgress] = useDeviceState(device, 'progress', 0, 'high')
