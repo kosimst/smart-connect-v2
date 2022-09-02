@@ -197,9 +197,6 @@ const fetchStatesWithPriority =
   (priority: SubscriptionPriority) => async () => {
     const states = getStatesWithPriority(priority)
 
-    if (states.size)
-      console.log(`Fetching ${states.size} states with priority ${priority}`)
-
     await fetchStates(Array.from(states))
   }
 
