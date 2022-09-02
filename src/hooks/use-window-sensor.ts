@@ -22,23 +22,16 @@ const useWindowSensor = (
   )
 
   const [opened] = useDeviceState(windowSensor, 'opened', false, 'high')
-  const [battery, , batteryExists] = useDeviceState(
-    windowSensor,
-    'battery',
-    0,
-    'high'
-  )
+  const [battery, , batteryExists] = useDeviceState(windowSensor, 'battery', 0)
   const [available, , availableExists] = useDeviceState(
     windowSensor,
     'available',
-    true,
-    'high'
+    true
   )
   const [batteryCritical, , batteryCriticalExists] = useDeviceState(
     windowSensor,
     'battery-critical',
-    false,
-    'high'
+    false
   )
 
   return {
