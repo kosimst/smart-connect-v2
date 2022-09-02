@@ -12,8 +12,9 @@ export const PageTitle = styled.h1`
 
 export const RoomTitle = styled(Typography)`
   padding: 16px;
+  padding-top: 18px;
   position: sticky;
-  top: 0;
+  top: -2px;
   background-color: white;
   color: rgba(0, 0, 0, 0.9);
   z-index: 4;
@@ -24,7 +25,7 @@ export const RoomTitle = styled(Typography)`
 
 export const Room = styled(motion.section)`
   position: relative;
-  margin-top: 32px;
+  margin-top: 30px;
 
   &::after {
     content: '';
@@ -33,7 +34,7 @@ export const Room = styled(motion.section)`
     top: 54px;
     height: 2px;
     width: 100vw;
-    transform: translateX(-16px);
+    transform: translateX(-16px) translateY(2px);
     z-index: 3;
   }
 
