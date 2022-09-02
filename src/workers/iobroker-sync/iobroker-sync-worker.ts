@@ -62,7 +62,7 @@ const initialSync = syncDb(data)
 const fetchStates = async (stateIds: string[]) => {
   const { credentials } = data
 
-  if (!credentials) {
+  if (!credentials || !stateIds.length) {
     return
   }
 
