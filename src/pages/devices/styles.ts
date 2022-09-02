@@ -10,12 +10,46 @@ export const PageTitle = styled.h1`
 `
 
 export const RoomTitle = styled(Typography)`
-  margin-bottom: 16px;
-  opacity: 0.9;
+  padding: 16px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  color: rgba(0, 0, 0, 0.9);
+  z-index: 4;
+  width: 100vw;
+  transform: translateX(-16px);
 `
 
 export const Room = styled(motion.section)`
-  margin-top: 40px;
+  margin-top: 24px;
+  position: relative;
+  &::after {
+    content: '';
+    background-color: white;
+    position: absolute;
+    top: 54px;
+    height: 4px;
+    width: 100vw;
+    transform: translateX(-16px);
+    z-index: 3;
+  }
+
+  &::before {
+    content: '';
+    display: block;
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    z-index: 2;
+    transform: translateX(-16px) translateY(16px);
+    height: 40px;
+    background-image: linear-gradient(
+      to bottom,
+      white 95%,
+      rgba(0, 0, 0, 0.2) 95%,
+      transparent 100%
+    );
+  }
 `
 
 export const LinksGrid = styled(motion.div)`

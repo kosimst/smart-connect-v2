@@ -155,8 +155,6 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
     !isSliding
   )
 
-  useScrollLock(isSliding)
-
   return (
     <>
       <Card
