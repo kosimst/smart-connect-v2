@@ -12,5 +12,4 @@
 body,
 html {
   overscroll-behavior-y: contain;
-  overflow-x: hidden;
 }

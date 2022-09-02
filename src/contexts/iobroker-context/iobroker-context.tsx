@@ -171,7 +171,6 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              id="scroll-lock"
             >
               <IoBrokerContext.Provider
                 value={{

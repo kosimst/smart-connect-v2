@@ -7,5 +7,4 @@ export const Main = styled.main`
   min-height: 100%;
   box-sizing: border-box;
   position: relative;
-  overflow-x: hidden;
 `
