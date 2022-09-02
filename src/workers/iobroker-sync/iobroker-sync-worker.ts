@@ -4,6 +4,7 @@ import {
   BACKGROUND_PRIORITY_REFETCH_INTERVAL,
   DEVICES_REFETCH_INTERVAL,
   DEVICE_STATE_REFETCH_COUNT,
+  DEVICE_STATE_REFETCH_DELAY,
   HIGH_PRIORITY_REFETCH_INTERVAL,
   LOW_PRIORITY_REFETCH_INTERVAL,
   MAX_BULK_GET_SIZE,
@@ -244,11 +245,8 @@ const refetchDevice = async (deviceId: string) => {
     await ioBrokerDb.states.where('id').startsWith(deviceId).toArray()
   ).map((state) => state.id)
 
-  await sleep(100)
-  await fetchStates(deviceStates)
-
-  for (let i = 0; i < DEVICE_STATE_REFETCH_COUNT - 1; i++) {
-    await sleep(333)
+  for (let i = 0; i < DEVICE_STATE_REFETCH_COUNT; i++) {
+    await sleep(DEVICE_STATE_REFETCH_DELAY)
     await fetchStates(deviceStates)
   }
 }

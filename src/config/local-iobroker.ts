@@ -23,4 +23,4 @@ export const SUBSCRIPTION_FETCH_DEBOUNCE_INTERVAL = 250
 export const DEVICE_STATE_REFETCH_COUNT = 5
 
 // Delay between re-fetches of a device's states
-export const DEVICE_STATE_REFETCH_DELAY = 333
+export const DEVICE_STATE_REFETCH_DELAY = 500
