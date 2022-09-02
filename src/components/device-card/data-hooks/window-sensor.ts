@@ -1,11 +1,15 @@
 import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
-import useWindowTilted from '../../../hooks/use-window-tilted'
+import useWindowSensor from '../../../hooks/use-window-sensor'
+import useWindowTilted from '../../../hooks/use-window-sensor'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
-  const [opened] = useDeviceState(device, 'opened', false)
-  const [tilted, tiltedExists] = useWindowTilted(device)
+  const { opened } = useWindowSensor(device, 'opened')
+  const { opened: tilted, exists: tiltedExists } = useWindowSensor(
+    device,
+    'tilted'
+  )
 
   const texts = useMemo<DataText[]>(
     () => [

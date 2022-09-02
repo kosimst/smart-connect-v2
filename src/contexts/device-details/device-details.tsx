@@ -17,6 +17,7 @@ import useScrollLock from '../../hooks/use-scoll-lock'
 import Device from '../../types/device'
 import controls from './controls'
 import Indicators from './indicators'
+import WindowSensors from './special-sections/window-sensors'
 import {
   Backdrop,
   Card,
@@ -41,7 +42,13 @@ export const DeviceDetailsContext = createContext<{
 export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   children,
 }) => {
-  const [openedDevice, setOpenedDevice] = useState<Device | null>(null)
+  // TODO: Fix
+  const [openedDevice, setOpenedDevice] = useState<Device | null>({
+    id: 'alias.0.simon.window-opened-sensor',
+    name: 'Window',
+    type: 'window-opened-sensor',
+    roomName: 'Simons room',
+  })
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)
@@ -65,6 +72,8 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
 
   // @ts-ignore
   const hasHistory = !!openedDevice && !!historyConfigs[openedDevice.type]
+
+  const isWindowSensor = openedDevice?.type === 'window-opened-sensor'
 
   return (
     <>
@@ -111,7 +120,7 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
           >
             <TitleRow variant="h2">
               <span>{openedDevice.name || deviceDefinition.name}</span>
-              <Indicators device={openedDevice} />
+              {!isWindowSensor && <Indicators device={openedDevice} />}
             </TitleRow>
             <Typography variant="subtitle1">
               <span>
@@ -138,6 +147,13 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
                 <ControlsContainer>
                   <HistoryUi device={openedDevice} />
                 </ControlsContainer>
+              </Section>
+            )}
+
+            {isWindowSensor && (
+              <Section>
+                <Typography variant="h3">Associated devices</Typography>
+                <WindowSensors device={openedDevice} />
               </Section>
             )}
           </Card>

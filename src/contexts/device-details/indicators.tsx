@@ -5,6 +5,7 @@ import { FC } from 'react'
 import Icon from '../../components/icon'
 import withProps from '../../helpers/with-props'
 import useDeviceState from '../../hooks/use-device-state'
+import useWindowSensor from '../../hooks/use-window-sensor'
 import Device from '../../types/device'
 import useAvailableIndicator from './indicator-hooks/use-available-indicator'
 import useBatteryIndicator from './indicator-hooks/use-battery-indicator'
@@ -19,6 +20,12 @@ const Container = styled.span`
 const StyledChip = withProps(
   styled(motion(Chip))`
     font-size: 12px;
+    & span.MuiChip-label {
+      position: relative;
+      left: -1.5px;
+      font-weight: 500;
+      line-height: 24px;
+    }
   `,
   {
     initial: {
@@ -37,7 +44,7 @@ const StyledChip = withProps(
   }
 )
 
-const Indicators: FC<{ device: Device }> = ({ device }) => {
+const DefaultIndicators: FC<{ device: Device }> = ({ device }) => {
   const battery = useBatteryIndicator(device)
   const available = useAvailableIndicator(device)
 
@@ -47,6 +54,12 @@ const Indicators: FC<{ device: Device }> = ({ device }) => {
     'available',
     true
   )
+  const [batteryCritical, , batteryCriticalExists] = useDeviceState(
+    device,
+    'battery-critical',
+    false,
+    'high'
+  )
 
   return (
     <Container>
@@ -55,6 +68,19 @@ const Indicators: FC<{ device: Device }> = ({ device }) => {
           <StyledChip
             label={`${batteryLevel}%`}
             icon={<Icon icon={battery} />}
+            key="battery"
+          />
+        )}
+
+        {batteryCriticalExists && (
+          <StyledChip
+            label={batteryCritical ? 'Low' : 'OK'}
+            icon={
+              <Icon
+                icon={batteryCritical ? 'battery_alert' : 'battery_unknown'}
+              />
+            }
+            key="battery-critical"
           />
         )}
 
@@ -62,11 +88,21 @@ const Indicators: FC<{ device: Device }> = ({ device }) => {
           <StyledChip
             label={availableState ? 'Available' : 'Unavailable'}
             icon={<Icon icon={available} />}
+            key="availability"
           />
         )}
       </AnimatePresence>
     </Container>
   )
+}
+
+const Indicators: FC<{ device: Device }> = ({ device }) => {
+  const { type } = device
+
+  switch (type) {
+    default:
+      return <DefaultIndicators device={device} />
+  }
 }
 
 export default Indicators

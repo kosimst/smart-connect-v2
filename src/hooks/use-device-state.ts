@@ -6,28 +6,36 @@ import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
 
 const useDeviceState = <T extends any>(
-  device: Device,
+  device: Device | undefined,
   state: string,
   defaultValue: T,
   priority: 'high' | 'normal' | 'low' = 'normal'
 ) => {
   const { subscribeState, updateState } = useIoBrokerStates()
 
-  const path = `${device.id}.${state}`
+  const path = device && `${device.id}.${state}`
 
   const [value, setValue] = useState<T>(defaultValue)
   const [exists, setExists] = useState<boolean>(false)
 
   const dbEntry = useLiveQuery(
-    () => ioBrokerDb.states.where('id').equals(path).first(),
+    () =>
+      ioBrokerDb.states
+        .where('id')
+        .equals(path ?? 'nowhere-tobe-found')
+        .first(),
     [path]
   )
 
   const setState = useCallback(
     (newValue: T) => {
+      if (!path) {
+        return
+      }
+
       updateState(path, newValue)
     },
-    [updateState]
+    [updateState, path]
   )
 
   useEffect(() => {
@@ -38,10 +46,14 @@ const useDeviceState = <T extends any>(
   }, [dbEntry])
 
   useEffect(() => {
+    if (!path) {
+      return
+    }
+
     const unsubscribe = subscribeState(path, priority)
 
     return unsubscribe
-  }, [subscribeState])
+  }, [subscribeState, path])
 
   return [value, setState, exists] as const
 }
