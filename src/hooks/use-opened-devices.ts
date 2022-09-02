@@ -6,27 +6,12 @@ import Device from '../types/device'
 import useDevices from './use-devices'
 
 const useOpenedDevices = () => {
-  const { subscribeState } = useIoBrokerStates()
-
-  const devices = useDevices()
-  useEffect(() => {
-    const subscriptions = devices
-      .filter((device) => device.type === 'window-tilted-sensor')
-      .map((device) => subscribeState(`${device.id}.opened`, 'low'))
-
-    return () => {
-      subscriptions.forEach((unsubscribePromise) =>
-        unsubscribePromise.then((unsubscribe) => unsubscribe())
-      )
-    }
-  }, [devices])
-
   const openedStates = useLiveQuery(
     () =>
       ioBrokerDb.states
         .where('role')
         .equals('opened')
-        .and((state) => state.value === true)
+        .and((state) => state.value === true || state.value === 1)
         .toArray(),
     [],
     Array<{
