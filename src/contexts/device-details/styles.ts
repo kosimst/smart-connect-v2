@@ -84,3 +84,13 @@ export const TitleRow = styled(Typography)`
   justify-content: space-between;
   align-items: center;
 `
+
+export const NoControlsHint = styled(Typography)`
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  right: 16px;
+  text-align: center;
+  line-height: 1.25;
+  opacity: 0.5;
+`

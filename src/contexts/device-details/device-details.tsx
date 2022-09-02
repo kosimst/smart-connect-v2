@@ -24,6 +24,7 @@ import {
   ControlsContainer,
   DetailsSeparator,
   FixedChildren,
+  NoControlsHint,
   Section,
   Subtitle,
   TitleRow,
@@ -68,6 +69,8 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   const hasHistory = !!openedDevice && !!historyConfigs[openedDevice.type]
 
   const isWindowSensor = openedDevice?.type === 'window-opened-sensor'
+
+  const noControlsAvailable = !hasHistory && !Controls && !isWindowSensor
 
   return (
     <>
@@ -149,6 +152,12 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
                 <Typography variant="h3">Associated devices</Typography>
                 <WindowSensors device={openedDevice} />
               </Section>
+            )}
+
+            {noControlsAvailable && (
+              <NoControlsHint variant="h3">
+                This device provides no further controls or informations
+              </NoControlsHint>
             )}
           </Card>
         )}
