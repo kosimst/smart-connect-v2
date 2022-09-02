@@ -29,6 +29,17 @@ const subscriptions = new Map<
   }
 >()
 
+const pausedSet = new Set<string>()
+
+const pause = () => {
+  const id = randomUUID()
+  pausedSet.add(id)
+
+  return () => pausedSet.delete(id)
+}
+
+const getPaused = () => !!pausedSet.size
+
 const getStatesWithPriority = (priority: SubscriptionPriority) => {
   const priorityOrder = [
     'high',
@@ -195,6 +206,10 @@ let clearSyncDevicesInterval: () => void
 
 const fetchStatesWithPriority =
   (priority: SubscriptionPriority) => async () => {
+    if (getPaused()) {
+      return
+    }
+
     const states = getStatesWithPriority(priority)
 
     await fetchStates(Array.from(states))
@@ -226,6 +241,10 @@ const start = async () => {
     HIGH_PRIORITY_REFETCH_INTERVAL
   )
   clearSyncBackgroundPriorityInterval = setWaitingInterval(async () => {
+    if (getPaused()) {
+      return
+    }
+
     const backgroundStates = getStatesWithPriority('background')
     const unsubscribedStates = data.states.filter((state) => {
       if (!subscriptions.has(state)) {
@@ -257,6 +276,8 @@ const stop = () => {
 }
 
 const refetchDevice = async (deviceId: string) => {
+  const resume = pause()
+
   const deviceStates = (
     await ioBrokerDb.states.where('id').startsWith(deviceId).toArray()
   ).map((state) => state.id)
@@ -265,6 +286,8 @@ const refetchDevice = async (deviceId: string) => {
     await sleep(DEVICE_STATE_REFETCH_DELAY)
     await fetchStates(deviceStates)
   }
+
+  resume()
 }
 
 const recentlyAdded = new Set<string>()
