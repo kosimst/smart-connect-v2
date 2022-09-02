@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { IconButton, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
+import DeviceGrid from '../../components/device-grid'
 import ExpandableChips from '../../components/expandable-chips'
 import ExpandableStatus from '../../components/expandable-status'
 
@@ -18,35 +19,34 @@ export const RoomTitle = styled(Typography)`
   z-index: 4;
   width: 100vw;
   transform: translateX(-16px);
+  margin-bottom: 0;
 `
 
 export const Room = styled(motion.section)`
   position: relative;
+
   &::after {
     content: '';
     background-color: white;
     position: absolute;
     top: 54px;
-    height: 4px;
+    height: 2px;
     width: 100vw;
     transform: translateX(-16px);
     z-index: 3;
   }
 
-  &::before {
-    content: '';
-    display: block;
+  & > .shadow {
     position: sticky;
-    top: 0;
+    top: 54px;
     width: 100vw;
-    z-index: 2;
-    transform: translateX(-16px) translateY(16px);
-    height: 40px;
+    z-index: 0;
+    transform: translateX(-16px);
+    height: 2px;
     background-image: linear-gradient(
       to bottom,
-      white 95%,
-      rgba(0, 0, 0, 0.2) 95%,
-      transparent 100%
+      rgba(0, 0, 0, 0.2),
+      transparent
     );
   }
 `
@@ -113,4 +113,8 @@ export const Version = styled(Typography)`
   right: 16px;
   text-align: right;
   opacity: 0.5;
+`
+
+export const StyledDeviceGrid = styled(DeviceGrid)`
+  margin-top: 8px;
 `

@@ -24,6 +24,7 @@ import {
   Room,
   RoomTitle,
   StatusContainer,
+  StyledDeviceGrid,
   StyledExpandableChips,
   StyledExpandableStatus,
   Title,
@@ -325,12 +326,13 @@ const DevicesPage: FC = () => {
             >
               {roomName}
             </RoomTitle>
+            <div className="shadow"></div>
 
-            <DeviceGrid>
+            <StyledDeviceGrid>
               {devices.map(({ device, visible }) => (
                 <DeviceCard device={device} key={device.id} visible={visible} />
               ))}
-            </DeviceGrid>
+            </StyledDeviceGrid>
           </Room>
         ))}
       </AnimateSharedLayout>
