@@ -21,7 +21,6 @@ export const RoomTitle = styled(Typography)`
 `
 
 export const Room = styled(motion.section)`
-  margin-top: 24px;
   position: relative;
   &::after {
     content: '';
