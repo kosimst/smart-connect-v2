@@ -15,6 +15,8 @@ import syncDb from './sync-db'
 import { expose } from 'comlink'
 import setWaitingInterval from '../../helpers/waiting-interval'
 import sleep from '../../helpers/sleep'
+import { SubscriptionPriority } from '.'
+import randomUUID from '../../helpers/randomUUID'
 
 const data = {
   credentials: null,
@@ -193,16 +195,36 @@ const refetchDevice = async (deviceId: string) => {
   ).map((state) => state.id)
 
   await fetchStates(deviceStates)
-  await sleep(250)
+  await sleep(333)
   await fetchStates(deviceStates)
-  await sleep(250)
+  await sleep(333)
   await fetchStates(deviceStates)
-  await sleep(250)
+  await sleep(333)
+  await fetchStates(deviceStates)
+  await sleep(333)
   await fetchStates(deviceStates)
 }
 
-expose({
+const subscribeState = async (
+  deviceId: string,
+  stateId: string,
+  priority: SubscriptionPriority
+) => {
+  const subscriptionId = randomUUID()
+
+  return subscriptionId
+}
+
+const unsubscribeState = async (subscriptionId: string) => {}
+
+const workerMethods = {
   start,
   stop,
   refetchDevice,
-})
+  subscribeState,
+  unsubscribeState,
+} as const
+
+export type WorkerMethods = typeof workerMethods
+
+expose(workerMethods)
