@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
-const useData: DataHook = (device) => {
+const useData: DataHook = (device, visible) => {
   /**
     "0": "NO_ACTION",
     "1": "ACTIVE RTO",
@@ -14,7 +14,8 @@ const useData: DataHook = (device) => {
   const [, setAction] = useDeviceState(
     device,
     'action',
-    0 as 0 | 1 | 2 | 3 | 4 | 5
+    0 as 0 | 1 | 2 | 3 | 4 | 5,
+    visible ? 'medium' : 'background'
   )
 
   /**
@@ -24,7 +25,12 @@ const useData: DataHook = (device) => {
     "3": "CONTINUOUS",
     "4": "MAINTENANCE"
    */
-  const [mode] = useDeviceState(device, 'mode', 0 as 0 | 1 | 2 | 3 | 4)
+  const [mode] = useDeviceState(
+    device,
+    'mode',
+    0 as 0 | 1 | 2 | 3 | 4,
+    visible ? 'medium' : 'background'
+  )
 
   /**
     "0": "UNTRAINED",
@@ -38,7 +44,8 @@ const useData: DataHook = (device) => {
   const [lockState] = useDeviceState(
     device,
     'lock-state',
-    0 as 0 | 1 | 3 | 5 | 7 | 253 | 255
+    0 as 0 | 1 | 3 | 5 | 7 | 253 | 255,
+    visible ? 'medium' : 'background'
   )
 
   const isRingToOpen = lockState === 3

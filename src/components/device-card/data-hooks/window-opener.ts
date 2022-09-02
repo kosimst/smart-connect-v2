@@ -2,14 +2,25 @@ import { useCallback, useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook from '../use-data-hook/data-hook'
 
-const useData: DataHook = (device) => {
+const useData: DataHook = (device, visible) => {
   const [openedLevel, setOpenedLevel] = useDeviceState(
     device,
     'opened-level',
-    -0.5
+    -0.5,
+    visible ? 'medium' : 'background'
   )
-  const [direction, setDirection] = useDeviceState(device, 'direction', 0)
-  const [stop, setStop] = useDeviceState(device, 'stop', true)
+  const [direction, setDirection] = useDeviceState(
+    device,
+    'direction',
+    0,
+    visible ? 'medium' : 'background'
+  )
+  const [stop, setStop] = useDeviceState(
+    device,
+    'stop',
+    true,
+    visible ? 'medium' : 'background'
+  )
 
   const texts = useMemo(
     () => [

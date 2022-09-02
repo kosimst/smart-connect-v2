@@ -1,5 +1,5 @@
 import { Badge, IconButton, Typography, Chip as MuiChip } from '@mui/material'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, AnimateSharedLayout } from 'framer-motion'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
@@ -89,9 +89,7 @@ const DevicesPage: FC = () => {
   )
 
   const groupedByRoom = useMemo(() => {
-    const sorted = Object.entries(
-      groupBy(selectedDevices, 'roomName', 'Other devices')
-    )
+    const sorted = Object.entries(groupBy(devices, 'roomName', 'Other devices'))
       .sort(([a], [b]) => a.localeCompare(b))
       .map(
         ([roomName, devices]) =>
@@ -100,6 +98,21 @@ const DevicesPage: FC = () => {
             devices.sort((a, b) => b.type.localeCompare(a.type)),
           ] as const
       )
+      .map(([roomName, devices]) => {
+        const devicesWithVisibility = devices.map((device) => {
+          const visible =
+            selectedDeviceTypes.includes(
+              deviceDefinitions[device.type].fullName
+            ) && !isHidden(deviceDefinitions[device.type].fullName)
+
+          return {
+            device,
+            visible,
+          }
+        })
+
+        return [roomName, devicesWithVisibility] as const
+      })
 
     const withoutFavorite = sorted.filter(
       ([roomName]) => roomName !== favoriteRoom
@@ -290,35 +303,36 @@ const DevicesPage: FC = () => {
         </StyledExpandableStatus>
       </StatusContainer>
 
-      {groupedByRoom.map(([roomName, devices]) => (
-        <Room
-          key={roomName}
-          transition={{
-            layout: {
-              duration: 0.15,
-            },
-          }}
-          layout
-        >
-          <RoomTitle
-            onContextMenu={() => {
-              setFavoriteRoom(roomName)
-              localStorage.setItem('favoriteRoom', roomName)
+      {/* @ts-ignore */}
+      <AnimateSharedLayout>
+        {groupedByRoom.map(([roomName, devices]) => (
+          <Room
+            key={roomName}
+            transition={{
+              layout: {
+                duration: 0.15,
+              },
             }}
-            variant="h2"
+            layout
           >
-            {roomName}
-          </RoomTitle>
+            <RoomTitle
+              onContextMenu={() => {
+                setFavoriteRoom(roomName)
+                localStorage.setItem('favoriteRoom', roomName)
+              }}
+              variant="h2"
+            >
+              {roomName}
+            </RoomTitle>
 
-          <DeviceGrid>
-            <AnimatePresence>
-              {devices.map((device) => (
-                <DeviceCard device={device} key={device.id} />
+            <DeviceGrid>
+              {devices.map(({ device, visible }) => (
+                <DeviceCard device={device} key={device.id} visible={visible} />
               ))}
-            </AnimatePresence>
-          </DeviceGrid>
-        </Room>
-      ))}
+            </DeviceGrid>
+          </Room>
+        ))}
+      </AnimateSharedLayout>
 
       <LinksGrid
         initial={{ opacity: 0 }}

@@ -1,5 +1,5 @@
 import TouchRipple from '@mui/material/ButtonBase/TouchRipple'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, MotionProps } from 'framer-motion'
 import {
   FC,
   memo,
@@ -42,7 +42,8 @@ export type PureDeviceCardProps = {
   onContextMenu?: MouseEventHandler<HTMLDivElement>
   lowBattery?: boolean
   notAvailable?: boolean
-}
+  visible?: boolean
+} & MotionProps
 
 const PureDeviceCard: FC<PureDeviceCardProps> = ({
   icon,
@@ -57,6 +58,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
   onContextMenu,
   lowBattery = false,
   notAvailable = false,
+  visible = true,
 }) => {
   const canSlide = useMemo(
     () => !!onSliderChangeCb && sliderValue !== undefined,
@@ -185,8 +187,12 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
         whileTap={{
           scale: 0.975,
         }}
+        style={{
+          opacity: visible ? 1 : 0,
+        }}
         layout
         onContextMenu={onContextMenu}
+        hidden={!visible}
       >
         <Slider
           type="range"

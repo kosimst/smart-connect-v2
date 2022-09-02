@@ -24,6 +24,10 @@ export const Card = styled(motion.div)<{
   & > * {
     grid-area: 1 / 1;
   }
+
+  &[hidden] {
+    display: none;
+  }
 `
 
 export const ColoredIcon = styled(Icon)`

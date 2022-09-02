@@ -8,14 +8,15 @@ import useDataHook from './use-data-hook'
 
 export type DeviceCardProps = {
   device: Device
+  visible: boolean
 }
 
-const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device }) => {
+const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device, visible }) => {
   const useData = useDataHook(device)
 
   const { open } = useDeviceDetails()
 
-  const data = useData(device)
+  const data = useData(device, visible)
   const definition = useDeviceDefinition(device)
 
   const onContextMenu = useCallback<MouseEventHandler<HTMLDivElement>>(
@@ -27,11 +28,17 @@ const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device }) => {
     [open, device]
   )
 
-  const [battery, , batteryExists] = useDeviceState(device, 'battery', 100)
+  const [battery, , batteryExists] = useDeviceState(
+    device,
+    'battery',
+    100,
+    'low'
+  )
   const [available, , availableExists] = useDeviceState(
     device,
     'available',
-    true
+    true,
+    'low'
   )
 
   return (
@@ -42,16 +49,15 @@ const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device }) => {
       onContextMenu={onContextMenu}
       lowBattery={batteryExists && battery <= 15}
       notAvailable={availableExists && !available}
+      visible={visible}
     />
   )
 }
 
-const DeviceCard: FC<DeviceCardProps> = ({ device }) => {
-  const definition = useDeviceDefinition(device)
-
+const DeviceCard: FC<DeviceCardProps> = ({ device, visible }) => {
   return (
     <Suspense fallback={null}>
-      <SuspendedDeviceCard device={device} />
+      <SuspendedDeviceCard device={device} visible={visible} />
     </Suspense>
   )
 }
