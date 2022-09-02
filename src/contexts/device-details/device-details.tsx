@@ -42,13 +42,7 @@ export const DeviceDetailsContext = createContext<{
 export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   children,
 }) => {
-  // TODO: Fix
-  const [openedDevice, setOpenedDevice] = useState<Device | null>({
-    id: 'alias.0.simon.window-opened-sensor',
-    name: 'Window',
-    type: 'window-opened-sensor',
-    roomName: 'Simons room',
-  })
+  const [openedDevice, setOpenedDevice] = useState<Device | null>(null)
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)
