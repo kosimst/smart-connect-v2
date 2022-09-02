@@ -242,6 +242,8 @@ const start = async () => {
 
     await fetchStates([...backgroundStates, ...unsubscribedStates])
   }, BACKGROUND_PRIORITY_REFETCH_INTERVAL)
+
+  setTimeout(fetchDevices, 2000)
 }
 
 const stop = () => {
