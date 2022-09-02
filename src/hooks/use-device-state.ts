@@ -56,7 +56,7 @@ const useDeviceState = <T extends any>(
     return () => {
       unsubscribePromise.then((unsubscribe) => unsubscribe())
     }
-  }, [subscribeState, path])
+  }, [subscribeState, path, priority])
 
   return [value, setState, exists] as const
 }
