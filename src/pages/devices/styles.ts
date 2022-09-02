@@ -32,9 +32,9 @@ export const Room = styled(motion.section)`
     background-color: white;
     position: absolute;
     top: 54px;
-    height: 2px;
+    height: 4px;
     width: 100vw;
-    transform: translateX(-16px) translateY(2px);
+    transform: translateX(-16px) translateY(0px);
     z-index: 3;
   }
 
