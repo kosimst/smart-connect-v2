@@ -240,10 +240,6 @@ const start = async () => {
       return !hasSubscriptions
     })
 
-    console.log(
-      `Fetching ${backgroundStates.size} background states and unsubscribed states (${unsubscribedStates.length})`
-    )
-
     await fetchStates([...backgroundStates, ...unsubscribedStates])
   }, BACKGROUND_PRIORITY_REFETCH_INTERVAL)
 }
