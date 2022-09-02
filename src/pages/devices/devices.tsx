@@ -27,6 +27,7 @@ import {
   StyledExpandableChips,
   StyledExpandableStatus,
   Title,
+  Version,
 } from './styles'
 
 const DevicesPage: FC = () => {
@@ -353,6 +354,8 @@ const DevicesPage: FC = () => {
           <span>Settings</span>
         </Link>
       </LinksGrid>
+
+      <Version>{import.meta.env.VITE_APP_VERSION}</Version>
     </>
   )
 }

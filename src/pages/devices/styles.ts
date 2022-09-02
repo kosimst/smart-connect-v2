@@ -27,7 +27,7 @@ export const LinksGrid = styled(motion.div)`
   justify-items: center;
   font-weight: 500;
   position: absolute;
-  bottom: 16px;
+  bottom: 48px;
   width: calc(100vw - 32px);
 `
 
@@ -72,3 +72,12 @@ export const StatusContainer = styled.div`
 `
 
 export const StyledExpandableStatus = styled(ExpandableStatus)``
+
+export const Version = styled(Typography)`
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  text-align: right;
+  opacity: 0.5;
+`
