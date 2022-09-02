@@ -21,7 +21,7 @@ const useWindowSensor = (
     [roomName, name]
   )
 
-  const [opened] = useDeviceState(windowSensor, 'opened', false, 'high')
+  const [opened] = useDeviceState(windowSensor, 'opened', false)
   const [battery, , batteryExists] = useDeviceState(windowSensor, 'battery', 0)
   const [available, , availableExists] = useDeviceState(
     windowSensor,

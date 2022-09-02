@@ -1,11 +1,14 @@
 /// <reference lib="webworker" />
 
 import {
+  BACKGROUND_PRIORITY_REFETCH_INTERVAL,
   DEVICES_REFETCH_INTERVAL,
+  DEVICE_STATE_REFETCH_COUNT,
   HIGH_PRIORITY_REFETCH_INTERVAL,
   LOW_PRIORITY_REFETCH_INTERVAL,
   MAX_BULK_GET_SIZE,
   STATE_REFETCH_INTERVAL,
+  SUBSCRIPTION_FETCH_DEBOUNCE_INTERVAL,
 } from '../../config/local-iobroker'
 import { isSupportedDeviceType } from '../../constants/device-definitions'
 import ioBrokerDb from '../../db/iobroker-db'
@@ -18,14 +21,40 @@ import sleep from '../../helpers/sleep'
 import { SubscriptionPriority } from '.'
 import randomUUID from '../../helpers/randomUUID'
 
+const subscriptions = new Map<
+  string,
+  {
+    [key in SubscriptionPriority]?: Set<string>
+  }
+>()
+
+const getStatesWithPriority = (priority: SubscriptionPriority) => {
+  const priorityOrder = [
+    'high',
+    'medium',
+    'low',
+    'background',
+  ] as SubscriptionPriority[]
+
+  const states = new Set<string>()
+
+  statesLoop: for (const [state, priorities] of subscriptions) {
+    for (const priorityEntry of priorityOrder) {
+      const hasPriorityEntry = !!priorities[priorityEntry]?.size
+
+      if (hasPriorityEntry && priorityEntry === priority) {
+        states.add(state)
+        continue statesLoop
+      }
+    }
+  }
+
+  return states
+}
+
 const data = {
   credentials: null,
-  states: {
-    background: [],
-    lowPriority: [],
-    normalPriority: [],
-    highPriority: [],
-  },
+  states: Array<string>(),
 } as Parameters<typeof syncDb>['0']
 
 const initialSync = syncDb(data)
@@ -146,7 +175,15 @@ let active = false
 let clearSyncLowPriorityInterval: () => void
 let clearSyncNormalPriorityInterval: () => void
 let clearSyncHighPriorityInterval: () => void
+let clearSyncBackgroundPriorityInterval: () => void
 let clearSyncDevicesInterval: () => void
+
+const fetchStatesWithPriority =
+  (priority: SubscriptionPriority) => async () => {
+    const states = getStatesWithPriority(priority)
+
+    await fetchStates(Array.from(states))
+  }
 
 const start = async () => {
   if (active) {
@@ -162,22 +199,34 @@ const start = async () => {
     DEVICES_REFETCH_INTERVAL
   )
   clearSyncLowPriorityInterval = setWaitingInterval(
-    () => fetchStates([...data.states.lowPriority, ...data.states.background]),
+    fetchStatesWithPriority('low'),
     LOW_PRIORITY_REFETCH_INTERVAL
   )
   clearSyncNormalPriorityInterval = setWaitingInterval(
-    () => fetchStates(data.states.normalPriority),
+    fetchStatesWithPriority('medium'),
     STATE_REFETCH_INTERVAL
   )
   clearSyncHighPriorityInterval = setWaitingInterval(
-    () => fetchStates(data.states.highPriority),
+    fetchStatesWithPriority('high'),
     HIGH_PRIORITY_REFETCH_INTERVAL
   )
+  clearSyncBackgroundPriorityInterval = setWaitingInterval(async () => {
+    const backgroundStates = getStatesWithPriority('background')
+    const unsubscribedStates = data.states.filter((state) => {
+      if (!subscriptions.has(state)) {
+        return true
+      }
 
-  await fetchDevices()
-  await fetchStates(data.states.highPriority)
-  await fetchStates(data.states.normalPriority)
-  await fetchStates(data.states.lowPriority)
+      const priorities = subscriptions.get(state)!
+      const hasSubscriptions = Object.values(priorities).some(
+        (priority) => !!priority?.size
+      )
+
+      return !hasSubscriptions
+    })
+
+    await fetchStates([...backgroundStates, ...unsubscribedStates])
+  }, BACKGROUND_PRIORITY_REFETCH_INTERVAL)
 }
 
 const stop = () => {
@@ -186,6 +235,7 @@ const stop = () => {
   clearSyncLowPriorityInterval()
   clearSyncNormalPriorityInterval()
   clearSyncHighPriorityInterval()
+  clearSyncBackgroundPriorityInterval()
   clearSyncDevicesInterval()
 }
 
@@ -194,28 +244,51 @@ const refetchDevice = async (deviceId: string) => {
     await ioBrokerDb.states.where('id').startsWith(deviceId).toArray()
   ).map((state) => state.id)
 
+  await sleep(100)
   await fetchStates(deviceStates)
-  await sleep(333)
-  await fetchStates(deviceStates)
-  await sleep(333)
-  await fetchStates(deviceStates)
-  await sleep(333)
-  await fetchStates(deviceStates)
-  await sleep(333)
-  await fetchStates(deviceStates)
+
+  for (let i = 0; i < DEVICE_STATE_REFETCH_COUNT - 1; i++) {
+    await sleep(333)
+    await fetchStates(deviceStates)
+  }
 }
 
-const subscribeState = async (
-  deviceId: string,
-  stateId: string,
-  priority: SubscriptionPriority
-) => {
+const recentlyAdded = new Set<string>()
+let fetchRecentlyAddedTimeout: ReturnType<typeof setTimeout>
+const subscribeState = async (id: string, priority: SubscriptionPriority) => {
   const subscriptionId = randomUUID()
+
+  if (!recentlyAdded.has(id)) {
+    clearTimeout(fetchRecentlyAddedTimeout)
+
+    recentlyAdded.add(id)
+
+    fetchRecentlyAddedTimeout = setTimeout(() => {
+      fetchStates(Array.from(recentlyAdded))
+      recentlyAdded.clear()
+    }, SUBSCRIPTION_FETCH_DEBOUNCE_INTERVAL)
+  }
+
+  const oldSubscriptions = subscriptions.get(id) || {}
+  const oldSet = oldSubscriptions[priority] || new Set<string>()
+
+  oldSet.add(subscriptionId)
+
+  subscriptions.set(id, {
+    ...oldSubscriptions,
+    [priority]: oldSet,
+  })
 
   return subscriptionId
 }
 
-const unsubscribeState = async (subscriptionId: string) => {}
+const unsubscribeState = async (subscriptionId: string) => {
+  for (const priorities of subscriptions.values()) {
+    for (const ids of Object.values(priorities)) {
+      ids.delete(subscriptionId)
+    }
+  }
+}
 
 const workerMethods = {
   start,

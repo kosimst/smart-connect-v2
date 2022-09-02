@@ -48,17 +48,23 @@ const DefaultIndicators: FC<{ device: Device }> = ({ device }) => {
   const battery = useBatteryIndicator(device)
   const available = useAvailableIndicator(device)
 
-  const [batteryLevel, , batteryExists] = useDeviceState(device, 'battery', 100)
+  const [batteryLevel, , batteryExists] = useDeviceState(
+    device,
+    'battery',
+    100,
+    'low'
+  )
   const [availableState, , availableExists] = useDeviceState(
     device,
     'available',
-    true
+    true,
+    'low'
   )
   const [batteryCritical, , batteryCriticalExists] = useDeviceState(
     device,
     'battery-critical',
     false,
-    'high'
+    'low'
   )
 
   return (

@@ -15,7 +15,9 @@ const useOpenedDevices = () => {
       .map((device) => subscribeState(`${device.id}.opened`, 'low'))
 
     return () => {
-      subscriptions.forEach((unsubscribe) => unsubscribe())
+      subscriptions.forEach((unsubscribePromise) =>
+        unsubscribePromise.then((unsubscribe) => unsubscribe())
+      )
     }
   }, [devices])
 

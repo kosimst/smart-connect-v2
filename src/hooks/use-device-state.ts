@@ -4,12 +4,13 @@ import useIoBroker from '../contexts/iobroker-context'
 import { useIoBrokerStates } from '../contexts/iobroker-states-context'
 import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
+import { SubscriptionPriority } from '../workers/iobroker-sync'
 
 const useDeviceState = <T extends any>(
   device: Device | undefined,
   state: string,
   defaultValue: T,
-  priority: 'high' | 'normal' | 'low' = 'normal'
+  priority: SubscriptionPriority = 'medium'
 ) => {
   const { subscribeState, updateState } = useIoBrokerStates()
 
@@ -50,9 +51,11 @@ const useDeviceState = <T extends any>(
       return
     }
 
-    const unsubscribe = subscribeState(path, priority)
+    const unsubscribePromise = subscribeState(path, priority)
 
-    return unsubscribe
+    return () => {
+      unsubscribePromise.then((unsubscribe) => unsubscribe())
+    }
   }, [subscribeState, path])
 
   return [value, setState, exists] as const

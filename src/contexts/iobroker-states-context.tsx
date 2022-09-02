@@ -10,11 +10,14 @@ import {
 import ioBrokerDb from '../db/iobroker-db'
 import randomUUID from '../helpers/randomUUID'
 import useIoBroker from './iobroker-context'
-import IoBrokerSync from '../workers/iobroker-sync'
+import IoBrokerSync, { SubscriptionPriority } from '../workers/iobroker-sync'
 import Device from '../types/device'
 
 type IoBrokerStates = {
-  subscribeState(id: string, priority: 'low' | 'normal' | 'high'): () => void
+  subscribeState(
+    id: string,
+    priority: SubscriptionPriority
+  ): Promise<() => Promise<void>>
   updateState(id: string, val: any): void
 }
 
@@ -63,14 +66,10 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   )
 
   const subscribeState = useCallback<IoBrokerStates['subscribeState']>(
-    (id, priority: 'high' | 'normal' | 'low' = 'normal') => {
-      const subscriptionId = randomUUID()
+    async (id, priority: SubscriptionPriority = 'medium') => {
+      const unsubscribe = await ioBrokerSync.subscribeState(id, priority)
 
-      ioBrokerDb.subscribedStates.add({ id, subscriptionId, priority })
-
-      return () => {
-        ioBrokerDb.subscribedStates.delete(subscriptionId)
-      }
+      return unsubscribe
     },
     []
   )
