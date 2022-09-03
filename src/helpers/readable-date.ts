@@ -15,7 +15,7 @@ const readableDate = (date: Date) => {
     return date.toLocaleTimeString()
   }
 
-  return date.toLocaleDateString()
+  return date.toLocaleString()
 }
 
 export default readableDate
