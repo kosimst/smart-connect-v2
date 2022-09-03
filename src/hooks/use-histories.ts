@@ -28,7 +28,10 @@ const useHistories = (
   const toIsoDate = useMemo(() => new Date(to).toISOString(), [to])
 
   useEffect(() => {
+    console.log('start')
+
     if (!credentials || !states.length) {
+      console.log('no credentials or states')
       return
     }
 
@@ -49,6 +52,7 @@ const useHistories = (
       )
 
       if (!response.ok) {
+        console.log('error')
         setError(true)
         setLoading(false)
         return
@@ -56,13 +60,54 @@ const useHistories = (
 
       const json = await response.json()
 
+      if (!json || !Array.isArray(json) || !json.length) {
+        console.log('no json')
+        setError(true)
+        setLoading(false)
+        return
+      }
+
+      const result: {
+        [state: string]: {
+          ts: number
+          value: any
+        }[]
+      } = {}
+
+      for (const state of states) {
+        const { datapoints } =
+          json.find((item) => item.target === `${device.id}.${state}`) || {}
+
+        console.log(state, datapoints)
+
+        if (!datapoints || !datapoints.length) {
+          console.log('no datapoints')
+          setError(true)
+          setLoading(false)
+          return
+        }
+
+        result[state] = datapoints.map(([value, ts]: [any, number]) => ({
+          value,
+          ts,
+        }))
+      }
+
+      console.log(result)
+
       //setHistory(json)
       setLoading(false)
       setError(false)
     }
 
     fetchHistory()
-  }, [credentials, device, from, to, states])
+  }, [
+    credentials?.toString(),
+    device.toString(),
+    fromIsoDate,
+    toIsoDate,
+    states.toString(),
+  ])
 
   return [history, loading, error] as const
 }

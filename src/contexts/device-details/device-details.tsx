@@ -9,11 +9,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import HistoryUi from '../../components/history-ui'
 import deviceDefinitions from '../../constants/device-definitions'
-import historyConfigs from '../../constants/history-configs'
-import useHistories from '../../hooks/use-histories'
-import useScrollLock from '../../hooks/use-scoll-lock'
 import Device from '../../types/device'
 import controls from './controls'
 import Indicators from './indicators'
@@ -29,6 +25,7 @@ import {
   Subtitle,
   TitleRow,
 } from './styles'
+import historyComponents from './history'
 
 type DeviceDetailsProviderProps = {
   children?: ReactNode
@@ -43,7 +40,14 @@ export const DeviceDetailsContext = createContext<{
 export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   children,
 }) => {
-  const [openedDevice, setOpenedDevice] = useState<Device | null>(null)
+  const [openedDevice, setOpenedDevice] = useState<Device | null>(
+    /*{
+    id: 'alias.0.simon.climate-sensor',
+    name: 'Netatmo',
+    type: 'climate-sensor',
+    roomName: 'Simons room',
+  }*/ null
+  )
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)
@@ -65,8 +69,13 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
     [openedDevice]
   )
 
-  // @ts-ignore
-  const hasHistory = !!openedDevice && !!historyConfigs[openedDevice.type]
+  const History = useMemo<FC<{ device: Device }> | null>(
+    //  @ts-ignore
+    () => (openedDevice ? historyComponents[openedDevice.type] || null : null),
+    [openedDevice]
+  )
+
+  const hasHistory = /*!!History*/ false
 
   const isWindowSensor = openedDevice?.type === 'window-opened-sensor'
 
@@ -142,7 +151,7 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
                 <Typography variant="h3">History</Typography>
 
                 <ControlsContainer>
-                  <HistoryUi device={openedDevice} />
+                  <History device={openedDevice} />
                 </ControlsContainer>
               </Section>
             )}
