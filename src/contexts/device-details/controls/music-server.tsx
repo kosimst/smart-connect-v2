@@ -86,10 +86,10 @@ const Controls: FC<{
 
         {active && (
           <CustomActions>
-            <IconButton onClick={backward30Sec}>
+            <IconButton onClick={backward5Sec}>
               <Icon icon="replay_5" />
             </IconButton>
-            <IconButton onClick={backward5Sec}>
+            <IconButton onClick={backward30Sec}>
               <Icon icon="replay_30" />
             </IconButton>
 
