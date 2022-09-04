@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@mui/material'
 import { indigo, pink, purple, red } from '@mui/material/colors'
-import { FC, useCallback, useMemo, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CartesianGrid,
   Legend,
@@ -69,6 +69,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
 
   const containerRef = useRef<HTMLDivElement>(null)
 
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const toggleFullScreen = useCallback(async () => {
     try {
       const fullScreenElement = document.fullscreenElement
@@ -79,40 +80,51 @@ const History: FC<{ device: Device }> = ({ device }) => {
         await containerRef.current?.requestFullscreen()
         await screen.orientation.lock('landscape')
       }
-    } catch {}
+    } catch {
+    } finally {
+      setIsFullscreen((prev) => !prev)
+    }
   }, [containerRef])
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setIsFullscreen(false)
+      }
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange)
+    }
+  }, [])
 
   return (
     <div
       ref={containerRef}
       style={{
-        position: 'relative',
         backgroundColor: 'white',
+        padding: isFullscreen ? 16 : 0,
       }}
     >
-      <ButtonGroup
+      <div
         style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           marginBottom: 16,
         }}
       >
-        <Button onClick={onTimeFrameSelect('1h')}>1h</Button>
-        <Button onClick={onTimeFrameSelect('6h')}>6h</Button>
-        <Button onClick={onTimeFrameSelect('12h')}>12h</Button>
-        <Button onClick={onTimeFrameSelect('24h')}>1d</Button>
-        <Button onClick={onTimeFrameSelect('168h')}>1w</Button>
-        <Button onClick={onTimeFrameSelect('720h')}>1m</Button>
-      </ButtonGroup>
-
-      <IconButton
-        onClick={toggleFullScreen}
-        style={{
-          position: 'absolute',
-          top: -6,
-          right: 0,
-        }}
-      >
-        <Icon icon="fullscreen" />
-      </IconButton>
+        <ButtonGroup>
+          <Button onClick={onTimeFrameSelect('1h')}>1h</Button>
+          <Button onClick={onTimeFrameSelect('6h')}>6h</Button>
+          <Button onClick={onTimeFrameSelect('12h')}>12h</Button>
+          <Button onClick={onTimeFrameSelect('24h')}>1d</Button>
+          <Button onClick={onTimeFrameSelect('168h')}>1w</Button>
+          <Button onClick={onTimeFrameSelect('720h')}>1m</Button>
+        </ButtonGroup>
+        <IconButton onClick={toggleFullScreen}>
+          <Icon icon={isFullscreen ? 'fullscreen_exit' : 'fullscreen'} />
+        </IconButton>
+      </div>
       {error ? (
         <div>Failed to fetch history</div>
       ) : loading ? (
