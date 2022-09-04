@@ -60,7 +60,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
         '12h': 10 * 60 * 1000,
         '24h': 30 * 60 * 1000,
         '168h': 60 * 60 * 1000,
-        '720h': 4 * 60 * 60 * 1000,
+        '720h': 5 * 60 * 60 * 1000,
       }
       setInterval(intervals[timeFrame])
     },
@@ -76,9 +76,11 @@ const History: FC<{ device: Device }> = ({ device }) => {
       if (fullScreenElement) {
         await document.exitFullscreen()
         await screen.orientation.unlock()
+        setInterval((prev) => (prev === 60 * 1000 ? prev : prev * 5))
       } else {
         await containerRef.current?.requestFullscreen()
         await screen.orientation.lock('landscape')
+        setInterval((prev) => Math.min(60 * 1000, prev / 5))
       }
     } catch {
     } finally {
