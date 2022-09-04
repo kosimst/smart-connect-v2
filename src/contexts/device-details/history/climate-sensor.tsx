@@ -39,6 +39,8 @@ const History: FC<{ device: Device }> = ({ device }) => {
   const [interval, setInterval] = useState(2 * 60 * 1000)
   const states = useMemo(() => ['temperature', 'humidity', 'co2'], [])
 
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
   const [histories, loading, error] = useHistories(
     device,
     states,
@@ -62,14 +64,20 @@ const History: FC<{ device: Device }> = ({ device }) => {
         '168h': 60 * 60 * 1000,
         '720h': 5 * 60 * 60 * 1000,
       }
-      setInterval(intervals[timeFrame])
+
+      let interval = intervals[timeFrame]
+
+      if (isFullscreen) {
+        interval /= 5
+        interval = Math.min(interval, 60 * 1000)
+      }
+      setInterval(interval)
     },
     []
   )
 
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [isFullscreen, setIsFullscreen] = useState(false)
   const toggleFullScreen = useCallback(async () => {
     try {
       const fullScreenElement = document.fullscreenElement
@@ -98,6 +106,16 @@ const History: FC<{ device: Device }> = ({ device }) => {
       document.removeEventListener('fullscreenchange', onFullscreenChange)
     }
   }, [])
+
+  const rect = useRect(containerRef)
+
+  const availableFullScreenHeight = useMemo(() => {
+    if (!rect) return 320
+
+    const { height } = rect
+
+    return height - 32 - 40 - 16
+  }, [rect])
 
   return (
     <div
@@ -132,7 +150,10 @@ const History: FC<{ device: Device }> = ({ device }) => {
       ) : loading ? (
         <div>Loading...</div>
       ) : (
-        <ResponsiveContainer width="100%" height={320}>
+        <ResponsiveContainer
+          width="100%"
+          height={isFullscreen ? availableFullScreenHeight : 320}
+        >
           <LineChart data={histories || []}>
             <XAxis dataKey="ts" tickCount={100} tick={false} />
             {states.map((state) => (
