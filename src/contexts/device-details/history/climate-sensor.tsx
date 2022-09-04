@@ -48,7 +48,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
   )
 
   const onTimeFrameSelect = useCallback(
-    (timeFrame: '1h' | '6h' | '12h' | '24h' | '168h') => () => {
+    (timeFrame: '1h' | '6h' | '12h' | '24h' | '168h' | '720h') => () => {
       const hours = parseInt(timeFrame)
 
       setFrom(Date.now() - hours * 60 * 60 * 1000)
@@ -59,7 +59,8 @@ const History: FC<{ device: Device }> = ({ device }) => {
         '6h': 5 * 60 * 1000,
         '12h': 10 * 60 * 1000,
         '24h': 30 * 60 * 1000,
-        '168h': 2 * 60 * 1000,
+        '168h': 60 * 60 * 1000,
+        '720h': 4 * 60 * 60 * 1000,
       }
       setInterval(intervals[timeFrame])
     },
@@ -99,6 +100,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
         <Button onClick={onTimeFrameSelect('12h')}>12h</Button>
         <Button onClick={onTimeFrameSelect('24h')}>1d</Button>
         <Button onClick={onTimeFrameSelect('168h')}>1w</Button>
+        <Button onClick={onTimeFrameSelect('720h')}>1m</Button>
       </ButtonGroup>
 
       <IconButton
