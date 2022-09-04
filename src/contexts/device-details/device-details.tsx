@@ -40,12 +40,7 @@ export const DeviceDetailsContext = createContext<{
 export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   children,
 }) => {
-  const [openedDevice, setOpenedDevice] = useState<Device | null>({
-    id: 'alias.0.simon.climate-sensor',
-    name: 'Netatmo',
-    type: 'climate-sensor',
-    roomName: 'Simons room',
-  })
+  const [openedDevice, setOpenedDevice] = useState<Device | null>(null)
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)
