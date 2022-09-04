@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useEffect, useState } from 'react'
 
-const useRect = (ref: RefObject<HTMLElement>) => {
+const useRect = (ref: RefObject<HTMLElement | null>) => {
   const [rect, setRect] = useState<DOMRect | null>(null)
 
   const updateRect = useCallback(() => {

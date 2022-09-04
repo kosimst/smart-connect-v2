@@ -12,10 +12,10 @@ const readableDate = (date: Date) => {
       return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`
     }
 
-    return date.toLocaleTimeString()
+    return date.toLocaleTimeString('de-AT')
   }
 
-  return date.toLocaleString()
+  return date.toLocaleString('de-AT')
 }
 
 export default readableDate
