@@ -77,7 +77,7 @@ const useHistories = (
           .map((state) => `${device.id}.${state}`)
           .join(
             ','
-          )}?dateFrom=${fromIsoDate}&dateTo=${toIsoDate}&count=${dataPointsCount}`,
+          )}?dateFrom=${fromIsoDate}&dateTo=${toIsoDate}&count=${dataPointsCount}&aggregate=average`,
         {
           headers: {
             'CF-Access-Client-Id': credentials.cfClientId,
