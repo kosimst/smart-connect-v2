@@ -268,8 +268,7 @@ const DevicesPage: FC = () => {
                 onClick={() => open(device)}
               />
               <span>
-                {' '}
-                in {device.roomName} is{' '}
+                in <b>{device.roomName}</b> is{' '}
                 {openedState === 1 ? 'tilted' : 'opened'}
               </span>
             </div>
@@ -288,7 +287,9 @@ const DevicesPage: FC = () => {
                 icon={<Icon icon={deviceDefinitions[device.type].icon} />}
                 onClick={() => open(device)}
               />
-              <span> is low on battery ({battery}%)</span>
+              <span>
+                in <b>{device.roomName}</b> is low on battery ({battery}%)
+              </span>
             </div>
           ))}
           {unavailableDevices.map(({ device }) => (
@@ -299,7 +300,10 @@ const DevicesPage: FC = () => {
                 icon={<Icon icon={deviceDefinitions[device.type].icon} />}
                 onClick={() => open(device)}
               />
-              <span> in {device.roomName} is unavailable</span>
+              <span>
+                {' '}
+                in <b>{device.roomName}</b> is unavailable
+              </span>
             </div>
           ))}
         </StyledExpandableStatus>
