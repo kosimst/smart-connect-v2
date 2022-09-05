@@ -20,7 +20,13 @@ const useData: DataHook = (device, visible) => {
     () => [
       {
         id: 'state',
-        text: tiltedExists && tilted ? 'Tilted' : opened ? 'Opened' : 'Closed',
+        text: opened
+          ? 'Opened'
+          : tiltedExists
+          ? tilted
+            ? 'Tilted'
+            : 'Closed'
+          : 'Closed',
       },
     ],
     [opened, tilted, tiltedExists]
