@@ -19,8 +19,10 @@
     "dexie": "^3.2.2",
     "dexie-react-hooks": "^1.1.1",
     "framer-motion": "^6.3.3",
+    "i18next": "^21.9.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-i18next": "^11.18.5",
     "recharts": "^2.1.13",
     "use-spring": "^0.2.4"
   },

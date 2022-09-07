@@ -1,0 +1,20 @@
+{
+  "home-greeting": "Mein Zuhause",
+  "all-devices-up-and-running": "Alle Geräte in Ordnung",
+  "x-devices-low-battery": "{{lowBatCount}} Geräte haben wenig Akku",
+  "one-device-low-battery": "1 Gerät hat wenig Akku",
+  "no-security-issues": "Keine Sicherheitsprobleme",
+  "x-security-issues": "{{openedCount}} Sicherheitsprobleme",
+  "one-security-issue": "1 Sicherheitsproblem",
+  "x-unavailable-one-low-battery": "{{unavailableCount}} Geräte offline • 1 Gerät mit wenig Akku",
+  "x-unavailable-x-low-battery": "{{unavailableCount}} Geräte offline • {{lowBatCount}} Geräte mit wenig Akku",
+  "one-unavailable-one-low-battery": "1 Gerät offline • 1 Gerät wenig Akku",
+  "one-unavailable-x-low-battery": "1 Gerät offline • {{lowBatCount}} Geräte wenig Akku",
+  "x-unavailable": "{{unavailableCount}} Geräte offline",
+  "tilted": "gekippt",
+  "opened": "geöffnet",
+  "is": "ist",
+  "is-low-on-battery": "hat wenig Akku",
+  "is-unavailable": "ist nicht erreichbar",
+  "settings": "Einstellungen"
+}

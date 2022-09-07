@@ -1,0 +1,20 @@
+{
+  "home-greeting": "My home",
+  "all-devices-up-and-running": "All devices are up and running",
+  "x-devices-low-battery": "{{lowBatCount}} devices are low on battery",
+  "one-device-low-battery": "1 device is low on battery",
+  "no-security-issues": "No security issues",
+  "x-security-issues": "{{openedCount}} security issues",
+  "one-security-issue": "1 security issue",
+  "x-unavailable-one-low-battery": "{{unavailableCount}} devices unavailable • 1 device low on battery",
+  "x-unavailable-x-low-battery": "{{unavailableCount}} devices unavailable • {{lowBatCount}} devices low on battery",
+  "one-unavailable-one-low-battery": "1 unavailable • 1 device low on battery",
+  "one-unavailable-x-low-battery": "1 device unavailable • {{lowBatCount}} devices low on battery",
+  "x-unavailable": "{{unavailableCount}} devices unavailable",
+  "tilted": "tilted",
+  "opened": "opened",
+  "is": "is",
+  "is-low-on-battery": "is low on battery",
+  "is-unavailable": "is unavailable",
+  "settings": "Settings"
+}

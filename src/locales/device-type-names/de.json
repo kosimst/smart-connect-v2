@@ -1,0 +1,23 @@
+{
+  "fan": "",
+  "room-light": "",
+  "light": "",
+  "shutter": "",
+  "window-opener": "",
+  "plug": "",
+  "presence-sensor": "",
+  "bed-occupancy-sensor": "",
+  "door-sensor": "",
+  "entrance-door-sensor": "",
+  "climate-sensor": "",
+  "brightness-sensor": "",
+  "wireless-switch": "",
+  "valve": "",
+  "speed-test": "",
+  "music-server": "",
+  "window-tilted-sensor": "",
+  "window-opened-sensor": "",
+  "routine": "",
+  "nuki-opener": "",
+  "switch": ""
+}
