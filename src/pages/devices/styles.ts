@@ -62,7 +62,7 @@ export const LinksGrid = styled(motion.div)`
   justify-items: center;
   font-weight: 500;
   position: absolute;
-  bottom: 48px;
+  bottom: 16px;
   width: calc(100vw - 32px);
 `
 

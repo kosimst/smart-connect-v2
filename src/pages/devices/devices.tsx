@@ -360,12 +360,6 @@ const DevicesPage: FC = () => {
           <span>Settings</span>
         </Link>
       </LinksGrid>
-
-      <Version>
-        {parseInt(import.meta.env.VITE_APP_VERSION)
-          ? new Date(import.meta.env.VITE_APP_VERSION).toLocaleString('de-AT')
-          : 'dev'}
-      </Version>
     </>
   )
 }
