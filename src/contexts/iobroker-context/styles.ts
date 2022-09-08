@@ -22,7 +22,7 @@ export const Input = styled(TextField)``
 export const Button = styled(MuiButton)``
 
 export const Title = styled(Typography)`
-  margin-bottom: 16px;
+  margin-bottom: 32px;
 `
 
 export const Subtitle = styled.h2``
@@ -38,4 +38,8 @@ export const OfflineContainer = styled(motion.div)`
     font-size: 64px;
     display: block;
   }
+`
+
+export const HttpsAdornment = styled.div`
+  padding-top: 18px;
 `

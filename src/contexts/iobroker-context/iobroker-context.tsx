@@ -11,7 +11,14 @@ import {
 } from 'react'
 import Icon from '../../components/icon'
 import ioBrokerDb from '../../db/iobroker-db'
-import { Button, Container, Input, OfflineContainer, Title } from './styles'
+import {
+  Button,
+  Container,
+  HttpsAdornment,
+  Input,
+  OfflineContainer,
+  Title,
+} from './styles'
 
 const ALIVE_STATE = 'system.adapter.admin.0.alive'
 
@@ -248,9 +255,10 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
             disabled={loading}
             helperText={error}
             InputProps={{
-              startAdornment: 'https://',
+              startAdornment: <HttpsAdornment>https://</HttpsAdornment>,
             }}
             autoCapitalize="none"
+            variant="filled"
           />
 
           <Input
@@ -263,6 +271,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
             disabled={loading}
             autoCapitalize="none"
             type="text"
+            variant="filled"
           />
 
           <Input
@@ -275,6 +284,7 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
             disabled={loading}
             autoCapitalize="none"
             type="password"
+            variant="filled"
           />
 
           <Button

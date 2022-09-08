@@ -8,7 +8,8 @@ const baseTheme = createTheme({
       lineHeight: 1,
     },
     h1: {
-      fontSize: '2.5rem',
+      fontSize: '2.25rem',
+      fontWeight: 500,
     },
     h2: {
       fontSize: 22,
@@ -27,6 +28,15 @@ const baseTheme = createTheme({
     primary: blueGrey,
   },
   shadows: Array(10).fill('none') as Shadows,
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          padding: '8px',
+        },
+      },
+    },
+  },
 })
 
 export default baseTheme
