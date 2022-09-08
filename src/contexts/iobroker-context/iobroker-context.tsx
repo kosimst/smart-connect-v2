@@ -162,6 +162,12 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
     }
   }, [urlInput, cfIdInput, cfSecretInput])
 
+  const fillOutDemo = useCallback(() => {
+    setUrlInput('us-central1-smart-connect-pwa.cloudfunctions.net')
+    setCfIdInput('demo.access')
+    setCfSecretInput('demo-secret')
+  }, [])
+
   return (
     <AnimatePresence>
       {url && !loading ? (
@@ -279,6 +285,16 @@ export const IoBrokerProvider: FC<{ children?: ReactNode }> = ({
             onClick={submit}
           >
             {loading ? 'Loading...' : 'Connect'}
+          </Button>
+
+          <Button
+            variant="outlined"
+            fullWidth
+            disabled={loading}
+            disableElevation
+            onClick={fillOutDemo}
+          >
+            Try with demo instance
           </Button>
         </Container>
       )}

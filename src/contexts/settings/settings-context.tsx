@@ -90,6 +90,9 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
         .then((subscription) => {
           setPushSubscriptionDetails(subscription.toJSON())
         })
+        .catch((e) => {
+          console.error(e)
+        })
     })
   }, [vapidPublicKey, pushPermission])
 
