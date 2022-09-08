@@ -10,6 +10,12 @@ If you stumbled on this repo already and want to use Smart Connect, but miss doc
 
 If you have any ideas on new features or on any improvements (technical, UI, whatever), please feel free to just open an issue!
 
+## Try it
+
+To make yourself a picture of this app, just head to https://smart-connect-pwa.web.app/ on your mobile device and connect to the demo mode.
+
+Note: In demo mode, Smart Connect doesn't connect to a real ioBroker instance, but rather to a API endpoint which simulates a home. As changes don't persist, device states will change on every sync (every 3s).
+
 ## Overview
 
 Smart Connect is a PWA (=Progressive Web App) to control your devices in ioBroker.
