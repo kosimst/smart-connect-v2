@@ -36,9 +36,11 @@ const useLowBatteryDevices = () => {
 
   useEffect(() => {
     const getDevices = async () => {
-      const devices = (await ioBrokerDb.devices.bulkGet(
-        lowBatteryDeviceIds.map((d) => d.deviceId)
-      )) as Device[]
+      const devices = (
+        await ioBrokerDb.devices.bulkGet(
+          lowBatteryDeviceIds.map((d) => d.deviceId)
+        )
+      ).filter(Boolean) as Device[]
 
       setInfos(
         devices.map((d) => ({
