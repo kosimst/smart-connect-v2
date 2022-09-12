@@ -1,5 +1,9 @@
 /// <reference lib="webworker" />
 
+import { expose } from 'comlink'
+import { signal, computed, effect } from '@preact/signals-core'
+
+import { SubscriptionPriority } from '.'
 import {
   BACKGROUND_PRIORITY_REFETCH_INTERVAL,
   DEVICES_REFETCH_INTERVAL,
@@ -7,200 +11,53 @@ import {
   DEVICE_STATE_REFETCH_DELAY,
   HIGH_PRIORITY_REFETCH_INTERVAL,
   LOW_PRIORITY_REFETCH_INTERVAL,
-  MAX_BULK_GET_SIZE,
   STATE_REFETCH_INTERVAL,
   SUBSCRIPTION_FETCH_DEBOUNCE_INTERVAL,
 } from '../../config/local-iobroker'
 import { isSupportedDeviceType } from '../../constants/device-definitions'
 import ioBrokerDb from '../../db/iobroker-db'
-import nSizedChunks from '../../helpers/n-sized-chunks'
-import Device from '../../types/device'
-import syncDb from './sync-db'
-import { expose } from 'comlink'
-import setWaitingInterval from '../../helpers/waiting-interval'
-import sleep from '../../helpers/sleep'
-import { SubscriptionPriority } from '.'
 import randomUUID from '../../helpers/randomUUID'
+import sleep from '../../helpers/sleep'
+import setWaitingInterval from '../../helpers/waiting-interval'
+import Device from '../../types/device'
+import fetchStates from './fetchers/fetch-states'
+import getStatesWithPriority from './get-states-with-priority'
+import syncDb from './sync-db'
+import Credentials from '../../types/credentials'
+import fetchDevices from './fetchers/fetch-devices'
 
-let highCount = 0
+const highCount = signal(0)
+const highPriorityMode = computed(() => highCount.value > 0)
 
-const subscriptions = new Map<
-  string,
-  {
-    [key in SubscriptionPriority]?: Set<string>
-  }
->()
+const subscriptions = signal(
+  new Map<
+    string,
+    {
+      [key in SubscriptionPriority]?: Set<string>
+    }
+  >()
+)
 
-const pausedSet = new Set<string>()
+const pausedSet = signal(new Set<string>())
 
 const pause = () => {
   const id = randomUUID()
-  pausedSet.add(id)
+  pausedSet.value = new Set([...pausedSet.value, id])
 
-  return () => pausedSet.delete(id)
-}
-
-const getPaused = () => !!pausedSet.size
-
-const getStatesWithPriority = (priority: SubscriptionPriority) => {
-  const priorityOrder = [
-    'high',
-    'medium',
-    'low',
-    'background',
-  ] as SubscriptionPriority[]
-
-  const states = new Set<string>()
-
-  for (const [state, priorities] of subscriptions) {
-    for (const priorityEntry of priorityOrder) {
-      if (priorityEntry !== priority) {
-        continue
-      }
-
-      const higherPriorities = priorityOrder.slice(
-        0,
-        priorityOrder.indexOf(priorityEntry)
-      )
-      const hasHigherPriority = higherPriorities.some(
-        (higherPriority) => !!priorities[higherPriority]?.size
-      )
-
-      if (hasHigherPriority) {
-        break
-      }
-
-      if (priorityEntry === priority && priorities[priorityEntry]?.size) {
-        states.add(state)
-        break
-      }
-    }
-  }
-
-  if (priority === 'high') {
-    highCount = states.size
-  }
-
-  return states
-}
-
-const data = {
-  credentials: null,
-  states: Array<string>(),
-} as Parameters<typeof syncDb>['0']
-
-const initialSync = syncDb(data)
-
-const fetchStates = async (stateIds: string[]) => {
-  const { credentials } = data
-
-  if (!credentials || !stateIds.length) {
-    return
-  }
-
-  const { url, cfClientId, cfClientSecret } = credentials
-
-  const chunks = nSizedChunks(stateIds, MAX_BULK_GET_SIZE)
-
-  for (const chunk of chunks) {
-    const path = '/getBulk/' + chunk.join(',')
-
-    try {
-      const response = await fetch(`https://${url}${path}`, {
-        headers: {
-          'CF-Access-Client-Id': cfClientId,
-          'CF-Access-Client-Secret': cfClientSecret,
-        },
-      })
-
-      if (response.status !== 200) {
-        return
-      }
-
-      const json = await response.json()
-      const newStates = json
-        .filter(({ id }: any) => !!id)
-        .map(({ id, val: value }: any) => ({
-          id,
-          value,
-          ts: new Date(),
-          role: id.split('.').at(-1),
-        })) as {
-        id: string
-        value: any
-        ts: Date
-        role: string
-      }[]
-
-      await ioBrokerDb.states.bulkPut(newStates)
-    } catch (error) {
-      console.error(error)
-    }
+  return () => {
+    const prev = pausedSet.value
+    const newSet = new Set(prev)
+    newSet.delete(id)
+    pausedSet.value = newSet
   }
 }
 
-const fetchDevices = async () => {
-  const { credentials } = data
+const isPaused = computed(() => pausedSet.value.size > 0)
 
-  if (!credentials) {
-    return
-  }
+const credentials = signal(null as Credentials | null)
+const states = signal(new Set<string>())
 
-  const { url, cfClientId, cfClientSecret } = credentials
-
-  const res = await fetch(
-    `https://${url}/objects?pattern=alias.0.*&type=channel`,
-    {
-      headers: {
-        'CF-Access-Client-Id': cfClientId,
-        'CF-Access-Client-Secret': cfClientSecret,
-      },
-    }
-  )
-
-  if (!res.ok) {
-    console.warn(`Failed to fetch devices: ${res.status} (${res.statusText})`)
-    return
-  }
-
-  const json = await res.json()
-
-  const newDevices = Array<Device>()
-
-  for (const {
-    common: { name, role },
-    _id: id,
-    enums,
-  } of Object.values<any>(json)) {
-    if (!isSupportedDeviceType(role)) {
-      continue
-    }
-
-    const roomName = Object.entries(enums).find(
-      ([k, v]) => k.startsWith('enum.rooms.') && v
-    )?.[1] as string | undefined
-
-    newDevices.push({
-      id,
-      name,
-      type: role,
-      roomName,
-    })
-  }
-
-  await ioBrokerDb.devices.bulkPut(newDevices)
-
-  const devices = await ioBrokerDb.devices.toArray()
-  const devicesToRemove = devices
-    .filter(
-      (device) => !newDevices.some((newDevice) => newDevice.id == device.id)
-    )
-    .map((device) => device.id)
-
-  if (devicesToRemove.length) {
-    await ioBrokerDb.devices.bulkDelete(devicesToRemove)
-  }
-}
+const initialSync = syncDb(credentials, states)
 
 let active = false
 
@@ -212,13 +69,15 @@ let clearSyncDevicesInterval: () => void
 
 const fetchStatesWithPriority =
   (priority: SubscriptionPriority) => async () => {
-    if (getPaused() || (priority !== 'high' && highCount)) {
+    if (isPaused.value || (priority !== 'high' && highPriorityMode.value)) {
       return
     }
 
-    const states = getStatesWithPriority(priority)
+    const states = getStatesWithPriority(subscriptions.value, priority)
 
-    await fetchStates(Array.from(states))
+    if (credentials.value) {
+      await fetchStates(Array.from(states), credentials.value)
+    }
   }
 
 const start = async () => {
@@ -230,10 +89,13 @@ const start = async () => {
 
   await initialSync
 
-  clearSyncDevicesInterval = setWaitingInterval(
-    fetchDevices,
-    DEVICES_REFETCH_INTERVAL
-  )
+  clearSyncDevicesInterval = setWaitingInterval(async () => {
+    if (!credentials.value) {
+      return
+    }
+
+    await fetchDevices(credentials.value)
+  }, DEVICES_REFETCH_INTERVAL)
   clearSyncLowPriorityInterval = setWaitingInterval(
     fetchStatesWithPriority('low'),
     LOW_PRIORITY_REFETCH_INTERVAL
@@ -247,17 +109,20 @@ const start = async () => {
     HIGH_PRIORITY_REFETCH_INTERVAL
   )
   clearSyncBackgroundPriorityInterval = setWaitingInterval(async () => {
-    if (getPaused() || highCount) {
+    if (isPaused.value || highPriorityMode.value) {
       return
     }
 
-    const backgroundStates = getStatesWithPriority('background')
-    const unsubscribedStates = data.states.filter((state) => {
-      if (!subscriptions.has(state)) {
+    const backgroundStates = getStatesWithPriority(
+      subscriptions.value,
+      'background'
+    )
+    const unsubscribedStates = [...states.value].filter((state) => {
+      if (!subscriptions.value.has(state)) {
         return true
       }
 
-      const priorities = subscriptions.get(state)!
+      const priorities = subscriptions.value.get(state)!
       const hasSubscriptions = Object.values(priorities).some(
         (priority) => !!priority?.size
       )
@@ -265,10 +130,15 @@ const start = async () => {
       return !hasSubscriptions
     })
 
-    await fetchStates([...backgroundStates, ...unsubscribedStates])
+    if (credentials.value) {
+      await fetchStates(
+        [...backgroundStates, ...unsubscribedStates],
+        credentials.value
+      )
+    }
   }, BACKGROUND_PRIORITY_REFETCH_INTERVAL)
 
-  setTimeout(fetchDevices, 2000)
+  setTimeout(() => credentials.value && fetchDevices(credentials.value), 2000)
 }
 
 const stop = () => {
@@ -290,7 +160,9 @@ const refetchDevice = async (deviceId: string) => {
 
   for (let i = 0; i < DEVICE_STATE_REFETCH_COUNT; i++) {
     await sleep(DEVICE_STATE_REFETCH_DELAY)
-    await fetchStates(deviceStates)
+    if (credentials.value) {
+      await fetchStates(deviceStates, credentials.value)
+    }
   }
 
   resume()
@@ -307,17 +179,19 @@ const subscribeState = async (id: string, priority: SubscriptionPriority) => {
     recentlyAdded.add(id)
 
     fetchRecentlyAddedTimeout = setTimeout(() => {
-      fetchStates(Array.from(recentlyAdded))
+      if (credentials.value) {
+        fetchStates(Array.from(recentlyAdded), credentials.value)
+      }
       recentlyAdded.clear()
     }, SUBSCRIPTION_FETCH_DEBOUNCE_INTERVAL)
   }
 
-  const oldSubscriptions = subscriptions.get(id) || {}
+  const oldSubscriptions = subscriptions.value.get(id) || {}
   const oldSet = oldSubscriptions[priority] || new Set<string>()
 
   oldSet.add(subscriptionId)
 
-  subscriptions.set(id, {
+  subscriptions.value = new Map(subscriptions.value).set(id, {
     ...oldSubscriptions,
     [priority]: oldSet,
   })
@@ -326,7 +200,7 @@ const subscribeState = async (id: string, priority: SubscriptionPriority) => {
 }
 
 const unsubscribeState = async (subscriptionId: string) => {
-  for (const priorities of subscriptions.values()) {
+  for (const priorities of subscriptions.value.values()) {
     for (const ids of Object.values(priorities)) {
       ids.delete(subscriptionId)
     }
