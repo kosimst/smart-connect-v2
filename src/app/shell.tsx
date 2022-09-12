@@ -5,6 +5,7 @@ import { DeviceDetailsProvider } from '../contexts/device-details/device-details
 import { IoBrokerProvider } from '../contexts/iobroker-context'
 import { IoBrokerStatesProvider } from '../contexts/iobroker-states-context'
 import { SettingsProvider } from '../contexts/settings'
+import ShareTarget from '../contexts/share-target'
 import ErrorBoundary from '../helpers/error-boundary'
 import useNoContextMenu from '../hooks/use-no-context-menu'
 import usePreventAlert from '../hooks/use-prevent-alert'
@@ -21,7 +22,9 @@ const Shell: FC = () => {
           <IoBrokerStatesProvider>
             <SettingsProvider>
               <DeviceDetailsProvider>
-                <App />
+                <ShareTarget>
+                  <App />
+                </ShareTarget>
               </DeviceDetailsProvider>
             </SettingsProvider>
           </IoBrokerStatesProvider>

@@ -44,6 +44,16 @@ export default defineConfig({
             purpose: 'any',
           },
         ],
+        // @ts-ignore
+        share_target: {
+          action: '/',
+          method: 'GET',
+          params: {
+            title: 'title',
+            text: 'text',
+            url: 'url',
+          },
+        },
       },
       includeAssets: 'public',
     }),
