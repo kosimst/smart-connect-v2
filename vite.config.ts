@@ -46,7 +46,7 @@ export default defineConfig({
         ],
         // @ts-ignore
         share_target: {
-          action: '/',
+          action: '/_share-target',
           method: 'GET',
           params: {
             title: 'title',
