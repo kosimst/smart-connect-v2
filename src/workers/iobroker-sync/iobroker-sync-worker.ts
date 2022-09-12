@@ -26,9 +26,6 @@ import syncDb from './sync-db'
 import Credentials from '../../types/credentials'
 import fetchDevices from './fetchers/fetch-devices'
 
-const highCount = signal(0)
-const highPriorityMode = computed(() => highCount.value > 0)
-
 const subscriptions = signal(
   new Map<
     string,
@@ -37,6 +34,11 @@ const subscriptions = signal(
     }
   >()
 )
+
+const highCount = computed(
+  () => getStatesWithPriority(subscriptions.value, 'high').size
+)
+const highPriorityMode = computed(() => highCount.value > 0)
 
 const pausedSet = signal(new Set<string>())
 
@@ -205,6 +207,8 @@ const unsubscribeState = async (subscriptionId: string) => {
       ids.delete(subscriptionId)
     }
   }
+
+  subscriptions.value = new Map(subscriptions.value)
 }
 
 const workerMethods = {
