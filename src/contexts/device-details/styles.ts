@@ -3,14 +3,19 @@ import { Typography } from '@mui/material'
 import { motion } from 'framer-motion'
 
 export const Card = styled(motion.div)`
+  margin: auto;
   position: relative;
-  height: 90vh;
+  height: auto;
+  min-height: 60vh;
   width: 100vw;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   background: white;
   padding: 40px 16px;
   overflow-x: hidden;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
+
+  max-width: 600px;
 
   &::after {
     content: '';

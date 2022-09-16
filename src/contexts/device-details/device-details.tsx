@@ -108,7 +108,7 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
               marginTop: '100vh',
             }}
             animate={{
-              marginTop: '10vh',
+              marginTop: '40vh',
             }}
             exit={{
               marginTop: '100vh',

@@ -104,6 +104,7 @@ export const StatusContainer = styled.div`
   grid-template-columns: 1fr;
   gap: 16px;
   margin-top: 16px;
+  max-width: 500px;
 `
 
 export const StyledExpandableStatus = styled(ExpandableStatus)``

@@ -64,9 +64,14 @@ const ExpandableStatus = forwardBaseProps<ExpandableStatusProps>(
               </motion.span>
             </AnimatePresence>
           </span>
-          <IconButton size="small" onClick={toggle}>
-            <Icon icon={expanded ? 'expand_less' : 'expand_more'} />
-          </IconButton>
+          {
+            // @ts-ignore
+            children?.length > 0 && (
+              <IconButton size="small" onClick={toggle}>
+                <Icon icon={expanded ? 'expand_less' : 'expand_more'} />
+              </IconButton>
+            )
+          }
         </StatusText>
 
         <ChildrenContainer>{children}</ChildrenContainer>
