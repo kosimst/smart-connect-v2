@@ -68,8 +68,8 @@ self.addEventListener('push', (event) => {
   const {
     title,
     options: {
-      badge = 'default',
-      icon = 'default',
+      badge = 'https://us-central1-smart-connect-pwa.cloudfunctions.net/notifyIcon?icon=home_iot_device&badge=true?size=96',
+      icon = 'https://us-central1-smart-connect-pwa.cloudfunctions.net/notifyIcon?icon=home_iot_device?size=196',
       body,
       silent,
       tag,
@@ -93,8 +93,8 @@ self.addEventListener('push', (event) => {
   }
 
   self.registration.showNotification(title, {
-    icon: `/notify/icons/${icon}.png`,
-    badge: `/notify/badges/${badge}.png`,
+    icon,
+    badge,
     body,
     silent,
     tag,
