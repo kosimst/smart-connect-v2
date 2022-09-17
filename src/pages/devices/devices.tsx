@@ -13,6 +13,7 @@ import deviceDefinitions, {
 import useDeviceDetails from '../../contexts/device-details'
 import { useSettings } from '../../contexts/settings'
 import groupBy from '../../helpers/group-by'
+import toKebabCase from '../../helpers/to-kebab-case'
 import useDevices from '../../hooks/use-devices'
 import useLowBatteryDevices from '../../hooks/use-low-battery-devices'
 import useOpenedDevices from '../../hooks/use-opened-devices'
@@ -328,7 +329,7 @@ const DevicesPage: FC = () => {
               }}
               variant="h2"
             >
-              {roomName}
+              <a id={'#' + toKebabCase(roomName)}>{roomName}</a>
             </RoomTitle>
             <div className="shadow"></div>
 
