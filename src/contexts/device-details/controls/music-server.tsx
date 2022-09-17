@@ -15,7 +15,7 @@ import { Fix, SliderFlex } from './styles'
 const Controls: FC<{
   device: Device
 }> = ({ device }) => {
-  const [active] = useDeviceState(device, 'active', false, 'high')
+  const [active, setActive] = useDeviceState(device, 'active', false, 'high')
   const [artist] = useDeviceState(device, 'artist', '', 'high')
   const [title] = useDeviceState(device, 'title', '', 'high')
   const [progress, setProgress] = useDeviceState(device, 'progress', 0, 'high')
@@ -67,6 +67,9 @@ const Controls: FC<{
     const newProgress = newMs / durationMs
     setProgress(newProgress)
   }, [progress, setProgress])
+  const stop = useCallback(() => {
+    setActive(false)
+  }, [setActive])
 
   return (
     <>
@@ -95,6 +98,9 @@ const Controls: FC<{
 
             <IconButton onClick={toggle}>
               <Icon icon={paused ? 'play_arrow' : 'pause'} />
+            </IconButton>
+            <IconButton onClick={stop}>
+              <Icon icon="stop" />
             </IconButton>
             <IconButton onClick={toggleMute}>
               <Icon icon={volume === 0 ? 'volume_up' : 'volume_off'} />
