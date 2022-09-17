@@ -28,6 +28,22 @@ export const Card = styled(motion.div)<{
   &[hidden] {
     display: none;
   }
+
+  @media (min-width: 500px) {
+    outline-color: transparent;
+
+    transition: outline-color 0.2s ease-in-out;
+
+    &:focus-within,
+    &:active,
+    &:focus {
+      outline-color: ${({ bgColor, active }) =>
+        active ? bgColor : inactiveBgColor};
+      outline-offset: 2px;
+      outline-width: 2px;
+      outline-style: solid;
+    }
+  }
 `
 
 export const ColoredIcon = styled(Icon)`
@@ -88,6 +104,10 @@ export const Slider = styled.input<{
     pointer-events: auto;
     height: 999px;
     width: 16px;
+  }
+
+  &:focus {
+    outline: none;
   }
 `
 

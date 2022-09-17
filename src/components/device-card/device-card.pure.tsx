@@ -1,7 +1,8 @@
-import TouchRipple from '@mui/material/ButtonBase/TouchRipple'
+import { useMediaQuery } from '@mui/material'
 import { AnimatePresence, motion, MotionProps } from 'framer-motion'
 import {
   FC,
+  KeyboardEventHandler,
   memo,
   MouseEventHandler,
   useCallback,
@@ -12,7 +13,8 @@ import {
 } from 'react'
 import clamp from '../../helpers/clamp'
 import preventDefault from '../../helpers/prevent-default'
-import useScrollLock from '../../hooks/use-scoll-lock'
+import silentObject from '../../helpers/silent-object'
+import useFocusOnHover from '../../hooks/use-focus-on-hover'
 import useSpring from '../../hooks/use-spring'
 import Icon from '../icon'
 import { AvailableIcon } from '../icon/available-icons'
@@ -69,7 +71,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
     [onToggleChange]
   )
 
-  const [actualSliderValue, setActualSliderValue] = useState(50)
+  const actualSliderValue = useRef(50)
   const [isSliding, setIsSliding] = useState(false)
 
   const onCardClick = useCallback(() => {
@@ -92,7 +94,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
       setLastSlide(Date.now())
 
       const value = e.target.valueAsNumber
-      setActualSliderValue(value)
+      actualSliderValue.current = value
     },
     [canSlide]
   )
@@ -104,7 +106,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
 
     const timeout = setTimeout(() => {
       setIsSliding(false)
-    }, 1000)
+    }, 1500)
 
     return () => clearTimeout(timeout)
   }, [setIsSliding, isSliding, lastSlide])
@@ -116,21 +118,12 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
       return
     }
 
-    if (actualSliderValue === sliderValue) {
+    if (actualSliderValue.current === sliderValue) {
       return
     }
 
-    setIsSliding(false)
-    onSliderChangeCb!(actualSliderValue)
-  }, [
-    canSlide,
-    onSliderChangeCb,
-    isSliding,
-    actualSliderValue,
-    sliderValue,
-    toggleValue,
-    onToggleChange,
-  ])
+    onSliderChangeCb!(actualSliderValue.current)
+  }, [canSlide, onSliderChangeCb, isSliding, actualSliderValue, toggleValue])
 
   useEffect(() => {
     if (!sliderRef.current) {
@@ -147,12 +140,67 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
   }, [onSlideEnd])
 
   useEffect(() => {
-    setActualSliderValue(sliderValue)
+    actualSliderValue.current = sliderValue
   }, [sliderValue])
 
   const sliderValueSpring = useSpring(
-    clamp(actualSliderValue, [0, 100]),
+    clamp(actualSliderValue.current, [0, 100]),
     !isSliding
+  )
+
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  const isDesktop = useMediaQuery('(min-width: 600px)')
+
+  useFocusOnHover(cardRef, sliderRef, 500, 250, isDesktop)
+
+  const [keyDownTimeout, setKeyDownTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null)
+  const onKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    (e) => {
+      if (
+        e.key === 'Tab' ||
+        !['ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)
+      ) {
+        return
+      }
+
+      if (e.key === 'ArrowLeft') {
+        actualSliderValue.current = clamp(
+          actualSliderValue.current - 5,
+          [0, 100]
+        )
+      } else if (e.key === 'ArrowRight') {
+        actualSliderValue.current = clamp(
+          actualSliderValue.current + 5,
+          [0, 100]
+        )
+      } else if (e.key === 'Enter') {
+        onContextMenu?.(silentObject())
+      }
+
+      if (['ArrowLeft', 'ArrowRight'].includes(e.key) && canSlide) {
+        e.preventDefault()
+        setIsSliding(true)
+        setLastSlide(Date.now())
+        if (keyDownTimeout) {
+          clearTimeout(keyDownTimeout)
+        }
+        const newTimeout = setTimeout(() => {
+          onSlideEnd()
+        }, 1000)
+
+        setKeyDownTimeout(newTimeout)
+      }
+    },
+    [
+      canSlide,
+      onSlideEnd,
+      keyDownTimeout,
+      actualSliderValue.current,
+      onContextMenu,
+    ]
   )
 
   return (
@@ -191,6 +239,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
         layout
         onContextMenu={onContextMenu}
         hidden={!visible}
+        ref={cardRef}
       >
         <Slider
           type="range"
@@ -208,6 +257,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
           step={1}
           min={0}
           max={100}
+          onKeyDown={onKeyDown}
         />
 
         <ContentContainer>
@@ -276,7 +326,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
                       }}
                       exit={{ opacity: 0 }}
                     >
-                      {`${actualSliderValue}%`}
+                      {`${actualSliderValue.current}%`}
                     </motion.span>
                   )}
                 </State>

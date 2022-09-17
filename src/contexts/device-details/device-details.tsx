@@ -6,6 +6,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -73,6 +74,18 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   const isWindowSensor = openedDevice?.type === 'window-opened-sensor'
 
   const noControlsAvailable = !hasHistory && !Controls && !isWindowSensor
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        close()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [close])
 
   return (
     <>

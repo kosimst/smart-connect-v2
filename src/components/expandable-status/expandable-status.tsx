@@ -1,6 +1,6 @@
 import { Chip, IconButton } from '@mui/material'
 import { AnimatePresence, motion, Transition, Variants } from 'framer-motion'
-import { ReactNode, useState, useCallback } from 'react'
+import { ReactNode, useState, useCallback, useEffect, useRef } from 'react'
 import forwardBaseProps from '../../helpers/forward-base-props'
 import Icon from '../icon'
 import { AvailableIcon } from '../icon/available-icons'
@@ -42,6 +42,18 @@ const ExpandableStatus = forwardBaseProps<ExpandableStatusProps>(
       [setExpanded]
     )
 
+    const containerRef = useRef<HTMLDivElement | null>(null)
+
+    useEffect(() => {
+      if (!containerRef.current) return
+
+      if (!expanded) {
+        containerRef.current.setAttribute('inert', '')
+      } else {
+        containerRef.current.removeAttribute('inert')
+      }
+    }, [expanded])
+
     return (
       <Container
         {...baseProps}
@@ -74,7 +86,7 @@ const ExpandableStatus = forwardBaseProps<ExpandableStatusProps>(
           }
         </StatusText>
 
-        <ChildrenContainer>{children}</ChildrenContainer>
+        <ChildrenContainer ref={containerRef}>{children}</ChildrenContainer>
       </Container>
     )
   }

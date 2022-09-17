@@ -1,7 +1,7 @@
 import { StyledComponent } from '@emotion/styled'
 import { Chip, Typography } from '@mui/material'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
+import { FC, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import forwardBaseProps from '../../helpers/forward-base-props'
 import Icon from '../icon'
 import { Chips, Container } from './styles'
@@ -36,11 +36,24 @@ const ExpandableChips = forwardBaseProps<ExpandableChipsProps, HTMLDivElement>(
       []
     )
 
+    const containerRef = useRef<HTMLDivElement | null>(null)
+
+    useEffect(() => {
+      if (!containerRef.current) return
+
+      if (!expanded) {
+        containerRef.current.setAttribute('inert', '')
+      } else {
+        containerRef.current.removeAttribute('inert')
+      }
+    }, [expanded])
+
     return (
       <Container
         initial="collapsed"
         animate={expanded ? 'expanded' : 'collapsed'}
         {...baseProps}
+        ref={containerRef}
       >
         <Chips variants={chipsVariants}>{children}</Chips>
       </Container>

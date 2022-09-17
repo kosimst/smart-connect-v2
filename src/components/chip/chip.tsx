@@ -24,6 +24,8 @@ const Chip: FC<ChipProps> = ({
         label={children}
         variant={selected ? 'filled' : 'outlined'}
         icon={<Icon icon={icon} />}
+        tabIndex={0}
+        role="button"
       />
     </Container>
   )

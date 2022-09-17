@@ -15,7 +15,7 @@ export const Card = styled(motion.div)`
   overflow-x: hidden;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
 
-  max-width: 600px;
+  max-width: 700px;
 
   &::after {
     content: '';
