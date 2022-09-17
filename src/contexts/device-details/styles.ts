@@ -35,6 +35,7 @@ export const FixedChildren = styled.div`
   position: fixed;
   inset: 0;
   overflow-y: auto;
+  overflow-x: hidden;
 `
 
 export const Backdrop = styled(motion.div)`

@@ -8,9 +8,6 @@ const App: FC = () => {
       <Main>
         <DevicesPage />
       </Main>
-      {/* <Toast type="error" visible>
-        Not connected to ioBroker
-      </Toast> */}
     </>
   )
 }
