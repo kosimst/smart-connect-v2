@@ -34,7 +34,7 @@ import { DataText } from './use-data-hook/data-hook'
 
 export type PureDeviceCardProps = {
   icon: AvailableIcon
-  color: Color
+  accentColor: Color
   name: string
   texts?: DataText[]
   toggleValue?: boolean
@@ -49,7 +49,7 @@ export type PureDeviceCardProps = {
 
 const PureDeviceCard: FC<PureDeviceCardProps> = ({
   icon,
-  color,
+  accentColor: color,
   name,
   texts = [],
   toggleValue = true,

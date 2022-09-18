@@ -90,8 +90,7 @@ const ShareTarget: FC<{
                     {musicServers.map((musicServer) => (
                       <DeviceCardPure
                         key={musicServer.id}
-                        bgColor={deviceDefinitions['music-server'].bgColor}
-                        color={deviceDefinitions['music-server'].color}
+                        accentColor={deviceDefinitions['music-server'].color}
                         icon={deviceDefinitions['music-server'].icon}
                         name={
                           musicServer.name ||
