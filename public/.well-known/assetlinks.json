@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "app.web.smart_connect_pwa.twa",
+                     "sha256_cert_fingerprints": ["4F:15:2B:26:06:25:22:62:CD:EE:1B:91:A0:3A:E1:AE:70:14:57:67:3A:60:6F:1A:FC:6D:FD:62:A0:28:5E:EE"] }
+      }
+]
