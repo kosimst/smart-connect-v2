@@ -90,7 +90,6 @@ export const ColoredIcon = styled(Icon)`
 `
 
 export const Name = styled.div`
-  opacity: 0.9;
   font-size: 14px;
   color: currentColor;
 `
