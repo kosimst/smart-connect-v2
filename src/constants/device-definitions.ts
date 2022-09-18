@@ -10,25 +10,25 @@ import {
 
 const colors = {
   light: {
-    color: amber,
+    accentColor: amber,
   },
   sensor: {
-    color: purple,
+    accentColor: purple,
   },
   security: {
-    color: deepOrange,
+    accentColor: deepOrange,
   },
   openedLevel: {
-    color: teal,
+    accentColor: teal,
   },
   routine: {
-    color: pink,
+    accentColor: pink,
   },
   default: {
-    color: blue,
+    accentColor: blue,
   },
   media: {
-    color: indigo,
+    accentColor: indigo,
   },
 }
 
