@@ -1,31 +1,34 @@
+import {
+  amber,
+  blue,
+  deepOrange,
+  indigo,
+  pink,
+  purple,
+  teal,
+} from '@mui/material/colors'
+
 const colors = {
   light: {
-    color: '#EF6C00',
-    bgColor: '#FFECB3',
+    color: amber,
   },
   sensor: {
-    color: '#4527A0',
-    bgColor: '#D1C4E9',
+    color: purple,
   },
   security: {
-    color: '#D84315',
-    bgColor: '#FFCCBC',
+    color: deepOrange,
   },
   openedLevel: {
-    color: '#00695C',
-    bgColor: '#B2DFDB',
+    color: teal,
   },
   routine: {
-    color: '#AD1457',
-    bgColor: '#F8BBD0',
+    color: pink,
   },
   default: {
-    color: '#1565C0',
-    bgColor: '#CCE4FC',
+    color: blue,
   },
   media: {
-    color: '#3F51B5',
-    bgColor: '#C5CAE9',
+    color: indigo,
   },
 }
 
@@ -180,11 +183,4 @@ export function assertSupportedDeviceType(
     throw new Error(`Unsupported device type: ${type}`)
   }
 }
-
-export const inactiveSliderColor = '#DFDFDF'
-
-export const inactiveBgColor = '#ECECEC'
-
-export const inactiveColor = '#585858'
-
 export default deviceDefinitions

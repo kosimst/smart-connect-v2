@@ -1,21 +1,17 @@
 import styled from '@emotion/styled'
-import Color from 'color'
+import { Color } from '@mui/material'
+import { grey } from '@mui/material/colors'
 import { motion } from 'framer-motion'
-import {
-  inactiveBgColor,
-  inactiveColor,
-  inactiveSliderColor,
-} from '../../constants/device-definitions'
 import Icon from '../icon'
 
 export const Card = styled(motion.div)<{
-  fgColor: string
-  bgColor: string
+  accentColor: Color
   active: boolean
 }>`
-  background-color: ${({ bgColor, active }) =>
-    active ? new Color(bgColor).lighten(0.1).hex() : inactiveBgColor};
-  color: ${(props) => (props.active ? props.fgColor : inactiveColor)};
+  background-color: ${({ accentColor: color, active }) =>
+    active ? color[50] : grey[200]};
+  color: ${({ active, accentColor: color }) =>
+    active ? color[900] : grey[700]};
   border-radius: 16px;
   overflow: hidden;
 
@@ -37,12 +33,19 @@ export const Card = styled(motion.div)<{
     &:focus-within,
     &:active,
     &:focus {
-      outline-color: ${({ bgColor, active }) =>
-        active ? bgColor : inactiveBgColor};
+      outline-color: ${({ accentColor: color, active }) =>
+        active ? color[900] : grey[700]};
       outline-offset: 2px;
       outline-width: 2px;
       outline-style: solid;
     }
+  }
+
+  & input {
+    background-image: ${({ active, accentColor }) => `linear-gradient(
+    ${active ? accentColor[100] : grey[300]},
+    ${active ? accentColor[100] : grey[300]}
+  );`};
   }
 `
 
@@ -81,7 +84,6 @@ export const TextContainer = styled.div`
 
 export const Slider = styled.input<{
   active: boolean
-  bgColor: string
 }>`
   appearance: none;
   width: 100%;
@@ -89,11 +91,6 @@ export const Slider = styled.input<{
   background-color: transparent;
   pointer-events: none;
   overflow: hidden;
-
-  background-image: ${({ active, bgColor }) => `linear-gradient(
-    ${active ? bgColor : inactiveSliderColor},
-    ${active ? bgColor : inactiveSliderColor}
-  );`};
   background-repeat: no-repeat;
   background-position: left;
 

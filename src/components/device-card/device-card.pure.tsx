@@ -1,4 +1,4 @@
-import { useMediaQuery } from '@mui/material'
+import { Color, useMediaQuery } from '@mui/material'
 import { AnimatePresence, motion, MotionProps } from 'framer-motion'
 import {
   FC,
@@ -34,8 +34,7 @@ import { DataText } from './use-data-hook/data-hook'
 
 export type PureDeviceCardProps = {
   icon: AvailableIcon
-  color: string
-  bgColor: string
+  color: Color
   name: string
   texts?: DataText[]
   toggleValue?: boolean
@@ -51,7 +50,6 @@ export type PureDeviceCardProps = {
 const PureDeviceCard: FC<PureDeviceCardProps> = ({
   icon,
   color,
-  bgColor,
   name,
   texts = [],
   toggleValue = true,
@@ -197,8 +195,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
     <>
       <Card
         onClick={onCardClick}
-        fgColor={color}
-        bgColor={bgColor}
+        accentColor={color}
         active={toggleValue}
         transition={{
           layout: {
@@ -235,7 +232,6 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
           type="range"
           onInput={onSliderInput}
           active={toggleValue}
-          bgColor={bgColor}
           style={{
             backgroundSize: `${
               canSlide ? sliderValueSpring : toggleValue ? 100 : 0
