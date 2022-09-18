@@ -2,16 +2,55 @@ import styled from '@emotion/styled'
 import { Color } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { motion } from 'framer-motion'
+import { Theme } from '../../constants/theme'
 import Icon from '../icon'
 
-export const Card = styled(motion.div)<{
+type CardProps = {
   accentColor: Color
   active: boolean
-}>`
-  background-color: ${({ accentColor: color, active }) =>
-    active ? color[50] : grey[200]};
-  color: ${({ active, accentColor: color }) =>
-    active ? color[900] : grey[700]};
+}
+
+type CardPropFunction = (props: CardProps & { theme: Theme }) => string
+
+const getTextColor: CardPropFunction = ({ theme, accentColor, active }) =>
+  theme.palette.mode === 'light'
+    ? active
+      ? accentColor[900]
+      : grey[700]
+    : active
+    ? accentColor[50]
+    : grey[300]
+
+const getOutlineColor: CardPropFunction = ({ theme, accentColor, active }) =>
+  theme.palette.mode === 'light'
+    ? active
+      ? accentColor[900]
+      : grey[700]
+    : active
+    ? accentColor[300]
+    : grey[500]
+
+const getSliderColor: CardPropFunction = ({ theme, accentColor, active }) =>
+  theme.palette.mode === 'light'
+    ? active
+      ? accentColor[100]
+      : grey[300]
+    : active
+    ? accentColor[500]
+    : grey[500]
+
+const getBackgroundColor: CardPropFunction = ({ theme, accentColor, active }) =>
+  theme.palette.mode === 'light'
+    ? active
+      ? accentColor[50]
+      : grey[200]
+    : active
+    ? accentColor[300]
+    : grey[700]
+
+export const Card = styled(motion.div)<CardProps>`
+  background-color: ${getBackgroundColor};
+  color: ${getTextColor};
   border-radius: 16px;
   overflow: hidden;
 
@@ -33,8 +72,7 @@ export const Card = styled(motion.div)<{
     &:focus-within,
     &:active,
     &:focus {
-      outline-color: ${({ accentColor: color, active }) =>
-        active ? color[900] : grey[700]};
+      outline-color: ${getOutlineColor};
       outline-offset: 2px;
       outline-width: 2px;
       outline-style: solid;
@@ -42,10 +80,7 @@ export const Card = styled(motion.div)<{
   }
 
   & input {
-    background-image: ${({ active, accentColor }) => `linear-gradient(
-    ${active ? accentColor[100] : grey[300]},
-    ${active ? accentColor[100] : grey[300]}
-  );`};
+    background-image: linear-gradient(${getSliderColor}, ${getSliderColor});
   }
 `
 
@@ -55,9 +90,9 @@ export const ColoredIcon = styled(Icon)`
 `
 
 export const Name = styled.div`
-  opacity: 0.7;
+  opacity: 0.9;
   font-size: 14px;
-  color: #000000;
+  color: currentColor;
 `
 
 export const State = styled(motion.div)`

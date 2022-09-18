@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@emotion/react'
+import { useMediaQuery } from '@mui/material'
 import { FC } from 'react'
-import baseTheme from '../constants/theme'
+import { lightTheme, darkTheme } from '../constants/theme'
 import { DeviceDetailsProvider } from '../contexts/device-details/device-details'
 import { IoBrokerProvider } from '../contexts/iobroker-context'
 import { IoBrokerStatesProvider } from '../contexts/iobroker-states-context'
@@ -15,8 +16,12 @@ const Shell: FC = () => {
   useNoContextMenu()
   usePreventAlert()
 
+  const isDarkMode = /*useMediaQuery('(prefers-color-scheme: dark)')*/ false
+
+  const usedTheme = isDarkMode ? darkTheme : lightTheme
+
   return (
-    <ThemeProvider theme={baseTheme}>
+    <ThemeProvider theme={usedTheme}>
       <ErrorBoundary>
         <IoBrokerProvider>
           <IoBrokerStatesProvider>

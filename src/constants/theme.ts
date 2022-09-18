@@ -1,7 +1,7 @@
 import { createTheme, Shadows } from '@mui/material'
 import { blueGrey } from '@mui/material/colors'
 
-const baseTheme = createTheme({
+export const lightTheme = createTheme({
   typography: {
     allVariants: {
       fontFamily: 'Google Sans',
@@ -26,6 +26,12 @@ const baseTheme = createTheme({
   },
   palette: {
     primary: blueGrey,
+    mode: 'light',
+    text: {
+      primary: '#000',
+      secondary: 'rgba(0, 0, 0, 0.9)',
+      disabled: 'rgba(0, 0, 0, 0.5)',
+    },
   },
   shadows: Array(10).fill('none') as Shadows,
   components: {
@@ -39,13 +45,21 @@ const baseTheme = createTheme({
   },
 })
 
-export default baseTheme
-
-export const lightTheme = {
+export const darkTheme = createTheme({
+  ...lightTheme,
   palette: {
-    background: '#fff',
-    chip: '#616161',
+    ...lightTheme.palette,
+    mode: 'dark',
+    background: {
+      default: '#121212',
+      paper: '#1f1f1f',
+    },
+    text: {
+      primary: '#fff',
+      secondary: 'rgba(255, 255, 255, 0.9)',
+      disabled: 'rgba(255, 255, 255, 0.5)',
+    },
   },
-}
+})
 
-export const darkTheme = { ...lightTheme }
+export type Theme = typeof lightTheme

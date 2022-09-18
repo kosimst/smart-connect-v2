@@ -5,18 +5,13 @@ import DeviceGrid from '../../components/device-grid'
 import ExpandableChips from '../../components/expandable-chips'
 import ExpandableStatus from '../../components/expandable-status'
 
-export const PageTitle = styled.h1`
-  opacity: 0.9;
-  margin-bottom: 16px;
-`
-
 export const RoomTitle = styled(Typography)`
   padding: 16px;
   padding-top: 18px;
   position: sticky;
   top: -2px;
-  background-color: white;
-  color: rgba(0, 0, 0, 0.9);
+  background-color: ${({ theme }) => theme.palette.background.default};
+  color: ${({ theme }) => theme.palette.text.secondary};
   z-index: 4;
   width: 100vw;
   transform: translateX(-16px);
@@ -29,7 +24,7 @@ export const Room = styled(motion.section)`
 
   &::after {
     content: '';
-    background-color: white;
+    background-color: ${({ theme }) => theme.palette.background.default};
     position: absolute;
     top: 54px;
     height: 4px;
@@ -47,7 +42,10 @@ export const Room = styled(motion.section)`
     height: 2px;
     background-image: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.2),
+      ${({ theme }) =>
+        theme.palette.mode === 'dark'
+          ? 'rgba(255,255,255,0.2)'
+          : 'rgba(0, 0, 0, 0.2)'},
       transparent
     );
   }
@@ -97,6 +95,7 @@ export const Title = styled(Typography)`
   display: flex;
   justify-content: space-between;
   margin-top: 16px;
+  color: ${({ theme }) => theme.palette.text.primary};
 `
 
 export const StatusContainer = styled.div`
