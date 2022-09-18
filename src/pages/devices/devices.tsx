@@ -1,5 +1,5 @@
 import { Badge } from '@mui/material'
-import { AnimateSharedLayout } from 'framer-motion'
+import { LayoutGroup } from 'framer-motion'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
@@ -213,8 +213,7 @@ const DevicesPage: FC = () => {
         <HomeVitals />
       </StatusContainer>
 
-      {/* @ts-ignore */}
-      <AnimateSharedLayout>
+      <LayoutGroup>
         {groupedByRoom.map(([roomName, devices]) => (
           <Room
             key={roomName}
@@ -243,7 +242,7 @@ const DevicesPage: FC = () => {
             </StyledDeviceGrid>
           </Room>
         ))}
-      </AnimateSharedLayout>
+      </LayoutGroup>
 
       <LinksGrid
         initial={{ opacity: 0 }}
