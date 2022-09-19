@@ -27,7 +27,7 @@ export const Room = styled(motion.section)`
     background-color: ${({ theme }) => theme.palette.background.default};
     position: absolute;
     top: 54px;
-    height: 4px;
+    height: 6px;
     width: 100vw;
     transform: translateX(-16px) translateY(0px);
     z-index: 3;
@@ -38,16 +38,10 @@ export const Room = styled(motion.section)`
     top: 54px;
     width: 100vw;
     z-index: 0;
-    transform: translateX(-16px);
+    transform: translateX(-16px) translateY(-2px);
     height: 2px;
-    background-image: linear-gradient(
-      to bottom,
-      ${({ theme }) =>
-        theme.palette.mode === 'dark'
-          ? 'rgba(255,255,255,0.2)'
-          : 'rgba(0, 0, 0, 0.2)'},
-      transparent
-    );
+    background-color: ${({ theme }) => theme.palette.background.default};
+    box-shadow: ${({ theme }) => theme.shadows[1]};
   }
 `
 

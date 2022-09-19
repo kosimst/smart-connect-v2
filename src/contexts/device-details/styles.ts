@@ -13,7 +13,7 @@ export const Card = styled(motion.div)`
   background: white;
   padding: 40px 16px;
   overflow-x: hidden;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: ${({ theme }) => theme.shadows[10]};
 
   max-width: 700px;
 
@@ -28,6 +28,10 @@ export const Card = styled(motion.div)`
     height: 3px;
     border-radius: 99px;
     opacity: 0.75;
+  }
+
+  @media (min-width: 700px) {
+    padding-inline: 24px;
   }
 `
 
@@ -89,6 +93,7 @@ export const TitleRow = styled(Typography)`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 `
 
 export const NoControlsHint = styled(Typography)`

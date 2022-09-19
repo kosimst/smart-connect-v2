@@ -24,6 +24,7 @@ export const lightTheme = createTheme({
       fontSize: 15,
     },
   },
+
   palette: {
     primary: blueGrey,
     mode: 'light',
@@ -33,12 +34,13 @@ export const lightTheme = createTheme({
       disabled: 'rgba(0, 0, 0, 0.5)',
     },
   },
-  shadows: Array(10).fill('none') as Shadows,
+  // shadows: Array(10).fill('none') as Shadows,
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           padding: '8px',
+          boxShadow: 'none',
         },
       },
     },

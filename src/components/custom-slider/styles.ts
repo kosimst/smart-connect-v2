@@ -5,6 +5,7 @@ import temperatureToRgb from '../../helpers/temperature-to-rgb'
 export const Texts = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-bottom: 4px;
 
   & > * {
     font-size: 14px;

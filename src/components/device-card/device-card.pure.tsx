@@ -152,7 +152,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
 
   const isDesktop = useMediaQuery('(min-width: 600px)')
 
-  useFocusOnHover(cardRef, sliderRef, 500, 250, isDesktop)
+  useFocusOnHover(cardRef, sliderRef, 1000, 0, isDesktop)
 
   const [keyDownTimeout, setKeyDownTimeout] = useState<ReturnType<
     typeof setTimeout
