@@ -6,11 +6,17 @@ import {
   pink,
   purple,
   teal,
+  yellow,
 } from '@mui/material/colors'
+
+const modifiedAmber = {
+  ...amber,
+  900: yellow[900],
+}
 
 const colors = {
   light: {
-    accentColor: amber,
+    accentColor: modifiedAmber,
   },
   sensor: {
     accentColor: purple,

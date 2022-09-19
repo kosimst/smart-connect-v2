@@ -24,7 +24,6 @@ export const lightTheme = createTheme({
       fontSize: 15,
     },
   },
-
   palette: {
     primary: blueGrey,
     mode: 'light',
