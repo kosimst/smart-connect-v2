@@ -35,10 +35,21 @@ export default defineConfig({
             purpose: 'maskable',
           },
           {
-            src: '/icons/favicon.svg',
-            sizes:
-              '16x16 32x32 48x48 64x64 96x96 128x128 192x192 256x256 512x512 1024x1024',
-            type: 'image/svg+xml',
+            src: '/icons/smart-connect-v2-icon_180px.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/icons/smart-connect-v2-icon_192px.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/icons/smart-connect-v2-icon_512px.png',
+            sizes: '512x512',
+            type: 'image/png',
             purpose: 'any',
           },
         ],
