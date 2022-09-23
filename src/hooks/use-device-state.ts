@@ -1,7 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useCallback, useEffect, useState } from 'react'
-import useIoBroker from '../contexts/iobroker-context'
-import { useIoBrokerStates } from '../contexts/iobroker-states-context'
+import { useIoBrokerStates } from '../contexts/iobroker-states/iobroker-states'
 import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
 import { SubscriptionPriority } from '../workers/iobroker-sync'
@@ -19,15 +18,6 @@ const useDeviceState = <T extends any>(
   const [value, setValue] = useState<T>(defaultValue)
   const [exists, setExists] = useState<boolean>(false)
 
-  const dbEntry = useLiveQuery(
-    () =>
-      ioBrokerDb.states
-        .where('id')
-        .equals(path ?? 'nowhere-tobe-found')
-        .first(),
-    [path]
-  )
-
   const setState = useCallback(
     (newValue: T) => {
       if (!path) {
@@ -40,18 +30,16 @@ const useDeviceState = <T extends any>(
   )
 
   useEffect(() => {
-    if (dbEntry?.value !== undefined) {
-      setValue(dbEntry?.value)
-      setExists(true)
-    }
-  }, [dbEntry])
-
-  useEffect(() => {
     if (!path) {
       return
     }
 
-    const unsubscribePromise = subscribeState(path, priority)
+    const cb = (val: T) => {
+      setValue(val)
+      setExists(true)
+    }
+
+    const unsubscribePromise = subscribeState(path, cb)
 
     return () => {
       unsubscribePromise.then((unsubscribe) => unsubscribe())

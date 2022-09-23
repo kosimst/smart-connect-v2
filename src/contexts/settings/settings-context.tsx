@@ -1,4 +1,4 @@
-import { Button, IconButton } from '@mui/material'
+import { Button, IconButton, TextField } from '@mui/material'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   createContext,
@@ -12,7 +12,6 @@ import {
 } from 'react'
 import Icon from '../../components/icon'
 import { RoomTitle } from '../../pages/devices/styles'
-import { Input } from '../iobroker-context/styles'
 import { Container, Icons, PushDetails } from './styles'
 
 const SettingsContext = createContext({
@@ -141,7 +140,7 @@ export const SettingsProvider: FC<{ children?: ReactNode }> = ({
 
             <RoomTitle>Push notifications</RoomTitle>
 
-            <Input
+            <TextField
               value={vapidPublicKeyInput}
               onChange={(e) => setVapidPublicKeyInput(e.target.value)}
               placeholder="Public key string..."

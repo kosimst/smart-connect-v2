@@ -3,8 +3,11 @@ import { useMediaQuery } from '@mui/material'
 import { FC } from 'react'
 import { lightTheme, darkTheme } from '../constants/theme'
 import { DeviceDetailsProvider } from '../contexts/device-details/device-details'
-import { IoBrokerProvider } from '../contexts/iobroker-context'
-import { IoBrokerStatesProvider } from '../contexts/iobroker-states-context'
+import {
+  IoBrokerConnectionContext,
+  IoBrokerConnectionProvider,
+} from '../contexts/iobroker-connection'
+import { IoBrokerStatesProvider } from '../contexts/iobroker-states/iobroker-states'
 import { SettingsProvider } from '../contexts/settings'
 import ShareTarget from '../contexts/share-target'
 import ErrorBoundary from '../helpers/error-boundary'
@@ -23,7 +26,7 @@ const Shell: FC = () => {
   return (
     <ThemeProvider theme={usedTheme}>
       <ErrorBoundary>
-        <IoBrokerProvider>
+        <IoBrokerConnectionProvider>
           <IoBrokerStatesProvider>
             <SettingsProvider>
               <DeviceDetailsProvider>
@@ -33,7 +36,7 @@ const Shell: FC = () => {
               </DeviceDetailsProvider>
             </SettingsProvider>
           </IoBrokerStatesProvider>
-        </IoBrokerProvider>
+        </IoBrokerConnectionProvider>
       </ErrorBoundary>
     </ThemeProvider>
   )

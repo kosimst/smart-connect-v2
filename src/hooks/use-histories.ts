@@ -1,5 +1,5 @@
-import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useMemo, useState } from 'react'
+import useIoBrokerConnection from '../contexts/iobroker-connection'
 import ioBrokerDb from '../db/iobroker-db'
 import closestMinute from '../helpers/closest-minute'
 import sleep from '../helpers/sleep'
@@ -29,6 +29,8 @@ const useHistories = (
   to: number,
   interval: number
 ) => {
+  const { connection } = useIoBrokerConnection()
+
   const [history, setHistory] = useState<
     {
       ts: number
@@ -37,12 +39,6 @@ const useHistories = (
   >([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
-
-  const credentials = useLiveQuery(
-    () => ioBrokerDb.credentials.toArray(),
-    [],
-    []
-  )[0]
 
   const fromIsoDate = useMemo(
     () => closestMinute(new Date(from)).toISOString(),
@@ -64,7 +60,7 @@ const useHistories = (
   )
 
   useEffect(() => {
-    if (!credentials || !states.length) {
+    if (!connection || !states.length) {
       return
     }
 
@@ -72,22 +68,19 @@ const useHistories = (
       setLoading(true)
       setError(false)
 
-      const response = await fetch(
-        `https://${credentials.url}/query/${states
-          .map((state) => `${device.id}.${state}`)
-          .join(
-            ','
-          )}?dateFrom=${fromIsoDate}&dateTo=${toIsoDate}&count=${dataPointsCount}&aggregate=average`,
+      const response = await connection.getHistory(
+        'alias.0.simon.climate-sensor.co2',
         {
-          headers: {
-            'CF-Access-Client-Id': credentials.cfClientId,
-            'CF-Access-Client-Secret': credentials.cfClientSecret,
-          },
+          start: Date.now() - 60 * 60 * 1000,
+          end: Date.now(),
+          id: 'alias.0.simon.climate-sensor.co2',
+          aggregate: 'minmax',
         }
       )
 
+      console.log(response)
+
       if (!response.ok) {
-        console.log('error')
         setError(true)
         setLoading(false)
         return
@@ -149,7 +142,6 @@ const useHistories = (
 
     fetchHistory()
   }, [
-    credentials?.toString(),
     device.toString(),
     fromIsoDate,
     toIsoDate,

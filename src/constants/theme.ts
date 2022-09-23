@@ -5,7 +5,6 @@ export const lightTheme = createTheme({
   typography: {
     allVariants: {
       fontFamily: 'Google Sans',
-      lineHeight: 1,
     },
     h1: {
       fontSize: '2.25rem',
@@ -33,17 +32,7 @@ export const lightTheme = createTheme({
       disabled: 'rgba(0, 0, 0, 0.5)',
     },
   },
-  // shadows: Array(10).fill('none') as Shadows,
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          padding: '8px',
-          boxShadow: 'none',
-        },
-      },
-    },
-  },
+  shadows: Array(10).fill('none') as Shadows,
 })
 
 export const darkTheme = createTheme({

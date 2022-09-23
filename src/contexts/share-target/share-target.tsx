@@ -12,7 +12,7 @@ import { RoomTitle, Title } from '../../pages/devices/styles'
 import Device from '../../types/device'
 import useDeviceDetails from '../device-details'
 import { TitleRow } from '../device-details/styles'
-import { useIoBrokerStates } from '../iobroker-states-context'
+import { useIoBrokerStates } from '../iobroker-states/iobroker-states'
 import { PageContainer, SectionHeading, SectionSubHeading } from './styles'
 
 const ShareTarget: FC<{

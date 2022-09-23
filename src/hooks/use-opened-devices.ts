@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useMemo, useState } from 'react'
-import { useIoBrokerStates } from '../contexts/iobroker-states-context'
+import { useIoBrokerStates } from '../contexts/iobroker-states/iobroker-states'
 import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
 import useDevices from './use-devices'
