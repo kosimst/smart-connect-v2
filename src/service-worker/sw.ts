@@ -105,26 +105,14 @@ self.addEventListener('notificationclick', (event) => {
   }
 
   event.waitUntil(
-    self.clients
-      .matchAll({
-        type: 'window',
-      })
-      .then(async (clientsArr) => {
-        const client = await (clientsArr.length
-          ? Promise.resolve(clientsArr[0])
-          : self.clients.openWindow('/'))
+    (async () => {
+      const targetUrl = new URL('/_set-states', self.location.origin)
 
-        await client?.focus()
+      for (const stateId in tasks) {
+        targetUrl.searchParams.set(stateId, tasks[stateId])
+      }
 
-        const targetUrl = new URL(client?.url || '')
-
-        targetUrl.pathname = '/_set-states'
-
-        for (const stateId in tasks) {
-          targetUrl.searchParams.set(stateId, tasks[stateId])
-        }
-
-        client?.navigate(targetUrl)
-      })
+      self.clients.openWindow(targetUrl)
+    })()
   )
 })
