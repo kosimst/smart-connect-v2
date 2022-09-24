@@ -21,15 +21,6 @@ const containerVariants: Variants = {
   },
 }
 
-const childrenContainerVariants: Variants = {
-  expanded: {
-    opacity: 1,
-  },
-  collapsed: {
-    opacity: 0,
-  },
-}
-
 const transition: Transition = {
   duration: 0.2,
 }

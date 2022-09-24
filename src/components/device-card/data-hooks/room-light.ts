@@ -2,19 +2,13 @@ import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
-const useData: DataHook = (device, visible) => {
+const useData: DataHook = (device) => {
   const [brightness, setBrightness, brightnessExists] = useDeviceState(
     device,
     'brightness',
-    0,
-    visible ? 'medium' : 'background'
+    0
   )
-  const [on, setOn] = useDeviceState(
-    device,
-    'on',
-    false,
-    visible ? 'medium' : 'background'
-  )
+  const [on, setOn] = useDeviceState(device, 'on', false)
 
   const texts = useMemo<DataText[]>(
     () =>

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import { Chip } from '@mui/material'
 import { motion } from 'framer-motion'
 
 export const Chips = styled(motion.section)`

@@ -3,37 +3,12 @@ import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
-const useData: DataHook = (device, visible) => {
-  const [active] = useDeviceState(
-    device,
-    'active',
-    false,
-    visible ? 'medium' : 'background'
-  )
-  const [paused, setPaused] = useDeviceState(
-    device,
-    'paused',
-    false,
-    visible ? 'medium' : 'background'
-  )
-  const [volume, setVolume] = useDeviceState(
-    device,
-    'volume',
-    0,
-    visible ? 'medium' : 'background'
-  )
-  const [player] = useDeviceState(
-    device,
-    'player',
-    '',
-    visible ? 'medium' : 'background'
-  )
-  const [title] = useDeviceState(
-    device,
-    'title',
-    '',
-    visible ? 'medium' : 'background'
-  )
+const useData: DataHook = (device) => {
+  const [active] = useDeviceState(device, 'active', false)
+  const [paused, setPaused] = useDeviceState(device, 'paused', false)
+  const [volume, setVolume] = useDeviceState(device, 'volume', 0)
+  const [player] = useDeviceState(device, 'player', '')
+  const [title] = useDeviceState(device, 'title', '')
 
   const texts = useMemo<DataText[]>(
     () =>

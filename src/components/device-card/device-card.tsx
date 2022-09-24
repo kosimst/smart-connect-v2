@@ -16,7 +16,7 @@ const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device, visible }) => {
 
   const { open } = useDeviceDetails()
 
-  const data = useData(device, visible)
+  const data = useData(device)
   const definition = useDeviceDefinition(device)
 
   const onContextMenu = useCallback<MouseEventHandler<HTMLDivElement>>(
@@ -28,17 +28,11 @@ const SuspendedDeviceCard: FC<DeviceCardProps> = ({ device, visible }) => {
     [open, device]
   )
 
-  const [battery, , batteryExists] = useDeviceState(
-    device,
-    'battery',
-    100,
-    'low'
-  )
+  const [battery, , batteryExists] = useDeviceState(device, 'battery', 100)
   const [available, , availableExists] = useDeviceState(
     device,
     'available',
-    true,
-    'low'
+    true
   )
 
   return (

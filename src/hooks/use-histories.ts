@@ -3,23 +3,6 @@ import useIoBrokerConnection from '../contexts/iobroker-connection'
 import closestMinute from '../helpers/closest-minute'
 import Device from '../types/device'
 
-type HistoryResult = {
-  target: string
-  datapoints: [any, number][]
-}[]
-
-function assertHistoryResult(json: any): asserts json is HistoryResult {
-  if (!json || !Array.isArray(json) || !json.length) {
-    throw new Error('Invalid history result')
-  }
-
-  for (const item of json) {
-    if (!item.datapoints || !Array.isArray(item.datapoints)) {
-      throw new Error('Invalid history result')
-    }
-  }
-}
-
 const useHistories = (
   device: Device,
   states: string[],

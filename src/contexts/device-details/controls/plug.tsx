@@ -9,8 +9,8 @@ import { Fix, SliderFlex } from './styles'
 const Controls: FC<{
   device: Device
 }> = ({ device }) => {
-  const [on, setOn] = useDeviceState(device, 'on', false, 'high')
-  const [power, , powerExists] = useDeviceState(device, 'power', 0, 'high')
+  const [on, setOn] = useDeviceState(device, 'on', false)
+  const [power, , powerExists] = useDeviceState(device, 'power', 0)
 
   return (
     <>

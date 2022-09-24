@@ -8,10 +8,6 @@ const isYoutube = (url: string) => {
   return url.includes('youtube.com') || url.includes('youtu.be')
 }
 
-const isSpotify = (url: string) => {
-  return url.includes('open.spotify.com')
-}
-
 export type MusicDetails = {
   player: 'YouTube' | 'Spotify' | 'SoundCloud'
   url: string

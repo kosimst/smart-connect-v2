@@ -1,6 +1,5 @@
 import styled from '@emotion/styled'
 import { Slider } from '@mui/material'
-import temperatureToRgb from '../../helpers/temperature-to-rgb'
 
 export const Texts = styled.div`
   display: flex;

@@ -1,4 +1,4 @@
-import { Slider, SliderProps, Typography } from '@mui/material'
+import { SliderProps, Typography } from '@mui/material'
 import {
   FC,
   forwardRef,

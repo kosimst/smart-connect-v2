@@ -12,14 +12,14 @@ import { SliderFlex } from './styles'
 const Controls: FC<{
   device: Device
 }> = ({ device }) => {
-  const [active, setActive] = useDeviceState(device, 'active', false, 'high')
-  const [artist] = useDeviceState(device, 'artist', '', 'high')
-  const [title] = useDeviceState(device, 'title', '', 'high')
-  const [progress, setProgress] = useDeviceState(device, 'progress', 0, 'high')
-  const [volume, setVolume] = useDeviceState(device, 'volume', 0, 'high')
-  const [player] = useDeviceState(device, 'player', '', 'high')
-  const [paused, setPaused] = useDeviceState(device, 'paused', false, 'high')
-  const [durationMs] = useDeviceState(device, 'duration-ms', 0, 'high')
+  const [active, setActive] = useDeviceState(device, 'active', false)
+  const [artist] = useDeviceState(device, 'artist', '')
+  const [title] = useDeviceState(device, 'title', '')
+  const [progress, setProgress] = useDeviceState(device, 'progress', 0)
+  const [volume, setVolume] = useDeviceState(device, 'volume', 0)
+  const [player] = useDeviceState(device, 'player', '')
+  const [paused, setPaused] = useDeviceState(device, 'paused', false)
+  const [durationMs] = useDeviceState(device, 'duration-ms', 0)
 
   const toggle = useCallback(() => setPaused(!paused), [paused, setPaused])
 

@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strictNullChecks": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "noUnusedLocals": true
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

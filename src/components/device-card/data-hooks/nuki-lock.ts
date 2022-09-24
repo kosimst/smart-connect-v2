@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
-const useData: DataHook = (device, visible) => {
+const useData: DataHook = (device) => {
   /**
     "0": "NO_ACTION",
     "1": "UNLOCK",
@@ -14,8 +14,7 @@ const useData: DataHook = (device, visible) => {
   const [, setAction] = useDeviceState(
     device,
     'action',
-    0 as 0 | 1 | 2 | 3 | 4 | 5,
-    visible ? 'medium' : 'background'
+    0 as 0 | 1 | 2 | 3 | 4 | 5
   )
 
   /**
@@ -33,8 +32,7 @@ const useData: DataHook = (device, visible) => {
   const [lockState] = useDeviceState(
     device,
     'lock-state',
-    0 as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 254 | 255,
-    visible ? 'medium' : 'background'
+    0 as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 254 | 255
   )
 
   const texts = useMemo<DataText[]>(

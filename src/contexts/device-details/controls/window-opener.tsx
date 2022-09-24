@@ -13,10 +13,9 @@ const Controls: FC<{
   const [openedLevel, setOpenedLevel] = useDeviceState(
     device,
     'opened-level',
-    0,
-    'high'
+    0
   )
-  const [direction] = useDeviceState(device, 'direction', 0, 'high')
+  const [direction] = useDeviceState(device, 'direction', 0)
   const [, setStop] = useDeviceState(device, 'stop', true)
 
   const stop = useCallback(() => setStop(true), [setStop])

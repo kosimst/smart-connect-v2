@@ -2,31 +2,11 @@ import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
-const useData: DataHook = (device, visible) => {
-  const [download] = useDeviceState(
-    device,
-    'download-megabits',
-    0,
-    visible ? 'medium' : 'background'
-  )
-  const [upload] = useDeviceState(
-    device,
-    'upload-megabits',
-    0,
-    visible ? 'medium' : 'background'
-  )
-  const [running] = useDeviceState(
-    device,
-    'running',
-    false,
-    visible ? 'medium' : 'background'
-  )
-  const [, setTestButton] = useDeviceState(
-    device,
-    'test-button',
-    true,
-    visible ? 'medium' : 'background'
-  )
+const useData: DataHook = (device) => {
+  const [download] = useDeviceState(device, 'download-megabits', 0)
+  const [upload] = useDeviceState(device, 'upload-megabits', 0)
+  const [running] = useDeviceState(device, 'running', false)
+  const [, setTestButton] = useDeviceState(device, 'test-button', true)
 
   const texts = useMemo<DataText[]>(
     () =>

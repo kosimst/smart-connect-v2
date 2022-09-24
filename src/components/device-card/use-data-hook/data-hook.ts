@@ -5,10 +5,7 @@ export type DataText = {
   id: string
 }
 
-type DataHook = (
-  device: Device,
-  visible: boolean
-) => {
+type DataHook = (device: Device) => {
   texts?: DataText[]
   sliderValue?: number
   toggleValue?: boolean

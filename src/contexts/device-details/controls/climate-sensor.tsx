@@ -8,18 +8,14 @@ import { SliderFlex } from './styles'
 const Controls: FC<{
   device: Device
 }> = ({ device }) => {
-  const [on, setOn] = useDeviceState(device, 'on', false, 'high')
-  const [power, , powerExists] = useDeviceState(device, 'power', 0, 'high')
-
-  const [temperature] = useDeviceState(device, 'temperature', 0, 'high')
-  const [humidity] = useDeviceState(device, 'humidity', 0, 'high')
-  const [co2, , co2Exists] = useDeviceState(device, 'co2', 0, 'high')
+  const [temperature] = useDeviceState(device, 'temperature', 0)
+  const [humidity] = useDeviceState(device, 'humidity', 0)
+  const [co2, , co2Exists] = useDeviceState(device, 'co2', 0)
 
   const [lastUpdate, , lastUpdateExists] = useDeviceState(
     device,
     'last-update',
-    0,
-    'high'
+    0
   )
   const lastUpdateFormatted = useMemo(
     () => lastUpdateExists && lastUpdate && readableDate(new Date(lastUpdate)),
@@ -30,7 +26,7 @@ const Controls: FC<{
     <>
       <SliderFlex>
         <CustomInfos label="Climate">
-          {temperature}°C • {humidity}% • {co2} ppm
+          {temperature}°C • {humidity}%{co2Exists && <> • {co2}ppm</>}
         </CustomInfos>
 
         {lastUpdateFormatted && (

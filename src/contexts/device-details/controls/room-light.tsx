@@ -28,17 +28,15 @@ const Controls: FC<{
   const [brightness, setBrightness, brightnessExists] = useDeviceState(
     device,
     'brightness',
-    0,
-    'high'
+    0
   )
   const [hue, setHue, hueExists] = useDeviceState(device, 'hue', 0)
   const [colorTemperature, setColorTemperature, ctExists] = useDeviceState(
     device,
     'color-temperature',
-    2198,
-    'high'
+    2198
   )
-  const [on, setOn, onExists] = useDeviceState(device, 'on', false, 'high')
+  const [on, setOn, onExists] = useDeviceState(device, 'on', false)
 
   return (
     <AnimatePresence>

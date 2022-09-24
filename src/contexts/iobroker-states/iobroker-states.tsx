@@ -104,8 +104,8 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
       // @ts-ignore
       sw.addEventListener('message', cb)
 
-      // @ts-ignore
       abortController.signal.addEventListener('abort', () => {
+        // @ts-ignore
         sw.removeEventListener('message', cb)
       })
     }

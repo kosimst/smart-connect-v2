@@ -2,13 +2,8 @@ import { useMemo } from 'react'
 import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
-const useData: DataHook = (device, visible) => {
-  const [on, setOn] = useDeviceState(
-    device,
-    'on',
-    false,
-    visible ? 'medium' : 'background'
-  )
+const useData: DataHook = (device) => {
+  const [on, setOn] = useDeviceState(device, 'on', false)
 
   const texts = useMemo<DataText[]>(
     () => [

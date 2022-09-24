@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import forwardBaseProps from '../../../helpers/forward-base-props'
 import { BigIcon, FullBleedCentered, Text } from './styles'
 

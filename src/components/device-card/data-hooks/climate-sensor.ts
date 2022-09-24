@@ -4,12 +4,8 @@ import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
   const [temperature] = useDeviceState(device, 'temperature', 0)
-  const [humidity, setHumidity, humidityExists] = useDeviceState(
-    device,
-    'humidity',
-    0
-  )
-  const [co2, setCo2, co2Exists] = useDeviceState(device, 'co2', 0)
+  const [humidity, , humidityExists] = useDeviceState(device, 'humidity', 0)
+  const [co2, , co2Exists] = useDeviceState(device, 'co2', 0)
   const [battery] = useDeviceState(device, 'battery', 100)
 
   const texts = useMemo<DataText[]>(

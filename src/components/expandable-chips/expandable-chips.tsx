@@ -1,9 +1,6 @@
-import { StyledComponent } from '@emotion/styled'
-import { Chip, Typography } from '@mui/material'
-import { AnimatePresence, motion, Variants } from 'framer-motion'
-import { FC, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { Variants } from 'framer-motion'
+import { ReactNode, useEffect, useMemo, useRef } from 'react'
 import forwardBaseProps from '../../helpers/forward-base-props'
-import Icon from '../icon'
 import { Chips, Container } from './styles'
 
 export type ExpandableChipsProps = {

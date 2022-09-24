@@ -14,6 +14,8 @@ const useFocusOnHover = (
     let outTimeout: ReturnType<typeof setTimeout>
 
     const handleMouseEnter = () => {
+      clearTimeout(outTimeout)
+
       if (inDelay === Infinity) {
         return
       }
@@ -39,6 +41,7 @@ const useFocusOnHover = (
       hoverRef.current?.removeEventListener('mouseenter', handleMouseEnter)
       hoverRef.current?.removeEventListener('mouseleave', handleMouseLeave)
       clearTimeout(inTimeout)
+      clearTimeout(outTimeout)
     }
   }, [])
 }

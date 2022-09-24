@@ -1,6 +1,5 @@
-import { FC, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import forwardBaseProps from '../../helpers/forward-base-props'
-import withProps from '../../helpers/with-props'
 import { Grid } from './styles'
 
 type DeviceGridProps = {
