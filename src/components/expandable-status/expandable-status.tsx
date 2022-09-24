@@ -69,11 +69,16 @@ const ExpandableStatus = forwardBaseProps<ExpandableStatusProps>(
           </span>
           {
             // @ts-ignore
-            children?.length > 0 && (
-              <IconButton size="small" onClick={toggle}>
-                <Icon icon={expanded ? 'expand_less' : 'expand_more'} />
-              </IconButton>
-            )
+            children?.length > 0 &&
+              // @ts-ignore
+              children
+                // @ts-ignore
+                .map((child) => (Array.isArray(child) ? child.length : true))
+                .every(Boolean) && (
+                <IconButton size="small" onClick={toggle}>
+                  <Icon icon={expanded ? 'expand_less' : 'expand_more'} />
+                </IconButton>
+              )
           }
         </StatusText>
 
