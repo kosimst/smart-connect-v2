@@ -32,6 +32,15 @@ export const lightTheme = createTheme({
       disabled: 'rgba(0, 0, 0, 0.5)',
     },
   },
+  components: {
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          borderRadius: 99,
+        },
+      },
+    },
+  },
   //shadows: Array(10).fill('none') as Shadows,
 })
 

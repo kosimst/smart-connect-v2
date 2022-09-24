@@ -3,6 +3,7 @@ import {
   ButtonGroup,
   capitalize,
   IconButton,
+  LinearProgress,
   useTheme,
 } from '@mui/material'
 import { indigo, pink, purple } from '@mui/material/colors'
@@ -150,7 +151,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
       {error ? (
         <div>Failed to fetch history</div>
       ) : loading ? (
-        <div>Loading...</div>
+        <LinearProgress />
       ) : (
         <ResponsiveContainer
           width="100%"
