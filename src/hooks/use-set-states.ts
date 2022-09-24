@@ -31,12 +31,8 @@ const useSetStates = () => {
       return
     }
 
-    console.log(queryParams)
-
     for (const [key, value] of Object.entries(queryParams)) {
       const parsedValue = JSON.parse(value)
-
-      console.log(`Setting ${key} to ${parsedValue}`)
 
       connection.setState(key, {
         val: parsedValue,
