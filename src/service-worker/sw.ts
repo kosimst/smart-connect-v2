@@ -114,16 +114,17 @@ self.addEventListener('notificationclick', (event) => {
           ? Promise.resolve(clientsArr[0])
           : self.clients.openWindow('/'))
 
-        if (!client) {
-          return
+        await client?.focus()
+
+        const targetUrl = new URL(client?.url || '')
+
+        targetUrl.pathname = '/_set-states'
+
+        for (const stateId in tasks) {
+          targetUrl.searchParams.set(stateId, tasks[stateId])
         }
 
-        await client.focus()
-
-        client.postMessage({
-          type: 'setStates',
-          tasks,
-        })
+        client?.navigate(targetUrl)
       })
   )
 })

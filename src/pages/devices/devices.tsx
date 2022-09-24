@@ -1,5 +1,5 @@
-import { Badge } from '@mui/material'
-import { LayoutGroup } from 'framer-motion'
+import { Alert, Badge } from '@mui/material'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
@@ -11,6 +11,7 @@ import { useSettings } from '../../contexts/settings'
 import forwardBaseProps from '../../helpers/forward-base-props'
 import groupBy from '../../helpers/group-by'
 import toKebabCase from '../../helpers/to-kebab-case'
+import useSetStates from '../../hooks/use-set-states'
 import HomeVitals from './parts/home-vitals'
 import OpenedDevices from './parts/opened-devices'
 import {
@@ -27,6 +28,8 @@ import {
 
 const DevicesPage = forwardBaseProps((baseProps) => {
   const { devices } = useIoBrokerDevices()
+
+  const didJustSetStates = useSetStates()
 
   const isHidden = useCallback(
     (deviceFullName: string) =>
@@ -136,6 +139,21 @@ const DevicesPage = forwardBaseProps((baseProps) => {
 
   return (
     <div {...baseProps}>
+      <AnimatePresence>
+        {didJustSetStates && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            key="set-states-alert"
+            layout
+          >
+            <Alert severity="success">Action successfully executed.</Alert>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Title variant="h1">
         <span>My home</span>
         <FilterIconButton
