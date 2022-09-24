@@ -1,8 +1,8 @@
-import en from './en.json'
 import de from './de.json'
+import en from './en.json'
 
-import enDeviceTypes from './device-type-names/en.json'
 import deDeviceTypes from './device-type-names/de.json'
+import enDeviceTypes from './device-type-names/en.json'
 
 // check if all languages intersect
 const languages = [en, de]

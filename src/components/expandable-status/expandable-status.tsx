@@ -1,6 +1,6 @@
-import { Chip, IconButton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { AnimatePresence, motion, Transition, Variants } from 'framer-motion'
-import { ReactNode, useState, useCallback, useEffect, useRef } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import forwardBaseProps from '../../helpers/forward-base-props'
 import Icon from '../icon'
 import { AvailableIcon } from '../icon/available-icons'

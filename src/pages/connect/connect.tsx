@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Paper,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Button, Card, CardContent, TextField, Typography } from '@mui/material'
 import { FC, useCallback, useState } from 'react'
 import useIoBrokerConnection from '../../contexts/iobroker-connection'
 import withProps from '../../helpers/with-props'

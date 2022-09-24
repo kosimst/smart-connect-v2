@@ -6,7 +6,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from 'react'
 import { IOBROKER_PROXY_HOST } from '../../constants/iobroker-proxy'

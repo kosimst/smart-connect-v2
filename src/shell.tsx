@@ -1,20 +1,16 @@
 import { ThemeProvider } from '@emotion/react'
-import { useMediaQuery } from '@mui/material'
 import { FC } from 'react'
-import { lightTheme, darkTheme } from './constants/theme'
+import App from './app'
+import { darkTheme, lightTheme } from './constants/theme'
 import { DeviceDetailsProvider } from './contexts/device-details/device-details'
-import {
-  IoBrokerConnectionContext,
-  IoBrokerConnectionProvider,
-} from './contexts/iobroker-connection'
+import { IoBrokerConnectionProvider } from './contexts/iobroker-connection'
+import { IoBrokerDevicesProvider } from './contexts/iobroker-devices'
 import { IoBrokerStatesProvider } from './contexts/iobroker-states/iobroker-states'
 import { SettingsProvider } from './contexts/settings'
 import ShareTarget from './contexts/share-target'
 import ErrorBoundary from './helpers/error-boundary'
 import useNoContextMenu from './hooks/use-no-context-menu'
 import usePreventAlert from './hooks/use-prevent-alert'
-import App from './app'
-import { IoBrokerDevicesProvider } from './contexts/iobroker-devices'
 
 const Shell: FC = () => {
   useNoContextMenu()

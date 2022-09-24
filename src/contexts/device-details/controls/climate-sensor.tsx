@@ -1,16 +1,9 @@
-import styled from '@emotion/styled'
-import { IconButton, Slider, Stack, Tooltip } from '@mui/material'
-import { AnimatePresence, motion } from 'framer-motion'
-import { FC, useCallback, useMemo } from 'react'
-import CustomActions from '../../../components/custom-actions'
+import { FC, useMemo } from 'react'
 import CustomInfos from '../../../components/custom-infos'
-import CustomSlider from '../../../components/custom-slider'
-import CustomToggle from '../../../components/custom-toggle'
-import Icon from '../../../components/icon'
 import readableDate from '../../../helpers/readable-date'
 import useDeviceState from '../../../hooks/use-device-state'
 import Device from '../../../types/device'
-import { Fix, SliderFlex } from './styles'
+import { SliderFlex } from './styles'
 
 const Controls: FC<{
   device: Device

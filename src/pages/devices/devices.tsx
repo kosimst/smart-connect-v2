@@ -1,16 +1,16 @@
 import { Badge } from '@mui/material'
 import { LayoutGroup } from 'framer-motion'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
 import Icon from '../../components/icon'
 import { AvailableIcon } from '../../components/icon/available-icons'
 import deviceDefinitions from '../../constants/device-definitions'
+import useIoBrokerDevices from '../../contexts/iobroker-devices'
 import { useSettings } from '../../contexts/settings'
 import forwardBaseProps from '../../helpers/forward-base-props'
 import groupBy from '../../helpers/group-by'
 import toKebabCase from '../../helpers/to-kebab-case'
-import useDevices from '../../hooks/use-devices'
 import HomeVitals from './parts/home-vitals'
 import OpenedDevices from './parts/opened-devices'
 import {
@@ -26,7 +26,7 @@ import {
 } from './styles'
 
 const DevicesPage = forwardBaseProps((baseProps) => {
-  const devices = useDevices()
+  const { devices } = useIoBrokerDevices()
 
   const isHidden = useCallback(
     (deviceFullName: string) =>

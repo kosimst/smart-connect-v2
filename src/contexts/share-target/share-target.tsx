@@ -1,17 +1,15 @@
 import { Typography } from '@mui/material'
-import { useLiveQuery } from 'dexie-react-hooks'
 import { AnimatePresence } from 'framer-motion'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 import DeviceCardPure from '../../components/device-card/device-card.pure'
 import DeviceGrid from '../../components/device-grid'
 import deviceDefinitions from '../../constants/device-definitions'
-import ioBrokerDb from '../../db/iobroker-db'
 import musicDetailsFromShare from '../../helpers/music-details-from-share'
 import useQueryParams from '../../hooks/use-query-params'
-import { RoomTitle, Title } from '../../pages/devices/styles'
+import { Title } from '../../pages/devices/styles'
 import Device from '../../types/device'
 import useDeviceDetails from '../device-details'
-import { TitleRow } from '../device-details/styles'
+import useIoBrokerDevices from '../iobroker-devices'
 import { useIoBrokerStates } from '../iobroker-states/iobroker-states'
 import { PageContainer, SectionHeading, SectionSubHeading } from './styles'
 
@@ -21,6 +19,7 @@ const ShareTarget: FC<{
   const { queryParams, setQueryParams } = useQueryParams()
   const { updateState } = useIoBrokerStates()
   const { open } = useDeviceDetails()
+  const { devices } = useIoBrokerDevices()
 
   const isShareTarget = useMemo(
     () => queryParams.text !== undefined || queryParams.url !== undefined,
@@ -41,10 +40,9 @@ const ShareTarget: FC<{
 
   const canHandleShare = !!musicDetails
 
-  const musicServers = useLiveQuery(
-    () => ioBrokerDb.devices.where('type').equals('music-server').toArray(),
-    [],
-    []
+  const musicServers = useMemo(
+    () => devices.filter((device) => device.type === 'music-server'),
+    [devices]
   )
 
   const onMusicServerClick = useCallback(

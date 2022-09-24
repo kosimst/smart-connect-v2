@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import useIoBrokerConnection from '../contexts/iobroker-connection'
-import ioBrokerDb from '../db/iobroker-db'
 import closestMinute from '../helpers/closest-minute'
-import sleep from '../helpers/sleep'
 import Device from '../types/device'
 
 type HistoryResult = {

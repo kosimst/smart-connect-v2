@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useIoBrokerStates } from '../contexts/iobroker-states/iobroker-states'
-import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
 
 const useDeviceState = <T extends any>(

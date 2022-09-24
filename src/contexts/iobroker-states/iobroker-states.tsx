@@ -1,4 +1,11 @@
-import { createContext, FC, ReactNode, useCallback, useContext } from 'react'
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+} from 'react'
 import useIoBrokerConnection from '../iobroker-connection'
 
 type IoBrokerStates = {
@@ -75,6 +82,40 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
     },
     [connection]
   )
+
+  useEffect(() => {
+    if (!connection) {
+      return
+    }
+
+    const abortController = new AbortController()
+
+    const subscribeToSwPostMessage = async () => {
+      const sw = await navigator.serviceWorker.ready
+
+      if (abortController.signal.aborted) {
+        return
+      }
+
+      const cb = (event: MessageEvent) => {
+        alert('Data: ' + JSON.stringify(event.data))
+      }
+
+      // @ts-ignore
+      sw.addEventListener('message', cb)
+
+      // @ts-ignore
+      abortController.signal.addEventListener('abort', () => {
+        sw.removeEventListener('message', cb)
+      })
+    }
+
+    subscribeToSwPostMessage()
+
+    return () => {
+      abortController.abort()
+    }
+  }, [connection])
 
   return (
     <IoBrokerStatesContext.Provider

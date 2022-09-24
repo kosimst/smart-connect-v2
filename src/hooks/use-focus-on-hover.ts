@@ -1,4 +1,4 @@
-import { MutableRefObject, Ref, useEffect, useRef } from 'react'
+import { MutableRefObject, useEffect } from 'react'
 
 const useFocusOnHover = (
   hoverRef: MutableRefObject<HTMLElement | null>,

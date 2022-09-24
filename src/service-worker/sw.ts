@@ -1,14 +1,12 @@
 /// <reference lib="webworker" />
 declare const self: ServiceWorkerGlobalScope
 
-import { liveQuery } from 'dexie'
 import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 import { clientsClaim } from 'workbox-core'
 import { ExpirationPlugin } from 'workbox-expiration'
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
 import { CacheFirst } from 'workbox-strategies'
-import ioBrokerDb from '../db/iobroker-db'
 
 self.skipWaiting()
 clientsClaim()
@@ -31,26 +29,6 @@ registerRoute(
     ],
   })
 )
-
-const credentialsObservable = liveQuery(() =>
-  ioBrokerDb.credentials.limit(1).toArray()
-)
-const subscribedStatesObservable = liveQuery(() =>
-  ioBrokerDb.subscribedStates.toArray()
-)
-
-let credentials: {
-  url: string
-  cfClientId: string
-  cfClientSecret: string
-} | null = null
-credentialsObservable.subscribe((newCredentials) => {
-  credentials = newCredentials[0] || null
-})
-let subscribedStates: string[] = []
-subscribedStatesObservable.subscribe((newSubscribedStates) => {
-  subscribedStates = [...new Set(newSubscribedStates.map((state) => state.id))]
-})
 
 self.addEventListener('push', (event) => {
   let msg = event.data?.text()
@@ -120,24 +98,32 @@ self.addEventListener('notificationclick', (event) => {
     return
   }
 
-  const { tasks } = JSON.parse(action)
-
-  if (!credentials) return
-
-  const { url, cfClientId, cfClientSecret } = credentials
-
-  for (const [stateId, value] of Object.entries(tasks)) {
-    fetch(`https://${url}/set/${stateId}?value=${value}`, {
-      headers: {
-        'CF-Access-Client-Id': cfClientId,
-        'CF-Access-Client-Secret': cfClientSecret,
-      },
-    }).catch((e) => {
-      self.registration.showNotification('Failed execute action', {
-        body: e.message,
-        icon: '/notify/icons/alert.png',
-        badge: '/notify/badges/default.png',
-      })
-    })
+  const { tasks } = JSON.parse(action) as {
+    tasks: {
+      [stateId: string]: any
+    }
   }
+
+  event.waitUntil(
+    self.clients
+      .matchAll({
+        type: 'window',
+      })
+      .then(async (clientsArr) => {
+        const client = await (clientsArr.length
+          ? Promise.resolve(clientsArr[0])
+          : self.clients.openWindow('/'))
+
+        if (!client) {
+          return
+        }
+
+        await client.focus()
+
+        client.postMessage({
+          type: 'setStates',
+          tasks,
+        })
+      })
+  )
 })

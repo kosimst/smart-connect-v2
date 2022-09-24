@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import randomUUID from '../helpers/randomUUID'
 
 const useQueryParams = () => {
   const [queryParams, setQueryParamsState] = useState<Record<string, string>>(

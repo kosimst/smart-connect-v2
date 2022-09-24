@@ -13,6 +13,7 @@ import {
 import deviceDefinitions from '../../constants/device-definitions'
 import Device from '../../types/device'
 import controls from './controls'
+import historyComponents from './history'
 import Indicators from './indicators'
 import WindowSensors from './special-sections/window-sensors'
 import {
@@ -23,10 +24,8 @@ import {
   FixedChildren,
   NoControlsHint,
   Section,
-  Subtitle,
   TitleRow,
 } from './styles'
-import historyComponents from './history'
 
 type DeviceDetailsProviderProps = {
   children?: ReactNode

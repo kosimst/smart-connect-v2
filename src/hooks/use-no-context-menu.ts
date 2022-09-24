@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import preventDefault from '../helpers/prevent-default'
 
 const useNoContextMenu = () => {
   useEffect(() => {

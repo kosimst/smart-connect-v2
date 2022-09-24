@@ -3,10 +3,9 @@ import {
   ButtonGroup,
   capitalize,
   IconButton,
-  Typography,
   useTheme,
 } from '@mui/material'
-import { indigo, pink, purple, red } from '@mui/material/colors'
+import { indigo, pink, purple } from '@mui/material/colors'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CartesianGrid,
