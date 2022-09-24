@@ -32,7 +32,7 @@ const useData: DataHook = (device) => {
               text: `${co2}ppm`,
             },
           ].filter(Boolean) as DataText[]),
-    [temperature, humidity, co2, battery]
+    [temperature, humidity, co2, battery, humidityExists, co2Exists]
   )
 
   return {
