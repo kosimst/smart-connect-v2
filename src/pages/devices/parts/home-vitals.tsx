@@ -49,11 +49,12 @@ const HomeVitals: FC = () => {
             onClick={() => open(device)}
           />
           <span>
-            in <b>{device.roomName}</b> is low on battery ({battery}%)
+            in <b>{device.roomName}</b> is low on battery{' '}
+            {typeof battery === 'number' && `(${battery}%)`}
           </span>
         </div>
       ))}
-      {unavailableDevices.map(({ device }) => (
+      {unavailableDevices.map((device) => (
         <div key={device.id}>
           <Chip
             label={device.name || deviceDefinitions[device.type].fullName}

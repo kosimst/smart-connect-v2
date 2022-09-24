@@ -58,7 +58,9 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
           cb(initialValue.val)
         }
       } catch (e) {
-        throw new Error('State does not exist')
+        throw new Error('Failed to subscribe', {
+          cause: e,
+        })
       }
 
       if (signal.aborted) {

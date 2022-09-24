@@ -1,87 +1,155 @@
-import { useLiveQuery } from 'dexie-react-hooks'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
+import useIoBrokerConnection from '../contexts/iobroker-connection'
+import useIoBrokerDevices from '../contexts/iobroker-devices'
 import { useIoBrokerStates } from '../contexts/iobroker-states/iobroker-states'
-import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
-import useDevices from './use-devices'
 
 const useOpenedDevices = () => {
-  const openedStates = useLiveQuery(
-    () =>
-      ioBrokerDb.states
-        .where('role')
-        .equals('opened')
-        .and((state) => state.value === true || state.value === 1)
-        .toArray(),
-    [],
-    Array<{
-      id: string
-      value: number
-    }>()
-  )
+  const { connection } = useIoBrokerConnection()
+  const { getDeviceFromId } = useIoBrokerDevices()
+  const { subscribeState } = useIoBrokerStates()
 
-  const deviceIds = useMemo(
-    () =>
-      openedStates.map((state) => ({
-        deviceId: state.id.split('.').slice(0, -1).join('.'),
-        value: state.value,
-      })),
-    [openedStates]
-  )
+  const [openedStates, setOpenedStates] = useState<string[]>([])
 
-  const [infos, setInfos] = useState(
-    Array<{
-      device: Device
-      openedState: 0 | 1 | 2
-    }>()
-  )
+  const [openedDevices, setOpenedDevices] = useState<
+    { device: Device; openedState: 0 | 1 | 2 }[]
+  >([])
 
   useEffect(() => {
-    const getDevices = async () => {
-      const devices = (await ioBrokerDb.devices.bulkGet(
-        deviceIds.map((d) => d.deviceId)
-      )) as Device[]
+    const fetchStatesToWatch = async () => {
+      if (!connection) {
+        return
+      }
 
-      const devicesWithState = devices.map((d) => ({
-        device: d,
-        openedState: (deviceIds.find((b) => b.deviceId === d.id)?.value ?? 0
-          ? 2
-          : 0) as 0 | 1 | 2,
-      }))
-
-      const newInfos = devicesWithState.filter(
-        (d) =>
-          d.device.type !== 'window-tilted-sensor' &&
-          d.device.type !== 'door-sensor'
-      )
-      const windowTiltedSensors = devicesWithState.filter(
-        (d) => d.device.type === 'window-tilted-sensor'
+      const states = await connection.getStates('alias.0.*')
+      const newOpenedStates = Object.fromEntries(
+        Object.entries(states).filter(([id]) => id.endsWith('.opened'))
       )
 
-      for (const { device: windowTiltedSensor } of windowTiltedSensors) {
-        const matchingWindowOpenedSensor = newInfos.find(
-          (d) =>
-            d.device.roomName === windowTiltedSensor.roomName &&
-            d.device.name === windowTiltedSensor.name
-        )
+      const newOpenedDevices = Object.entries(newOpenedStates)
+        .filter(([, state]) => state?.val)
+        .map(([id]) => ({ device: getDeviceFromId(id), openedState: 2 }))
+        .filter(({ device }) => device) as {
+        device: Device
+        openedState: 0 | 1 | 2
+      }[]
 
-        if (matchingWindowOpenedSensor) {
+      const combinedOpenedDevices = Array<{
+        device: Device
+        openedState: 0 | 1 | 2
+      }>()
+
+      for (const { device, openedState } of newOpenedDevices) {
+        // ignore door-sensor
+        if (device.type === 'door-sensor') {
           continue
         }
 
-        newInfos.push({
-          device: windowTiltedSensor,
-          openedState: 1,
-        })
+        if (device.type === 'window-tilted-sensor') {
+          const openedSensor = newOpenedDevices.find(
+            ({ device: d }) =>
+              d.type === 'window-opened-sensor' &&
+              d.roomName === device.roomName &&
+              d.name === device.name
+          )
+
+          if (openedSensor) {
+            combinedOpenedDevices.push({
+              device,
+              openedState: 2,
+            })
+          } else {
+            combinedOpenedDevices.push({
+              device,
+              openedState: 1,
+            })
+          }
+        } else {
+          combinedOpenedDevices.push({
+            device,
+            openedState,
+          })
+        }
       }
 
-      setInfos(newInfos)
+      setOpenedDevices(combinedOpenedDevices)
+      setOpenedStates(Object.keys(newOpenedStates))
     }
 
-    getDevices()
-  }, [deviceIds])
+    fetchStatesToWatch()
+  }, [connection])
 
-  return infos
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    const watchStates = async () => {
+      for (const id of openedStates) {
+        subscribeState(
+          id,
+          (val) => {
+            const device = getDeviceFromId(id)
+
+            if (!device) {
+              return
+            }
+
+            setOpenedDevices((devices) =>
+              devices.filter((d) => d.device.id !== device.id)
+            )
+
+            if (val) {
+              setOpenedDevices((devices) => {
+                const newDevices = [...devices]
+
+                // ignore door-sensor
+                if (device.type === 'door-sensor') {
+                  return newDevices
+                }
+
+                if (device.type === 'window-tilted-sensor') {
+                  const openedSensor = newDevices.find(
+                    ({ device: d }) =>
+                      d.type === 'window-opened-sensor' &&
+                      d.roomName === device.roomName &&
+                      d.name === device.name
+                  )
+
+                  if (openedSensor) {
+                    return newDevices
+                  } else {
+                    return [
+                      ...newDevices,
+                      {
+                        device,
+                        openedState: 1,
+                      },
+                    ]
+                  }
+                }
+
+                return [
+                  ...newDevices,
+                  {
+                    device,
+                    openedState: 2,
+                  },
+                ]
+              })
+            }
+          },
+          abortController.signal
+        )
+      }
+    }
+
+    watchStates()
+
+    return () => {
+      abortController.abort()
+    }
+  }, [openedStates, subscribeState, getDeviceFromId])
+
+  return openedDevices
 }
 
 export default useOpenedDevices

@@ -14,6 +14,7 @@ import ErrorBoundary from './helpers/error-boundary'
 import useNoContextMenu from './hooks/use-no-context-menu'
 import usePreventAlert from './hooks/use-prevent-alert'
 import App from './app'
+import { IoBrokerDevicesProvider } from './contexts/iobroker-devices'
 
 const Shell: FC = () => {
   useNoContextMenu()
@@ -27,15 +28,17 @@ const Shell: FC = () => {
     <ThemeProvider theme={usedTheme}>
       <ErrorBoundary>
         <IoBrokerConnectionProvider>
-          <IoBrokerStatesProvider>
-            <SettingsProvider>
-              <DeviceDetailsProvider>
-                <ShareTarget>
-                  <App />
-                </ShareTarget>
-              </DeviceDetailsProvider>
-            </SettingsProvider>
-          </IoBrokerStatesProvider>
+          <IoBrokerDevicesProvider>
+            <IoBrokerStatesProvider>
+              <SettingsProvider>
+                <DeviceDetailsProvider>
+                  <ShareTarget>
+                    <App />
+                  </ShareTarget>
+                </DeviceDetailsProvider>
+              </SettingsProvider>
+            </IoBrokerStatesProvider>
+          </IoBrokerDevicesProvider>
         </IoBrokerConnectionProvider>
       </ErrorBoundary>
     </ThemeProvider>

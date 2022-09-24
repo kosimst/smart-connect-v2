@@ -1,55 +1,75 @@
-import { useLiveQuery } from 'dexie-react-hooks'
-import { useEffect, useMemo, useState } from 'react'
-import ioBrokerDb from '../db/iobroker-db'
+import { useEffect, useState } from 'react'
+import useIoBrokerConnection from '../contexts/iobroker-connection'
+import useIoBrokerDevices from '../contexts/iobroker-devices'
+import { useIoBrokerStates } from '../contexts/iobroker-states'
 import Device from '../types/device'
 
 const useUnavailableDevices = () => {
-  const lowBatteryStates = useLiveQuery(
-    () =>
-      ioBrokerDb.states
-        .where('role')
-        .equals('available')
-        .and((state) => state.value === false)
-        .toArray(),
-    [],
-    Array<{
-      id: string
-      value: number
-    }>()
-  )
+  const { connection } = useIoBrokerConnection()
+  const { getDeviceFromId } = useIoBrokerDevices()
+  const { subscribeState } = useIoBrokerStates()
 
-  const deviceIds = useMemo(
-    () =>
-      lowBatteryStates.map((state) => ({
-        deviceId: state.id.split('.').slice(0, -1).join('.'),
-        value: state.value,
-      })),
-    [lowBatteryStates]
-  )
+  const [unavailableStates, setUnavailableStates] = useState<string[]>([])
 
-  const [infos, setInfos] = useState(
-    Array<{
-      device: Device
-    }>()
-  )
+  const [unavailableDevices, setUnavailableDevices] = useState<Device[]>([])
 
   useEffect(() => {
-    const getDevices = async () => {
-      const devices = (
-        await ioBrokerDb.devices.bulkGet(deviceIds.map((d) => d.deviceId))
-      ).filter(Boolean) as Device[]
+    const fetchStatesToWatch = async () => {
+      if (!connection) {
+        return
+      }
 
-      setInfos(
-        devices.map((d) => ({
-          device: d,
-        }))
+      const newUnavailableStates = await connection.getStates(
+        'alias.0.*.available'
       )
+
+      const newUnavailableDevices = Object.entries(newUnavailableStates)
+        .filter(([, state]) => !state?.val)
+        .map(([id]) => getDeviceFromId(id))
+        .filter((device) => device) as Device[]
+
+      setUnavailableDevices(newUnavailableDevices)
+      setUnavailableStates(Object.keys(newUnavailableStates))
     }
 
-    getDevices()
-  }, [deviceIds])
+    fetchStatesToWatch()
+  }, [connection])
 
-  return infos
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    const watchStates = async () => {
+      for (const state of unavailableStates) {
+        subscribeState(
+          state,
+          (state) => {
+            const device = getDeviceFromId(state.id)
+
+            if (!device) {
+              return
+            }
+
+            setUnavailableDevices((devices) =>
+              devices.filter((d) => d.id !== device.id)
+            )
+
+            if (!state.val) {
+              setUnavailableDevices((devices) => [...devices, device])
+            }
+          },
+          abortController.signal
+        ).catch(() => {})
+      }
+    }
+
+    watchStates()
+
+    return () => {
+      abortController.abort()
+    }
+  }, [unavailableStates])
+
+  return unavailableDevices
 }
 
 export default useUnavailableDevices

@@ -1,60 +1,146 @@
-import { useLiveQuery } from 'dexie-react-hooks'
-import { useEffect, useMemo, useState } from 'react'
-import ioBrokerDb from '../db/iobroker-db'
+import { useEffect, useState } from 'react'
+import useIoBrokerConnection from '../contexts/iobroker-connection'
+import useIoBrokerDevices from '../contexts/iobroker-devices'
+import { useIoBrokerStates } from '../contexts/iobroker-states'
 import Device from '../types/device'
 
 const useLowBatteryDevices = () => {
-  const lowBatteryStates = useLiveQuery(
-    () =>
-      ioBrokerDb.states
-        .where('role')
-        .equals('battery')
-        .and((state) => state.value < 20)
-        .toArray(),
-    [],
-    Array<{
-      id: string
-      value: number
-    }>()
+  const { connection } = useIoBrokerConnection()
+  const { getDeviceFromId } = useIoBrokerDevices()
+  const { subscribeState } = useIoBrokerStates()
+
+  const [batteryStates, setLowBatteryStates] = useState<string[]>([])
+  const [batteryCriticalStates, setBatteryCriticalStates] = useState<string[]>(
+    []
   )
 
-  const lowBatteryDeviceIds = useMemo(
-    () =>
-      lowBatteryStates.map((state) => ({
-        deviceId: state.id.split('.').slice(0, -1).join('.'),
-        value: state.value,
-      })),
-    [lowBatteryStates]
-  )
-
-  const [infos, setInfos] = useState(
-    Array<{
+  const [lowBatteryDevices, setLowBatteryDevices] = useState<
+    {
       device: Device
-      battery: number
-    }>()
-  )
+      battery: number | 'critical'
+    }[]
+  >([])
 
   useEffect(() => {
-    const getDevices = async () => {
-      const devices = (
-        await ioBrokerDb.devices.bulkGet(
-          lowBatteryDeviceIds.map((d) => d.deviceId)
-        )
-      ).filter(Boolean) as Device[]
+    const fetchStatesToWatch = async () => {
+      if (!connection) {
+        return
+      }
 
-      setInfos(
-        devices.map((d) => ({
-          device: d,
-          battery:
-            lowBatteryDeviceIds.find((b) => b.deviceId === d.id)?.value ?? 0,
-        }))
+      const newBatteryStates = await connection.getStates('alias.0.*.battery')
+      const newBatteryCriticalStates = await connection.getStates(
+        'alias.0.*.battery-critical'
       )
+
+      const devicesWithLowBattery = Object.entries(newBatteryStates)
+        .filter(([, state]) => state?.val <= 20)
+        .map(([id, { val: battery }]) => ({
+          device: getDeviceFromId(id),
+          battery,
+        }))
+        .filter(({ device }) => device) as {
+        device: Device
+        battery: number | 'critical'
+      }[]
+
+      const devicesWithCriticalBattery = Object.entries(
+        newBatteryCriticalStates
+      )
+        .filter(([, state]) => state?.val)
+        .map(([id]) => ({
+          device: getDeviceFromId(id),
+          battery: 'critical',
+        }))
+        .filter(({ device }) => device) as {
+        device: Device
+        battery: number | 'critical'
+      }[]
+
+      setLowBatteryDevices([
+        ...devicesWithLowBattery,
+        ...devicesWithCriticalBattery,
+      ])
+
+      setLowBatteryStates(Object.keys(newBatteryStates))
+      setBatteryCriticalStates(Object.keys(newBatteryCriticalStates))
     }
 
-    getDevices()
-  }, [lowBatteryDeviceIds])
+    fetchStatesToWatch()
+  }, [connection])
 
-  return infos
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    const watchStates = async () => {
+      for (const batteryState of batteryStates) {
+        await subscribeState(
+          batteryState,
+          (val) => {
+            const device = getDeviceFromId(batteryState)
+
+            if (!device) {
+              return
+            }
+
+            setLowBatteryDevices((prev) =>
+              prev.filter(({ device: d }) => d.id !== device.id)
+            )
+
+            if (val > 20) {
+              return
+            }
+
+            setLowBatteryDevices((devices) => [
+              ...devices,
+              {
+                device,
+                battery: val,
+              },
+            ])
+          },
+          abortController.signal
+        ).catch(() => {})
+      }
+
+      for (const batteryCriticalState of batteryCriticalStates) {
+        await subscribeState(
+          batteryCriticalState,
+          (val) => {
+            const device = getDeviceFromId(batteryCriticalState)
+
+            if (!device) {
+              return
+            }
+
+            setLowBatteryDevices((prev) =>
+              prev.filter(({ device: d }) => d.id !== device.id)
+            )
+
+            if (!val) {
+              return
+            }
+
+            setLowBatteryDevices((devices) => [
+              ...devices,
+              {
+                device,
+                battery: 'critical',
+              },
+            ])
+          },
+          abortController.signal
+        ).catch(() => {})
+      }
+    }
+
+    watchStates()
+
+    return () => {
+      abortController.abort()
+    }
+  }, [subscribeState, batteryStates, batteryCriticalStates])
+
+  return lowBatteryDevices
 }
 
 export default useLowBatteryDevices
