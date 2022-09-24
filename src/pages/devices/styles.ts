@@ -26,19 +26,19 @@ export const Room = styled(motion.section)`
     content: '';
     background-color: ${({ theme }) => theme.palette.background.default};
     position: absolute;
-    top: 54px;
+    top: 56px;
     height: 6px;
     width: 100vw;
-    transform: translateX(-16px) translateY(0px);
+    transform: translateX(-16px) translateY(4px);
     z-index: 3;
   }
 
   & > .shadow {
     position: sticky;
-    top: 54px;
+    top: 56px;
     width: 100vw;
     z-index: 0;
-    transform: translateX(-16px) translateY(-2px);
+    transform: translateX(-16px) translateY(0px);
     height: 2px;
     background-color: ${({ theme }) => theme.palette.background.default};
     box-shadow: ${({ theme }) => theme.shadows[1]};

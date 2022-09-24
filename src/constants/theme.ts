@@ -32,7 +32,7 @@ export const lightTheme = createTheme({
       disabled: 'rgba(0, 0, 0, 0.5)',
     },
   },
-  shadows: Array(10).fill('none') as Shadows,
+  //shadows: Array(10).fill('none') as Shadows,
 })
 
 export const darkTheme = createTheme({

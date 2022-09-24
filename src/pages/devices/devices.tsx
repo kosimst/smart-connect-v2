@@ -7,6 +7,7 @@ import Icon from '../../components/icon'
 import { AvailableIcon } from '../../components/icon/available-icons'
 import deviceDefinitions from '../../constants/device-definitions'
 import { useSettings } from '../../contexts/settings'
+import forwardBaseProps from '../../helpers/forward-base-props'
 import groupBy from '../../helpers/group-by'
 import toKebabCase from '../../helpers/to-kebab-case'
 import useDevices from '../../hooks/use-devices'
@@ -24,7 +25,7 @@ import {
   Title,
 } from './styles'
 
-const DevicesPage: FC = () => {
+const DevicesPage = forwardBaseProps((baseProps) => {
   const devices = useDevices()
 
   const isHidden = useCallback(
@@ -134,7 +135,7 @@ const DevicesPage: FC = () => {
   }, [])
 
   return (
-    <>
+    <div {...baseProps}>
       <Title variant="h1">
         <span>My home</span>
         <FilterIconButton
@@ -263,8 +264,8 @@ const DevicesPage: FC = () => {
           <span>Settings</span>
         </Link>
       </LinksGrid>
-    </>
+    </div>
   )
-}
+})
 
 export default DevicesPage

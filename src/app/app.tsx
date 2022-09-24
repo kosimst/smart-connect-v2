@@ -3,7 +3,11 @@ import useIoBrokerConnection from '../contexts/iobroker-connection'
 import useIsOffline from '../hooks/use-is-offline'
 import ConnectPage from '../pages/connect'
 import DevicesPage from '../pages/devices'
-import { Main } from './app-styles'
+import {
+  ConnectingOverlay,
+  OfflineOverlay,
+} from './parts/no-connection-overlays'
+import { Main } from './styles'
 
 const App: FC = () => {
   const { valid, connection } = useIoBrokerConnection()
@@ -12,14 +16,12 @@ const App: FC = () => {
   return (
     <>
       <Main>
-        {connection ? (
+        {connection && !isOffline ? (
           <DevicesPage />
+        ) : isOffline ? (
+          <OfflineOverlay />
         ) : valid ? (
-          isOffline ? (
-            <span>Offline</span>
-          ) : (
-            <span>Connecting...</span>
-          )
+          <ConnectingOverlay />
         ) : (
           <ConnectPage />
         )}

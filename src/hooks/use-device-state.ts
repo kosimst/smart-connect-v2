@@ -1,15 +1,12 @@
-import { useLiveQuery } from 'dexie-react-hooks'
 import { useCallback, useEffect, useState } from 'react'
 import { useIoBrokerStates } from '../contexts/iobroker-states/iobroker-states'
 import ioBrokerDb from '../db/iobroker-db'
 import Device from '../types/device'
-import { SubscriptionPriority } from '../workers/iobroker-sync'
 
 const useDeviceState = <T extends any>(
   device: Device | undefined,
   state: string,
-  defaultValue: T,
-  priority: SubscriptionPriority = 'medium'
+  defaultValue: T
 ) => {
   const { subscribeState, updateState } = useIoBrokerStates()
 
@@ -34,17 +31,22 @@ const useDeviceState = <T extends any>(
       return
     }
 
-    const cb = (val: T) => {
-      setValue(val)
-      setExists(true)
+    const abortController = new AbortController()
+    const subscribeToState = async () => {
+      try {
+        await subscribeState(path, setValue, abortController.signal)
+        setExists(true)
+      } catch {}
     }
 
-    const unsubscribePromise = subscribeState(path, cb)
+    subscribeToState()
 
     return () => {
-      unsubscribePromise.then((unsubscribe) => unsubscribe())
+      abortController.abort()
+      setExists(false)
+      setValue(defaultValue)
     }
-  }, [subscribeState, path, priority])
+  }, [subscribeState, path])
 
   return [value, setState, exists] as const
 }

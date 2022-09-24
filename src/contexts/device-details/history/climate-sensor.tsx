@@ -4,6 +4,7 @@ import {
   capitalize,
   IconButton,
   Typography,
+  useTheme,
 } from '@mui/material'
 import { indigo, pink, purple, red } from '@mui/material/colors'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -34,7 +35,7 @@ const tooltipFormatter = (value: number, name: string) => [
 ]
 
 const History: FC<{ device: Device }> = ({ device }) => {
-  const [from, setFrom] = useState(Date.now() - 60 * 60 * 1000)
+  const [from, setFrom] = useState(Date.now() - 6 * 60 * 60 * 1000)
   const [to, setTo] = useState(Date.now())
   const [interval, setInterval] = useState(2 * 60 * 1000)
   const states = useMemo(() => ['temperature', 'humidity', 'co2'], [])
@@ -117,6 +118,8 @@ const History: FC<{ device: Device }> = ({ device }) => {
     return height - 32 - 40 - 16
   }, [rect])
 
+  const theme = useTheme()
+
   return (
     <div
       ref={containerRef}
@@ -187,7 +190,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
                 border: 'none',
                 outline: 'none',
                 borderRadius: 8,
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.33)',
+                boxShadow: theme.shadows[2],
               }}
               contentStyle={{
                 outline: 'none',

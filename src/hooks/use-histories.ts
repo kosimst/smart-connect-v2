@@ -40,15 +40,6 @@ const useHistories = (
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
-  const fromIsoDate = useMemo(
-    () => closestMinute(new Date(from)).toISOString(),
-    [from]
-  )
-  const toIsoDate = useMemo(
-    () => closestMinute(new Date(to)).toISOString(),
-    [to]
-  )
-
   const dataPointsCount = useMemo(
     () =>
       Math.ceil(
@@ -68,33 +59,27 @@ const useHistories = (
       setLoading(true)
       setError(false)
 
-      const response = await connection.getHistory(
-        'alias.0.simon.climate-sensor.co2',
-        {
-          start: Date.now() - 60 * 60 * 1000,
-          end: Date.now(),
-          id: 'alias.0.simon.climate-sensor.co2',
-          aggregate: 'minmax',
-        }
+      const stateHistories = await Promise.all(
+        states.map(
+          (state) =>
+            connection.getHistory(`${device.id}.${state}`, {
+              instance: 'influxdb.0',
+              start: from,
+              end: to,
+              from: false,
+              ack: false,
+              q: false,
+              addID: false,
+              aggregate: 'average',
+              returnNewestEntries: true,
+              count: dataPointsCount,
+            }) as Promise<{ val: any; ts: number }[]>
+        )
       )
 
-      console.log(response)
-
-      if (!response.ok) {
-        setError(true)
-        setLoading(false)
-        return
-      }
-
-      const json = await response.json()
-
-      try {
-        assertHistoryResult(json)
-      } catch {
-        setError(true)
-        setLoading(false)
-        return
-      }
+      const data = Object.fromEntries(
+        states.map((state, index) => [state, stateHistories[index]])
+      )
 
       const result = Array<{
         ts: number
@@ -111,9 +96,7 @@ const useHistories = (
 
       for (const [i, entry] of Object.entries(result)) {
         for (const state of states) {
-          const stateDataPoints = json.find(
-            (item) => item.target === `${device.id}.${state}`
-          )?.datapoints
+          const stateDataPoints = data[state]
 
           if (!stateDataPoints) {
             setError(true)
@@ -123,7 +106,7 @@ const useHistories = (
 
           const { ts: entryTs } = entry
           const stateAtTs = stateDataPoints.find(
-            ([value, dataPointTs]) => dataPointTs >= entryTs
+            ({ ts: dataPointTs }) => dataPointTs >= entryTs
           )
 
           if (!stateAtTs) {
@@ -131,7 +114,7 @@ const useHistories = (
           }
 
           // @ts-ignore
-          result[i][state] = stateAtTs[0]
+          result[i][state] = stateAtTs.val
         }
       }
 
@@ -141,13 +124,7 @@ const useHistories = (
     }
 
     fetchHistory()
-  }, [
-    device.toString(),
-    fromIsoDate,
-    toIsoDate,
-    states.toString(),
-    dataPointsCount,
-  ])
+  }, [device.id, from, to, , states, dataPointsCount])
 
   return [history, loading, error] as const
 }

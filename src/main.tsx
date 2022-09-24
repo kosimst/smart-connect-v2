@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Shell from './app/shell'
+import Shell from './shell'
 import './index.css'
 
 import './i18n'

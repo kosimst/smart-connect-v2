@@ -1,21 +1,12 @@
-import {
-  createContext,
-  FC,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from 'react'
-import ioBrokerDb from '../../db/iobroker-db'
-import randomUUID from '../../helpers/randomUUID'
-import IoBrokerSync, { SubscriptionPriority } from '../../workers/iobroker-sync'
-import Device from '../../types/device'
+import { createContext, FC, ReactNode, useCallback, useContext } from 'react'
 import useIoBrokerConnection from '../iobroker-connection'
-import { BinaryStateChangeHandler } from '@iobroker/socket-client'
 
 type IoBrokerStates = {
-  subscribeState(id: string, cb: (val: any) => void): Promise<() => void>
+  subscribeState(
+    id: string,
+    cb: (val: any) => void,
+    signal: AbortSignal
+  ): Promise<void>
   updateState(id: string, val: any): void
 }
 
@@ -47,7 +38,7 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
   )
 
   const subscribeState = useCallback(
-    async (id: string, cb: (val: any) => void) => {
+    async (id: string, cb: (val: any) => void, signal: AbortSignal) => {
       if (!connection) {
         throw new Error('Not connected to ioBroker')
       }
@@ -60,11 +51,25 @@ export const IoBrokerStatesProvider: FC<{ children: ReactNode }> = ({
         cb(state.val)
       }
 
+      try {
+        const initialValue = await connection.getState(id)
+
+        if (initialValue && !signal.aborted) {
+          cb(initialValue.val)
+        }
+      } catch (e) {
+        throw new Error('State does not exist')
+      }
+
+      if (signal.aborted) {
+        return
+      }
+
       await connection.subscribeState(id, usedCb)
 
-      return () => {
+      signal.addEventListener('abort', () => {
         connection.unsubscribeState(id, usedCb)
-      }
+      })
     },
     [connection]
   )
