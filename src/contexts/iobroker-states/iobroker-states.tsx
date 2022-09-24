@@ -1,11 +1,4 @@
-import {
-  createContext,
-  FC,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-} from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext } from 'react'
 import useIoBrokerConnection from '../iobroker-connection'
 
 type IoBrokerStates = {
