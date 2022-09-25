@@ -91,11 +91,12 @@ const History: FC<{ device: Device }> = ({ device }) => {
   const [selectedTimeFrame, setSelectedTimeFrame] =
     useState<AvailableTimeFrame>('3h')
 
+  const [now, setNow] = useState(Date.now())
   const from = useMemo(
-    () => Date.now() - timeFrameMinutes[selectedTimeFrame] * 60 * 1000,
+    () => now - timeFrameMinutes[selectedTimeFrame] * 60 * 1000,
     [selectedTimeFrame]
   )
-  const to = useMemo(() => Date.now(), [])
+  const to = useMemo(() => now, [now])
 
   const interval = useMemo(
     () => timeFrameIntervalMinutes[selectedTimeFrame] * 60 * 1000,
@@ -116,6 +117,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
   const setTimeFrameTo = useCallback(
     (timeFrame: AvailableTimeFrame) => () => {
       setSelectedTimeFrame(timeFrame)
+      setNow(Date.now())
     },
     [setSelectedTimeFrame]
   )
@@ -162,6 +164,8 @@ const History: FC<{ device: Device }> = ({ device }) => {
   }, [rect])
 
   const theme = useTheme()
+
+  const [hiddenStates, setHiddenStates] = useState<Set<string>>(new Set())
 
   return (
     <div
@@ -227,6 +231,17 @@ const History: FC<{ device: Device }> = ({ device }) => {
               formatter={(val) => (val === 'co2' ? 'CO2' : capitalize(val))}
               align="left"
               iconType="plainline"
+              onClick={({ dataKey }) => {
+                setHiddenStates((prev) => {
+                  const next = new Set(prev)
+                  if (next.has(dataKey)) {
+                    next.delete(dataKey)
+                  } else {
+                    next.add(dataKey)
+                  }
+                  return next
+                })
+              }}
             />
             <Tooltip
               labelFormatter={(ts) =>
@@ -269,6 +284,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
                 dot={false}
                 yAxisId={key}
                 strokeWidth={2}
+                hide={hiddenStates.has(key)}
               />
             ))}
           </LineChart>
