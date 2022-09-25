@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import CustomInfos from '../../../components/custom-infos'
-import CustomToggle from '../../../components/custom-toggle'
 import useDeviceState from '../../../hooks/use-device-state'
 import Device from '../../../types/device'
 import { Fix, SliderFlex } from './styles'
