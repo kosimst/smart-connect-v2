@@ -23,6 +23,59 @@ import useHistories from '../../../hooks/use-histories'
 import useRect from '../../../hooks/use-rect'
 import Device from '../../../types/device'
 
+const availableTimeFrames = [
+  '1h',
+  '3h',
+  '6h',
+  '12h',
+  '1d',
+  '3d',
+  '1w',
+  '2w',
+  '1m',
+  '3m',
+  '6m',
+  '1y',
+]
+
+const onlyVisibleOnFullScreen = ['1h', '6h', '12h', '2w', '6m', '1y']
+
+const timeFrameMinutes = {
+  '1h': 60,
+  '3h': 180,
+  '6h': 360,
+  '12h': 720,
+  '1d': 1440,
+  '3d': 4320,
+  '1w': 10080,
+  '2w': 20160,
+  '1m': 43800,
+  '3m': 131400,
+  '6m': 262800,
+  '1y': 525600,
+} as {
+  [key: AvailableTimeFrame]: number
+}
+
+const timeFrameIntervalMinutes = {
+  '1h': 1,
+  '3h': 2,
+  '6h': 5,
+  '12h': 5,
+  '1d': 5,
+  '3d': 30,
+  '1w': 60,
+  '2w': 3 * 60,
+  '1m': 3 * 60,
+  '3m': 6 * 60,
+  '6m': 12 * 60,
+  '1y': 12 * 60,
+} as {
+  [key: AvailableTimeFrame]: number
+}
+
+type AvailableTimeFrame = typeof availableTimeFrames[number]
+
 const tooltipFormatter = (value: number, name: string) => [
   `${Math.round(value * 100) / 100}${
     {
@@ -35,9 +88,19 @@ const tooltipFormatter = (value: number, name: string) => [
 ]
 
 const History: FC<{ device: Device }> = ({ device }) => {
-  const [from, setFrom] = useState(Date.now() - 6 * 60 * 60 * 1000)
-  const [to, setTo] = useState(Date.now())
-  const [interval, setInterval] = useState(2 * 60 * 1000)
+  const [selectedTimeFrame, setSelectedTimeFrame] =
+    useState<AvailableTimeFrame>('3h')
+
+  const from = useMemo(
+    () => Date.now() - timeFrameMinutes[selectedTimeFrame] * 60 * 1000,
+    [selectedTimeFrame]
+  )
+  const to = useMemo(() => Date.now(), [])
+
+  const interval = useMemo(
+    () => timeFrameIntervalMinutes[selectedTimeFrame] * 60 * 1000,
+    [selectedTimeFrame]
+  )
   const states = useMemo(() => ['temperature', 'humidity', 'co2'], [])
 
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -50,31 +113,11 @@ const History: FC<{ device: Device }> = ({ device }) => {
     interval
   )
 
-  const onTimeFrameSelect = useCallback(
-    (timeFrame: '1h' | '6h' | '12h' | '24h' | '168h' | '720h') => () => {
-      const hours = parseInt(timeFrame)
-
-      setFrom(Date.now() - hours * 60 * 60 * 1000)
-      setTo(Date.now())
-
-      const intervals = {
-        '1h': 1 * 60 * 1000,
-        '6h': 5 * 60 * 1000,
-        '12h': 10 * 60 * 1000,
-        '24h': 30 * 60 * 1000,
-        '168h': 60 * 60 * 1000,
-        '720h': 5 * 60 * 60 * 1000,
-      }
-
-      let interval = intervals[timeFrame]
-
-      if (isFullscreen) {
-        interval /= 5
-        interval = Math.min(interval, 60 * 1000)
-      }
-      setInterval(interval)
+  const setTimeFrameTo = useCallback(
+    (timeFrame: AvailableTimeFrame) => () => {
+      setSelectedTimeFrame(timeFrame)
     },
-    []
+    [setSelectedTimeFrame]
   )
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -137,12 +180,22 @@ const History: FC<{ device: Device }> = ({ device }) => {
         }}
       >
         <ButtonGroup>
-          <Button onClick={onTimeFrameSelect('1h')}>1h</Button>
-          <Button onClick={onTimeFrameSelect('6h')}>6h</Button>
-          <Button onClick={onTimeFrameSelect('12h')}>12h</Button>
-          <Button onClick={onTimeFrameSelect('24h')}>1d</Button>
-          <Button onClick={onTimeFrameSelect('168h')}>1w</Button>
-          <Button onClick={onTimeFrameSelect('720h')}>1m</Button>
+          {availableTimeFrames
+            .filter(
+              (timeFrame) =>
+                !onlyVisibleOnFullScreen.includes(timeFrame) || isFullscreen
+            )
+            .map((timeFrame) => (
+              <Button
+                key={timeFrame}
+                onClick={setTimeFrameTo(timeFrame)}
+                variant={
+                  selectedTimeFrame === timeFrame ? 'contained' : 'outlined'
+                }
+              >
+                {timeFrame}
+              </Button>
+            ))}
         </ButtonGroup>
         <IconButton onClick={toggleFullScreen}>
           <Icon icon={isFullscreen ? 'fullscreen_exit' : 'fullscreen'} />

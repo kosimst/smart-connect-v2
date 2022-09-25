@@ -40,6 +40,13 @@ export const lightTheme = createTheme({
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none !important',
+        },
+      },
+    },
   },
   //shadows: Array(10).fill('none') as Shadows,
 })
