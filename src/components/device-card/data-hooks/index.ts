@@ -18,6 +18,7 @@ import valve from './valve'
 import windowOpener from './window-opener'
 import windowSensor from './window-sensor'
 import wirelessSwitch from './wireless-switch'
+import readonlyPlug from './readonly-plug'
 
 const dataHooks = {
   'bed-occupancy-sensor': bedOccupancySensor,
@@ -42,6 +43,7 @@ const dataHooks = {
   shutter,
   switch: switchHook,
   valve,
+  'readonly-plug': readonlyPlug,
 }
 
 export default dataHooks

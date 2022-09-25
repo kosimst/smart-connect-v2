@@ -172,6 +172,12 @@ const deviceDefinitions = {
     fullName: 'Nuki lock',
     ...colors.security,
   },
+  'readonly-plug': {
+    icon: 'outlet',
+    name: 'R/O Plug',
+    fullName: 'R/O Smart plug',
+    ...colors.default,
+  },
 } as const
 
 export const supportedDeviceTypes = Object.keys(

@@ -2052,6 +2052,7 @@ const availableIcons = [
   'mode_fan',
   'energy_savings_leaf',
   'door_front',
+  'door_open',
   'emergency_home',
   'table_restaurant',
   'foundation',

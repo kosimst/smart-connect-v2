@@ -36,6 +36,8 @@ const useHistories = (
       return
     }
 
+    const abortController = new AbortController()
+
     const fetchHistory = async () => {
       setLoading(true)
       setError(false)
@@ -57,6 +59,10 @@ const useHistories = (
             }) as Promise<{ val: any; ts: number }[]>
         )
       )
+
+      if (abortController.signal.aborted) {
+        return
+      }
 
       const data = Object.fromEntries(
         states.map((state, index) => [state, stateHistories[index]])
@@ -105,6 +111,10 @@ const useHistories = (
     }
 
     fetchHistory()
+
+    return () => {
+      abortController.abort()
+    }
   }, [device.id, from, to, , states, dataPointsCount])
 
   return [history, loading, error] as const
