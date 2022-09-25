@@ -28,6 +28,22 @@ export const IoBrokerConnectionContext = createContext({
   credentials: null as IoBrokerCredentials | null,
 })
 
+const getConnectionDetailsHash = (
+  host: string,
+  port: string,
+  protocol: string
+) => `host=${host}&port=${port}&protocol=${protocol}`
+
+const connectionsMap = new Map<string, Connection>()
+
+const getConnection = (host: string, port: string, protocol: string) => {
+  const hash = getConnectionDetailsHash(host, port, protocol)
+  if (!connectionsMap.has(hash)) {
+    connectionsMap.set(hash, new Connection({ host, port, protocol }))
+  }
+  return connectionsMap.get(hash)!
+}
+
 export const IoBrokerConnectionProvider: FC<{
   children: ReactNode
 }> = ({ children }) => {
@@ -41,41 +57,45 @@ export const IoBrokerConnectionProvider: FC<{
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 
-  useEffect(() => {
-    const setupConnection = async () => {
-      setConnecting(true)
-
-      try {
-        const { host, cfAccessClientId, cfAccessClientSecret } = credentials!
-
-        const newConnection = new Connection({
-          host: IOBROKER_PROXY_HOST,
-          port: `443?host=${host}&clientId=${cfAccessClientId}&clientSecret=${cfAccessClientSecret}`,
-          protocol: 'wss',
-        })
-
-        const result = await Promise.race([
-          newConnection
-            .waitForFirstConnection()
-            .then(() => 'Success')
-            .catch(() => 'Failed to connect'),
-          sleep(5000).then(() => 'Timed out'),
-        ])
-
-        if (result === 'Success') {
-          setConnection(newConnection)
-          setValid(true)
-          setError(null)
-        } else {
-          setError(new Error(result))
-        }
-      } catch (error) {
-        setError(new Error('Failed to connect'))
-      } finally {
-        setConnecting(false)
-      }
+  const setupConnection = useCallback(async () => {
+    if (!credentials) {
+      return
     }
 
+    setConnecting(true)
+
+    try {
+      const { host, cfAccessClientId, cfAccessClientSecret } = credentials
+
+      const newConnection = getConnection(
+        IOBROKER_PROXY_HOST,
+        `443?host=${host}&clientId=${cfAccessClientId}&clientSecret=${cfAccessClientSecret}`,
+        'wss'
+      )
+
+      const result = await Promise.race([
+        newConnection
+          .waitForFirstConnection()
+          .then(() => 'Success')
+          .catch(() => 'Failed to connect'),
+        sleep(5000).then(() => 'Timed out'),
+      ])
+
+      if (result === 'Success') {
+        setConnection(newConnection)
+        setValid(true)
+        setError(null)
+      } else {
+        setError(new Error(result))
+      }
+    } catch (error) {
+      setError(new Error('Failed to connect'))
+    } finally {
+      setConnecting(false)
+    }
+  }, [])
+
+  useEffect(() => {
     if (credentials) {
       setupConnection()
     } else {
@@ -83,11 +103,23 @@ export const IoBrokerConnectionProvider: FC<{
       setValid(false)
       setError(null)
     }
-  }, [credentials])
+  }, [credentials, setupConnection])
+
+  useEffect(() => {
+    if (!valid || !error || connecting || connection) {
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      setupConnection()
+    }, 3000)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [valid, setupConnection, error, connecting, connection])
 
   const connect = useCallback((credentials: IoBrokerCredentials) => {
-    console.log('connect', credentials)
-
     setCredentials(credentials)
   }, [])
 
