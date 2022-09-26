@@ -11,6 +11,7 @@ import { useSettings } from '../../contexts/settings'
 import forwardBaseProps from '../../helpers/forward-base-props'
 import groupBy from '../../helpers/group-by'
 import toKebabCase from '../../helpers/to-kebab-case'
+import useLocalStorage from '../../hooks/use-local-storage'
 import useSetStates from '../../hooks/use-set-states'
 import HomeVitals from './parts/home-vitals'
 import OpenedDevices from './parts/opened-devices'
@@ -55,26 +56,32 @@ const DevicesPage = forwardBaseProps((baseProps) => {
     )
     return deviceDefinition ? deviceDefinition[1].icon : 'home_iot_device'
   }, [])
-  const [selectedDeviceTypes, setSelectedDeviceTypes] = useState([] as string[])
-  useEffect(() => {
-    const storedSelectedDeviceTypes = localStorage.getItem(
-      'selectedDeviceTypes'
-    )
-    if (storedSelectedDeviceTypes) {
-      setSelectedDeviceTypes(JSON.parse(storedSelectedDeviceTypes))
-    } else {
-      setSelectedDeviceTypes(deviceTypes)
-    }
-  }, [deviceTypes])
 
-  const [favoriteRoom, setFavoriteRoom] = useState('Simon')
-  useEffect(() => {
-    const storedFavoriteRoom = localStorage.getItem('favoriteRoom')
+  const { open: openSettings } = useSettings()
 
-    if (storedFavoriteRoom) {
-      setFavoriteRoom(storedFavoriteRoom)
-    }
-  }, [])
+  const [favoriteRoom, setFavoriteRoom] = useLocalStorage('favorite-room', '')
+  const setFavoriteRoomTo = useCallback(
+    (room: string) => () => setFavoriteRoom(room),
+    [setFavoriteRoom]
+  )
+
+  const [selectedDeviceTypes, setSelectedDeviceTypes] = useLocalStorage(
+    'selected-device-types',
+    deviceTypes
+  )
+  const hiddenDeviceTypesCount = useMemo(
+    () =>
+      deviceTypes.filter((type) => !selectedDeviceTypes.includes(type)).length,
+    [deviceTypes, selectedDeviceTypes]
+  )
+
+  const [filterExpanded, setFilterExpanded] = useLocalStorage(
+    'device-filter-expanded',
+    false
+  )
+  const toggleFilterExpanded = useCallback(() => {
+    setFilterExpanded((prev) => !prev)
+  }, [setFilterExpanded])
 
   const selectedDevices = useMemo(
     () =>
@@ -121,22 +128,6 @@ const DevicesPage = forwardBaseProps((baseProps) => {
     return [...favorite, ...withoutFavorite]
   }, [selectedDevices, favoriteRoom])
 
-  const { open: openSettings } = useSettings()
-
-  const hiddenDeviceTypesCount = useMemo(
-    () =>
-      deviceTypes.filter((type) => !selectedDeviceTypes.includes(type)).length,
-    [deviceTypes, selectedDeviceTypes]
-  )
-
-  const [filterExpanded, setFilterExpanded] = useState(false)
-  useEffect(() => {
-    const storedFilterExpanded = localStorage.getItem('filterExpanded')
-    if (storedFilterExpanded) {
-      setFilterExpanded(JSON.parse(storedFilterExpanded))
-    }
-  }, [])
-
   return (
     <div {...baseProps}>
       <AnimatePresence>
@@ -156,14 +147,7 @@ const DevicesPage = forwardBaseProps((baseProps) => {
 
       <Title variant="h1">
         <span>My home</span>
-        <FilterIconButton
-          onClick={() =>
-            setFilterExpanded((prev) => {
-              localStorage.setItem('filterExpanded', JSON.stringify(!prev))
-              return !prev
-            })
-          }
-        >
+        <FilterIconButton onClick={toggleFilterExpanded}>
           <Badge
             variant="standard"
             badgeContent={hiddenDeviceTypesCount}
@@ -190,19 +174,11 @@ const DevicesPage = forwardBaseProps((baseProps) => {
                   if (selectedDeviceTypes.includes(type)) {
                     setSelectedDeviceTypes((prev) => {
                       const newVal = prev.filter((t) => t !== type)
-                      localStorage.setItem(
-                        'selectedDeviceTypes',
-                        JSON.stringify(newVal)
-                      )
                       return newVal
                     })
                   } else {
                     setSelectedDeviceTypes((prev) => {
                       const newVal = [...prev, type]
-                      localStorage.setItem(
-                        'selectedDeviceTypes',
-                        JSON.stringify(newVal)
-                      )
                       return newVal
                     })
                   }
@@ -213,10 +189,6 @@ const DevicesPage = forwardBaseProps((baseProps) => {
                       prev.length === 1 && prev[0] === type
                         ? deviceTypes
                         : [type]
-                    localStorage.setItem(
-                      'selectedDeviceTypes',
-                      JSON.stringify(newVal)
-                    )
                     return newVal
                   })
                 }}
@@ -243,13 +215,7 @@ const DevicesPage = forwardBaseProps((baseProps) => {
             }}
             layout
           >
-            <RoomTitle
-              onContextMenu={() => {
-                setFavoriteRoom(roomName)
-                localStorage.setItem('favoriteRoom', roomName)
-              }}
-              variant="h2"
-            >
+            <RoomTitle onContextMenu={setFavoriteRoomTo(roomName)} variant="h2">
               <a id={'#' + toKebabCase(roomName)}>{roomName}</a>
             </RoomTitle>
             <div className="shadow"></div>
