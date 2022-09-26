@@ -149,7 +149,26 @@ const useOpenedDevices = () => {
     }
   }, [openedStates, subscribeState, getDeviceFromId])
 
-  return openedDevices
+  const filtered = openedDevices.filter(({ device, openedState }) => {
+    const otherSensorOnSameWindow = openedDevices.find(
+      ({ device: d }) =>
+        d.type !== device.type &&
+        d.name === device.name &&
+        d.roomName === device.roomName
+    )
+
+    if (!otherSensorOnSameWindow) {
+      return true
+    }
+
+    if (device.type === 'window-tilted-sensor') {
+      return false
+    }
+
+    return true
+  })
+
+  return filtered
 }
 
 export default useOpenedDevices
