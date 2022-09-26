@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, useTransform, useViewportScroll } from 'framer-motion'
 import {
   createContext,
   FC,
@@ -44,11 +44,21 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
   const open = useCallback(
     (device: Device) => {
       setOpenedDevice(device)
+
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: window.innerHeight / 3,
+          behavior: 'smooth',
+        })
+      })
     },
     [setOpenedDevice]
   )
   const close = useCallback(() => {
-    setOpenedDevice(null)
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
   }, [setOpenedDevice])
 
   const deviceDefinition = useMemo(
@@ -86,28 +96,41 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
     }
   }, [close])
 
+  const { scrollY } = useViewportScroll()
+  const backdropOpacity = useTransform(
+    scrollY,
+    [0, window.innerHeight],
+    [0, 0.8]
+  )
+
+  // close if scrollY is <= 0
+  useEffect(() => {
+    const unsubscribe = scrollY.onChange((value) => {
+      if (value <= 0 && openedDevice) {
+        requestAnimationFrame(() => {
+          const currentVal = scrollY.get()
+          if (currentVal <= 0) {
+            setOpenedDevice(null)
+          }
+        })
+      }
+    })
+    return () => {
+      unsubscribe()
+    }
+  }, [setOpenedDevice, scrollY, openedDevice])
+
   return (
     <>
       <FixedChildren>
-        <AnimatePresence>
-          {!!openedDevice && (
-            <Backdrop
-              onClick={close}
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 0.5,
-              }}
-              exit={{
-                opacity: 0,
-              }}
-              transition={{
-                duration: 0.2,
-              }}
-            />
-          )}
-        </AnimatePresence>
+        {!!openedDevice && (
+          <Backdrop
+            onClick={close}
+            style={{
+              opacity: backdropOpacity,
+            }}
+          />
+        )}
 
         <DeviceDetailsContext.Provider value={{ open }}>
           {children}
@@ -120,7 +143,7 @@ export const DeviceDetailsProvider: FC<DeviceDetailsProviderProps> = ({
               marginTop: '100vh',
             }}
             animate={{
-              marginTop: '40vh',
+              marginTop: '100vh',
             }}
             exit={{
               marginTop: '100vh',
