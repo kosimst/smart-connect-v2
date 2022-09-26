@@ -14,7 +14,7 @@ export const Container = styled(motion.div)`
 
 export const StatusText = styled.span`
   box-sizing: border-box;
-  padding: 0 8px;
+  padding-left: 8px;
   font-size: 13px;
   color: rgba(0, 0, 0, 0.87);
   display: flex;
