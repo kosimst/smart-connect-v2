@@ -21,15 +21,6 @@ const getTextColor: CardPropFunction = ({ theme, accentColor, active }) =>
     ? accentColor[50]
     : grey[300]
 
-const getOutlineColor: CardPropFunction = ({ theme, accentColor, active }) =>
-  theme.palette.mode === 'light'
-    ? active
-      ? accentColor[900]
-      : grey[700]
-    : active
-    ? accentColor[300]
-    : grey[500]
-
 const getSliderColor: CardPropFunction = ({ theme, accentColor, active }) =>
   theme.palette.mode === 'light'
     ? active
@@ -47,6 +38,8 @@ const getBackgroundColor: CardPropFunction = ({ theme, accentColor, active }) =>
     : active
     ? accentColor[300]
     : grey[700]
+
+const getOutlineColor = getSliderColor
 
 export const Card = styled(motion.div)<CardProps>`
   background-color: ${getBackgroundColor};
