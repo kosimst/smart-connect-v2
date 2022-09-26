@@ -1,6 +1,6 @@
 import { Alert, Badge } from '@mui/material'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import Chip from '../../components/chip'
 import DeviceCard from '../../components/device-card'
 import Icon from '../../components/icon'
