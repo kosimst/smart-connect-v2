@@ -37,7 +37,7 @@ export const Room = styled(motion.section)`
     position: sticky;
     top: 56px;
     width: 100vw;
-    z-index: 0;
+    z-index: 1;
     transform: translateX(-16px) translateY(0px);
     height: 2px;
     background-color: ${({ theme }) => theme.palette.background.default};

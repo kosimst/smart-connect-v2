@@ -68,7 +68,6 @@ export const Card = styled(motion.div)<CardProps>`
       transform: scale(1.1);
       opacity: 0;
       transition: all 0.075s ease-in-out;
-      z-index: 9999999;
     }
 
     &:focus-within,
