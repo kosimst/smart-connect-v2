@@ -72,7 +72,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
 
   const [actualSliderValue, setActualSliderValue, actualSliderValueRef] =
     useRefState(50)
-  const [isSliding, setIsSliding] = useState(false)
+  const [isSliding, setIsSliding, isSlidingRef] = useRefState(false)
 
   const onCardClick = useCallback(() => {
     if (!canToggle) {
@@ -114,7 +114,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
   const sliderRef = useRef<HTMLInputElement>(null)
 
   const onSlideEnd = useCallback(() => {
-    if (!canSlide || !isSliding) {
+    if (!canSlide || !isSlidingRef.current) {
       return
     }
 
@@ -123,7 +123,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
     }
 
     onSliderChangeCb!(actualSliderValueRef.current)
-  }, [canSlide, onSliderChangeCb, isSliding, actualSliderValue, toggleValue])
+  }, [canSlide, onSliderChangeCb, actualSliderValueRef])
 
   useEffect(() => {
     if (!sliderRef.current) {
