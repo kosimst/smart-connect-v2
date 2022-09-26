@@ -45,7 +45,7 @@ export const Card = styled(motion.div)<CardProps>`
   background-color: ${getBackgroundColor};
   color: ${getTextColor};
   border-radius: 16px;
-  overflow: hidden;
+  position: relative;
 
   display: grid;
 
@@ -58,17 +58,26 @@ export const Card = styled(motion.div)<CardProps>`
   }
 
   @media (min-width: 500px) {
-    outline-color: transparent;
-
-    transition: outline-color 0.2s ease-in-out;
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border: solid 2px ${getOutlineColor};
+      border-radius: 20px;
+      pointer-events: none;
+      transform: scale(1.1);
+      opacity: 0;
+      transition: all 0.075s ease-in-out;
+      z-index: 9999999;
+    }
 
     &:focus-within,
     &:active,
     &:focus {
-      outline-color: ${getOutlineColor};
-      outline-offset: 2px;
-      outline-width: 2px;
-      outline-style: solid;
+      &::before {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
   }
 
@@ -120,6 +129,7 @@ export const Slider = styled.input<{
   overflow: hidden;
   background-repeat: no-repeat;
   background-position: left;
+  border-radius: inherit;
 
   transition: background-image 0.2s ease-in-out;
 

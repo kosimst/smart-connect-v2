@@ -161,7 +161,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
     (e) => {
       if (
         e.key === 'Tab' ||
-        !['ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)
+        !['ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)
       ) {
         return
       }
@@ -172,6 +172,9 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
         setActualSliderValue((prev) => clamp(prev + 5, [0, 100]))
       } else if (e.key === 'Enter') {
         onContextMenu?.(silentObject())
+      } else if (e.key === ' ') {
+        e.preventDefault()
+        onCardClick()
       }
 
       if (['ArrowLeft', 'ArrowRight'].includes(e.key) && canSlide) {
@@ -188,7 +191,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
         setKeyDownTimeout(newTimeout)
       }
     },
-    [canSlide, onSlideEnd, keyDownTimeout, onContextMenu]
+    [canSlide, onSlideEnd, keyDownTimeout, onContextMenu, onCardClick]
   )
 
   return (
