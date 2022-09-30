@@ -1,13 +1,7 @@
 import { useTheme } from '@emotion/react'
-import {
-  capitalize,
-  ButtonGroup,
-  Button,
-  IconButton,
-  LinearProgress,
-} from '@mui/material'
+import { capitalize, ButtonGroup, Button, IconButton } from '@mui/material'
 import { indigo, purple, pink } from '@mui/material/colors'
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect, memo } from 'react'
 import {
   ResponsiveContainer,
   LineChart,
@@ -23,6 +17,15 @@ import useHistories from '../../hooks/use-histories'
 import useRect from '../../hooks/use-rect'
 import Device from '../../types/device'
 import Icon from '../icon'
+import {
+  ChartWrapper,
+  Container,
+  Header,
+  LoadingOverlay,
+  Spinner,
+} from './styles'
+
+const PIXELS_PER_DATA_POINT = 1
 
 export type HistoryDetailsProps = {
   device: Device
@@ -63,23 +66,6 @@ const timeFrameMinutes = {
   [key: AvailableTimeFrame]: number
 }
 
-const timeFrameIntervalMinutes = {
-  '1h': 1,
-  '3h': 2,
-  '6h': 5,
-  '12h': 5,
-  '1d': 5,
-  '3d': 30,
-  '1w': 60,
-  '2w': 3 * 60,
-  '1m': 3 * 60,
-  '3m': 6 * 60,
-  '6m': 12 * 60,
-  '1y': 12 * 60,
-} as {
-  [key: AvailableTimeFrame]: number
-}
-
 type AvailableTimeFrame = typeof availableTimeFrames[number]
 
 const dataKeyNames = {
@@ -97,6 +83,7 @@ const tooltipFormatter = (value: number, name: string) => [
       'download-megabits': 'Mbit/s',
       'upload-megabits': 'Mbit/s',
       power: 'W',
+      ping: 'ms',
     }[name]
   }`,
   // @ts-ignore
@@ -115,20 +102,7 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
     )
     const to = useMemo(() => now, [now])
 
-    const interval = useMemo(
-      () => timeFrameIntervalMinutes[selectedTimeFrame] * 60 * 1000,
-      [selectedTimeFrame]
-    )
-
     const [isFullscreen, setIsFullscreen] = useState(false)
-
-    const [histories, loading, error] = useHistories(
-      device,
-      states,
-      from,
-      to,
-      interval
-    )
 
     const setTimeFrameTo = useCallback(
       (timeFrame: AvailableTimeFrame) => () => {
@@ -139,6 +113,22 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
     )
 
     const containerRef = useRef<HTMLDivElement>(null)
+
+    const rect = useRect(containerRef)
+
+    const dataPointsCount = useMemo(() => {
+      if (!rect) return 0
+
+      return Math.round(rect.width / PIXELS_PER_DATA_POINT)
+    }, [rect])
+
+    const [histories, loading, error] = useHistories(
+      device,
+      states,
+      from,
+      to,
+      dataPointsCount
+    )
 
     const toggleFullScreen = useCallback(async () => {
       try {
@@ -169,8 +159,6 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
       }
     }, [])
 
-    const rect = useRect(containerRef)
-
     const availableFullScreenHeight = useMemo(() => {
       if (!rect) return 320
 
@@ -184,22 +172,8 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
     const [hiddenStates, setHiddenStates] = useState<Set<string>>(new Set())
 
     return (
-      <div
-        {...baseProps}
-        ref={containerRef}
-        style={{
-          backgroundColor: 'white',
-          padding: isFullscreen ? 16 : 0,
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
-          }}
-        >
+      <Container {...baseProps} ref={containerRef}>
+        <Header>
           <ButtonGroup>
             {availableTimeFrames
               .filter(
@@ -221,96 +195,100 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
           <IconButton onClick={toggleFullScreen}>
             <Icon icon={isFullscreen ? 'fullscreen_exit' : 'fullscreen'} />
           </IconButton>
-        </div>
+        </Header>
         {error ? (
           <div>Failed to fetch history</div>
-        ) : loading ? (
-          <LinearProgress />
         ) : (
-          <ResponsiveContainer
-            width="100%"
-            height={isFullscreen ? availableFullScreenHeight : 320}
-          >
-            <LineChart data={histories || []}>
-              <XAxis dataKey="ts" tickCount={100} tick={false} />
-              {states.map((state) => (
-                <YAxis
-                  key={state}
-                  yAxisId={state}
-                  hide
-                  domain={[
-                    (dataMin: number) => dataMin * 0.975,
-                    (dataMax: number) => dataMax * 1.025,
-                  ]}
+          <ChartWrapper>
+            {loading && <Spinner />}
+            {loading && <LoadingOverlay />}
+            <ResponsiveContainer
+              width="100%"
+              height={isFullscreen ? availableFullScreenHeight : 320}
+            >
+              <LineChart data={histories || []}>
+                <XAxis dataKey="ts" tickCount={100} tick={false} />
+                {states.map((state) => (
+                  <YAxis
+                    key={state}
+                    yAxisId={state}
+                    hide
+                    domain={[
+                      (dataMin: number) => dataMin * 0.975,
+                      (dataMax: number) => dataMax * 1.025,
+                    ]}
+                  />
+                ))}
+                <Legend
+                  // @ts-ignore
+                  formatter={(val) => capitalize(dataKeyNames[val] || val)}
+                  align="left"
+                  iconType="plainline"
+                  onClick={({ dataKey }) => {
+                    setHiddenStates((prev) => {
+                      const next = new Set(prev)
+                      if (next.has(dataKey)) {
+                        next.delete(dataKey)
+                      } else {
+                        next.add(dataKey)
+                      }
+                      return next
+                    })
+                  }}
                 />
-              ))}
-              <Legend
-                // @ts-ignore
-                formatter={(val) => capitalize(dataKeyNames[val] || val)}
-                align="left"
-                iconType="plainline"
-                onClick={({ dataKey }) => {
-                  setHiddenStates((prev) => {
-                    const next = new Set(prev)
-                    if (next.has(dataKey)) {
-                      next.delete(dataKey)
-                    } else {
-                      next.add(dataKey)
-                    }
-                    return next
-                  })
-                }}
-              />
-              <Tooltip
-                labelFormatter={(ts) =>
-                  new Date(ts).toLocaleString('de-AT', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                  })
-                }
-                formatter={tooltipFormatter}
-                wrapperStyle={{
-                  border: 'none',
-                  outline: 'none',
-                  borderRadius: 8,
-                  boxShadow: theme.shadows[2],
-                }}
-                contentStyle={{
-                  outline: 'none',
-                  border: 'none',
-                  borderRadius: 8,
-                }}
-                labelStyle={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  marginBottom: 4,
-                  opacity: 0.75,
-                }}
-              />
-              <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-              {states.map((key) => (
-                <Line
-                  key={key}
-                  type="monotone"
-                  dataKey={key}
-                  stroke={[indigo[500], purple[500], pink[600]].find(
-                    (_, i) => i === states.indexOf(key)
-                  )}
-                  dot={false}
-                  yAxisId={key}
-                  strokeWidth={2}
-                  hide={hiddenStates.has(key)}
+
+                <Tooltip
+                  labelFormatter={(ts) =>
+                    new Date(ts).toLocaleString('de-AT', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })
+                  }
+                  formatter={tooltipFormatter}
+                  wrapperStyle={{
+                    border: 'none',
+                    outline: 'none',
+                    borderRadius: 8,
+                    boxShadow: theme.shadows[2],
+                    display: loading ? 'none' : 'block',
+                  }}
+                  contentStyle={{
+                    outline: 'none',
+                    border: 'none',
+                    borderRadius: 8,
+                  }}
+                  labelStyle={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    marginBottom: 4,
+                    opacity: 0.75,
+                  }}
                 />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                {states.map((key) => (
+                  <Line
+                    key={key}
+                    type="monotone"
+                    dataKey={key}
+                    stroke={[indigo[500], purple[500], pink[600]].find(
+                      (_, i) => i === states.indexOf(key)
+                    )}
+                    dot={false}
+                    yAxisId={key}
+                    strokeWidth={2}
+                    hide={hiddenStates.has(key)}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartWrapper>
         )}
-      </div>
+      </Container>
     )
   }
 )
 
-export default HistoryDetails
+export default memo(HistoryDetails)

@@ -8,7 +8,8 @@ const useHistories = (
   states: string[],
   from: number,
   to: number,
-  interval: number
+  dataPointsCount: number,
+  aggregate: 'average' | 'min' | 'max' | 'total' | 'minmax' = 'minmax'
 ) => {
   const { connection } = useIoBrokerConnection()
 
@@ -21,18 +22,13 @@ const useHistories = (
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
-  const dataPointsCount = useMemo(
-    () =>
-      Math.ceil(
-        (closestMinute(new Date(to)).getTime() -
-          closestMinute(new Date(from)).getTime()) /
-          interval
-      ),
-    [from, to, interval]
+  const intervalMs = useMemo(
+    () => (to - from) / dataPointsCount,
+    [from, to, dataPointsCount]
   )
 
   useEffect(() => {
-    if (!connection || !states.length) {
+    if (!connection || !states.length || !dataPointsCount) {
       return
     }
 
@@ -53,7 +49,7 @@ const useHistories = (
               ack: false,
               q: false,
               addID: false,
-              aggregate: 'average',
+              aggregate,
               returnNewestEntries: true,
               count: dataPointsCount,
             }) as Promise<{ val: any; ts: number }[]>
@@ -74,7 +70,7 @@ const useHistories = (
       }>(dataPointsCount)
         .fill(null as any)
         .map((_, i) => {
-          const ts = closestMinute(new Date(from + i * interval)).getTime()
+          const ts = closestMinute(new Date(from + i * intervalMs)).getTime()
 
           return {
             ts,
@@ -115,7 +111,7 @@ const useHistories = (
     return () => {
       abortController.abort()
     }
-  }, [device.id, from, to, , states, dataPointsCount])
+  }, [device.id, from, to, , states, dataPointsCount, aggregate])
 
   return [history, loading, error] as const
 }

@@ -6,7 +6,7 @@ const History: FC<{ device: Device }> = ({ device }) => {
   return (
     <HistoryDetails
       device={device}
-      states={['download-megabits', 'upload-megabits']}
+      states={['download-megabits', 'upload-megabits', 'ping']}
     />
   )
 }
