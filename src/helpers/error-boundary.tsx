@@ -78,6 +78,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     const { errors } = this.state
 
     if (errors.some(({ severity }) => severity === 'fatal')) {
+      if (!isDev) {
+        return null
+      }
+
       return (
         <>
           <h1>Something went wrong.</h1>
