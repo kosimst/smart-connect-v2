@@ -7,8 +7,6 @@ const closestMinute = (date: Date) => {
   const seconds = closestMinute.getSeconds()
   if (seconds >= 30) {
     closestMinute.setMinutes(closestMinute.getMinutes() + 1)
-  } else {
-    closestMinute.setMinutes(closestMinute.getMinutes() - 1)
   }
   closestMinute.setSeconds(0)
   return closestMinute
