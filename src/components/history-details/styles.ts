@@ -17,13 +17,13 @@ export const ChartWrapper = styled.div`
 export const LoadingOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background-color: white;
+  background-color: ${({ theme }) => theme.palette.background.default};
   opacity: 0.75;
   z-index: 2;
 `
 
 export const Container = styled.div`
-  background-color: white;
+  background-color: ${({ theme }) => theme.palette.background.default};
 
   @media all and (display-mode: fullscreen) {
     padding: 16px;

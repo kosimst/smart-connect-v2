@@ -6,6 +6,7 @@ import useDeviceDetails from '../../../contexts/device-details'
 import useLowBatteryDevices from '../../../hooks/use-low-battery-devices'
 import useUnavailableDevices from '../../../hooks/use-unavailable-devices'
 import { StyledExpandableStatus } from '../styles'
+import { InText } from './styles'
 
 const HomeVitals: FC = () => {
   const devicesWithLowBattery = useLowBatteryDevices()
@@ -48,10 +49,10 @@ const HomeVitals: FC = () => {
             icon={<Icon icon={deviceDefinitions[device.type].icon} />}
             onClick={() => open(device)}
           />
-          <span>
+          <InText>
             in <b>{device.roomName}</b> is low on battery{' '}
             {typeof battery === 'number' && `(${battery}%)`}
-          </span>
+          </InText>
         </div>
       ))}
       {unavailableDevices.map((device) => (
@@ -62,10 +63,10 @@ const HomeVitals: FC = () => {
             icon={<Icon icon={deviceDefinitions[device.type].icon} />}
             onClick={() => open(device)}
           />
-          <span>
+          <InText>
             {' '}
             in <b>{device.roomName}</b> is unavailable
-          </span>
+          </InText>
         </div>
       ))}
     </StyledExpandableStatus>

@@ -9,7 +9,6 @@ import {
   YAxis,
   Legend,
   Tooltip,
-  CartesianGrid,
   Line,
 } from 'recharts'
 import forwardBaseProps from '../../helpers/forward-base-props'
@@ -171,6 +170,11 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
 
     const [hiddenStates, setHiddenStates] = useState<Set<string>>(new Set())
 
+    const colorLevel = useMemo(
+      () => (theme.palette.mode === 'dark' ? 300 : 500),
+      [theme.palette.mode]
+    )
+
     return (
       <Container {...baseProps} ref={containerRef}>
         <Header>
@@ -259,6 +263,7 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
                     outline: 'none',
                     border: 'none',
                     borderRadius: 8,
+                    backgroundColor: theme.palette.background.paper,
                   }}
                   labelStyle={{
                     fontSize: 14,
@@ -267,15 +272,16 @@ const HistoryDetails = forwardBaseProps<HistoryDetailsProps>(
                     opacity: 0.75,
                   }}
                 />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                 {states.map((key) => (
                   <Line
                     key={key}
                     type="monotone"
                     dataKey={key}
-                    stroke={[indigo[500], purple[500], pink[600]].find(
-                      (_, i) => i === states.indexOf(key)
-                    )}
+                    stroke={[
+                      indigo[colorLevel],
+                      purple[colorLevel],
+                      pink[colorLevel],
+                    ].find((_, i) => i === states.indexOf(key))}
                     dot={false}
                     yAxisId={key}
                     strokeWidth={2}

@@ -5,6 +5,7 @@ import deviceDefinitions from '../../../constants/device-definitions'
 import useDeviceDetails from '../../../contexts/device-details'
 import useOpenedDevices from '../../../hooks/use-opened-devices'
 import { StyledExpandableStatus } from '../styles'
+import { InText } from './styles'
 
 const OpenedDevices: FC = () => {
   const openedDevices = useOpenedDevices()
@@ -31,10 +32,10 @@ const OpenedDevices: FC = () => {
             icon={<Icon icon={deviceDefinitions[device.type].icon} />}
             onClick={() => open(device)}
           />
-          <span>
+          <InText>
             in <b>{device.roomName}</b> is{' '}
             {openedState === 1 ? 'tilted' : 'opened'}
-          </span>
+          </InText>
         </div>
       ))}
     </StyledExpandableStatus>

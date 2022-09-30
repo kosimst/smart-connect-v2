@@ -48,7 +48,6 @@ export const lightTheme = createTheme({
       },
     },
   },
-  //shadows: Array(10).fill('none') as Shadows,
 })
 
 export const darkTheme = createTheme({
@@ -57,13 +56,23 @@ export const darkTheme = createTheme({
     ...lightTheme.palette,
     mode: 'dark',
     background: {
-      default: '#121212',
-      paper: '#1f1f1f',
+      default: '#1E2022',
+      paper: '#303134',
     },
     text: {
       primary: '#fff',
       secondary: 'rgba(255, 255, 255, 0.9)',
       disabled: 'rgba(255, 255, 255, 0.5)',
+    },
+  },
+  components: {
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#303134',
+          border: 'none',
+        },
+      },
     },
   },
 })

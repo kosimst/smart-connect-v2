@@ -10,7 +10,8 @@ export const Card = styled(motion.div)`
   width: 100vw;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  background: white;
+  background-color: ${({ theme }) => theme.palette.background.default};
+  color: ${({ theme }) => theme.palette.text.primary};
   padding: 40px 16px;
   overflow-x: hidden;
   box-shadow: ${({ theme }) => theme.shadows[10]};
@@ -24,7 +25,7 @@ export const Card = styled(motion.div)`
     left: 50%;
     transform: translateX(-50%);
     width: 25%;
-    background: black;
+    background-color: ${({ theme }) => theme.palette.text.primary};
     height: 3px;
     border-radius: 99px;
     opacity: 0.75;
@@ -47,28 +48,6 @@ export const Backdrop = styled(motion.div)`
   inset: 0;
   z-index: 999;
   background-color: black;
-
-  /*@supports (animation-timeline: works) {
-    & {
-      animation: 1s linear forwards adjust-opacity;
-      animation-timeline: scroll;
-    }
-
-    @scroll-timeline scroll {
-      source: auto;
-      orientation: vertical;
-      scroll-offsets: 0%, 100%;
-    }
-
-    @keyframes adjust-opacity {
-      from {
-        opacity: 0.45;
-      }
-      to {
-        opacity: 0.8;
-      }
-    }
-  }*/
 `
 
 export const Subtitle = styled.div`

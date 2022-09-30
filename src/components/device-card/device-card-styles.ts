@@ -1,45 +1,48 @@
 import styled from '@emotion/styled'
-import { Color } from '@mui/material'
+import { Color as MuiColor } from '@mui/material'
 import { grey } from '@mui/material/colors'
+import Color from 'color'
 import { motion } from 'framer-motion'
 import { Theme } from '../../constants/theme'
 import Icon from '../icon'
 
 type CardProps = {
-  accentColor: Color
+  accentColor: MuiColor
   active: boolean
 }
 
 type CardPropFunction = (props: CardProps & { theme: Theme }) => string
 
-const getTextColor: CardPropFunction = ({ theme, accentColor, active }) =>
-  theme.palette.mode === 'light'
-    ? active
-      ? accentColor[900]
-      : grey[700]
-    : active
-    ? accentColor[50]
-    : grey[300]
+const withAlpha = (color: MuiColor, alpha: number, level: keyof MuiColor) =>
+  Color(color[level]).alpha(alpha).toString()
 
-const getSliderColor: CardPropFunction = ({ theme, accentColor, active }) =>
-  theme.palette.mode === 'light'
-    ? active
-      ? accentColor[100]
-      : grey[300]
-    : active
-    ? accentColor[500]
-    : grey[500]
+const getTextColor: CardPropFunction = ({ accentColor, active, theme }) =>
+  withAlpha(
+    active ? accentColor : grey,
+    theme.palette.mode === 'light' ? 1 : 0.9,
+    theme.palette.mode === 'light' ? 900 : 100
+  )
 
-const getBackgroundColor: CardPropFunction = ({ theme, accentColor, active }) =>
-  theme.palette.mode === 'light'
-    ? active
-      ? accentColor[50]
-      : grey[200]
-    : active
-    ? accentColor[300]
-    : grey[700]
+const getSliderColor: CardPropFunction = ({ accentColor, active, theme }) =>
+  withAlpha(
+    active ? accentColor : grey,
+    theme.palette.mode === 'light' ? 0.25 : 0.2,
+    theme.palette.mode === 'light' ? 500 : 300
+  )
 
-const getOutlineColor = getSliderColor
+const getBackgroundColor: CardPropFunction = ({ accentColor, active, theme }) =>
+  withAlpha(
+    active ? accentColor : grey,
+    theme.palette.mode === 'light' ? 0.2 : 0.15,
+    theme.palette.mode === 'light' ? 500 : 300
+  )
+
+const getOutlineColor: CardPropFunction = ({ accentColor, active, theme }) =>
+  withAlpha(
+    active ? accentColor : grey,
+    0.45,
+    theme.palette.mode === 'light' ? 500 : 300
+  )
 
 export const Card = styled(motion.div)<CardProps>`
   background-color: ${getBackgroundColor};

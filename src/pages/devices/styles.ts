@@ -71,9 +71,10 @@ export const Link = styled.span`
 
   & > * {
     font-size: inherit;
+    color: ${({ theme }) => theme.palette.text.primary};
   }
 
-  & > *::first-of-type {
+  & > *.material-symbols-rounded {
     position: relative;
     top: 1px;
   }

@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@emotion/react'
+import { useMediaQuery } from '@mui/material'
 import { FC } from 'react'
 import App from './app'
 import { darkTheme, lightTheme } from './constants/theme'
@@ -16,7 +17,7 @@ const Shell: FC = () => {
   useNoContextMenu()
   usePreventAlert()
 
-  const isDarkMode = /*useMediaQuery('(prefers-color-scheme: dark)')*/ false
+  const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
 
   const usedTheme = isDarkMode ? darkTheme : lightTheme
 

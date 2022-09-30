@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import Color from 'color'
 import { motion } from 'framer-motion'
 
 export const Container = styled(motion.div)`
@@ -24,16 +25,18 @@ export const StatusText = styled.span`
   justify-content: space-between;
 
   & > * {
-    color: rgba(0, 0, 0, 0.54);
-
     &:first-of-type {
       justify-self: start;
+      color: ${({ theme }) =>
+        new Color(theme.palette.text.primary).alpha(0.87).toString()};
     }
 
     &:nth-of-type(2) {
       display: grid;
       width: 100%;
       text-align: center;
+      color: ${({ theme }) =>
+        new Color(theme.palette.text.primary).alpha(0.87).toString()};
 
       & > * {
         grid-area: 1 / 1;
