@@ -62,6 +62,7 @@ export const IoBrokerConnectionProvider: FC<{
       return
     }
 
+    setError(null)
     setConnecting(true)
 
     try {
@@ -93,7 +94,7 @@ export const IoBrokerConnectionProvider: FC<{
     } finally {
       setConnecting(false)
     }
-  }, [])
+  }, [credentials])
 
   useEffect(() => {
     if (credentials) {

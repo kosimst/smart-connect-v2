@@ -12,6 +12,8 @@ const CustomTextField = withProps(TextField, {
 const ConnectPage: FC = () => {
   const { error, connect, connecting, credentials } = useIoBrokerConnection()
 
+  console.log({ connecting, error })
+
   const [host, setHost] = useState(credentials?.host ?? '')
   const [cfAccessClientId, setCfAccessClientId] = useState(
     credentials?.cfAccessClientId ?? ''
