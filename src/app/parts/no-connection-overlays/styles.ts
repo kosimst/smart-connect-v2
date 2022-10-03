@@ -24,6 +24,10 @@ export const Text = styled(
   })
 )`
   opacity: 0.75;
+  color: ${({ theme }) =>
+    theme.palette.mode === 'dark'
+      ? theme.palette.common.white
+      : theme.palette.common.black};
 `
 
 export const BottomRow = styled.div``

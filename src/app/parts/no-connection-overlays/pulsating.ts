@@ -3,7 +3,7 @@ import withProps from '../../../helpers/with-props'
 
 const Pulsating = withProps(motion.div, {
   initial: {
-    opacity: 0.5,
+    opacity: 1,
   },
   animate: {
     opacity: 0,
