@@ -22,7 +22,7 @@ const useDeviceState = <T extends any>(
   const setReady = useMemo(() => {
     const timeout = setTimeout(() => {
       setReadyState('timeout')
-    }, 7500)
+    }, 15_000)
 
     return () => {
       clearTimeout(timeout)
