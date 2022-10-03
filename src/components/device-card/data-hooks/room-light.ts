@@ -8,7 +8,7 @@ const useData: DataHook = (device) => {
     'brightness',
     0
   )
-  const [on, setOn] = useDeviceState(device, 'on', false)
+  const [on, setOn, , readyState] = useDeviceState(device, 'on', false)
 
   const texts = useMemo<DataText[]>(
     () =>
@@ -33,6 +33,7 @@ const useData: DataHook = (device) => {
     toggleValue: on,
     onToggleChange: setOn,
     texts,
+    readyState,
   }
 }
 

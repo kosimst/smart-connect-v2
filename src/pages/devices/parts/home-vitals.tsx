@@ -9,10 +9,17 @@ import { StyledExpandableStatus } from '../styles'
 import { InText } from './styles'
 
 const HomeVitals: FC = () => {
-  const devicesWithLowBattery = useLowBatteryDevices()
-  const unavailableDevices = useUnavailableDevices()
+  const [devicesWithLowBattery, devicesWithLowBatteryReady] =
+    useLowBatteryDevices()
+  const [unavailableDevices, unavailableDevicesReady] = useUnavailableDevices()
+
+  const ready = devicesWithLowBatteryReady && unavailableDevicesReady
 
   const devicesHealthText = useMemo(() => {
+    if (!ready) {
+      return 'Loading...'
+    }
+
     const lowBatCount = devicesWithLowBattery.length
     const unavailableCount = unavailableDevices.length
 
@@ -35,7 +42,7 @@ const HomeVitals: FC = () => {
     return `${unavailableCount} device${
       unavailableCount > 1 ? 's' : ''
     } unavailable • ${lowBatCount} low on battery`
-  }, [devicesWithLowBattery.length, unavailableDevices.length])
+  }, [devicesWithLowBattery.length, unavailableDevices.length, ready])
 
   const { open } = useDeviceDetails()
 

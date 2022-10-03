@@ -14,6 +14,7 @@ import {
 import clamp from '../../helpers/clamp'
 import preventDefault from '../../helpers/prevent-default'
 import silentObject from '../../helpers/silent-object'
+import { ReadyState } from '../../hooks/use-device-state'
 import useFocusOnHover from '../../hooks/use-focus-on-hover'
 import useRefState from '../../hooks/use-ref-state'
 import useSpring from '../../hooks/use-spring'
@@ -43,8 +44,9 @@ export type PureDeviceCardProps = {
   onSliderChange?: (value: number) => void
   onContextMenu?: MouseEventHandler<HTMLDivElement>
   lowBattery?: boolean
-  notAvailable?: boolean
   visible?: boolean
+  notAvailable?: boolean
+  readyState: ReadyState
 } & MotionProps
 
 const PureDeviceCard: FC<PureDeviceCardProps> = ({
@@ -58,16 +60,19 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
   onSliderChange: onSliderChangeCb,
   onContextMenu,
   lowBattery = false,
-  notAvailable = false,
   visible = true,
+  notAvailable = false,
+  readyState,
 }) => {
   const canSlide = useMemo(
-    () => !!onSliderChangeCb && sliderValue !== undefined,
-    [onSliderChangeCb]
+    () =>
+      !!onSliderChangeCb && sliderValue !== undefined && readyState === 'ready',
+    [onSliderChangeCb, readyState]
   )
   const canToggle = useMemo(
-    () => !!onToggleChange && toggleValue !== undefined,
-    [onToggleChange]
+    () =>
+      !!onToggleChange && toggleValue !== undefined && readyState === 'ready',
+    [onToggleChange, readyState]
   )
 
   const [actualSliderValue, setActualSliderValue, actualSliderValueRef] =
@@ -194,12 +199,23 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
     [canSlide, onSlideEnd, keyDownTimeout, onContextMenu, onCardClick]
   )
 
+  const onContextMenuHandler = useCallback<MouseEventHandler<HTMLDivElement>>(
+    (e) => {
+      if (readyState !== 'ready') {
+        return
+      }
+
+      onContextMenu?.(e)
+    },
+    [onContextMenu, readyState]
+  )
+
   return (
     <>
       <Card
         onClick={onCardClick}
         accentColor={color}
-        active={toggleValue}
+        active={toggleValue && readyState === 'ready'}
         transition={{
           layout: {
             duration: 0.15,
@@ -227,17 +243,21 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
           opacity: visible ? 1 : 0,
         }}
         layout
-        onContextMenu={onContextMenu}
+        onContextMenu={onContextMenuHandler}
         hidden={!visible}
         ref={cardRef}
       >
         <Slider
           type="range"
           onInput={onSliderInput}
-          active={toggleValue}
+          active={toggleValue && readyState === 'ready'}
           style={{
             backgroundSize: `${
-              canSlide ? sliderValueSpring : toggleValue ? 100 : 0
+              canSlide
+                ? sliderValueSpring
+                : toggleValue && readyState === 'ready'
+                ? 100
+                : 0
             }% 100%`,
           }}
           onPointerDown={preventDefault}
@@ -259,7 +279,7 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
             <PresenceContainer>
               <ColoredIcon
                 icon={icon}
-                filled={toggleValue}
+                filled={toggleValue && readyState === 'ready'}
                 key={toggleValue ? 'filled' : 'outlined'}
                 initial={{ opacity: 0 }}
                 animate={{
@@ -281,30 +301,54 @@ const PureDeviceCard: FC<PureDeviceCardProps> = ({
                   exit={{ opacity: 0 }}
                 >
                   {!isSliding ? (
-                    notAvailable ? (
-                      <motion.span
-                        key="not-available"
-                        initial={{ opacity: 0 }}
-                        animate={{
-                          opacity: 1,
-                        }}
-                        exit={{ opacity: 0 }}
-                      >
-                        Not available
-                      </motion.span>
-                    ) : (
-                      texts.map(({ text, id }) => (
+                    readyState === 'ready' ? (
+                      notAvailable ? (
                         <motion.span
-                          key={id}
+                          key="not-available"
                           initial={{ opacity: 0 }}
                           animate={{
                             opacity: 1,
                           }}
                           exit={{ opacity: 0 }}
                         >
-                          {text}
+                          Not available
                         </motion.span>
-                      ))
+                      ) : (
+                        texts.map(({ text, id }) => (
+                          <motion.span
+                            key={id}
+                            initial={{ opacity: 0 }}
+                            animate={{
+                              opacity: 1,
+                            }}
+                            exit={{ opacity: 0 }}
+                          >
+                            {text}
+                          </motion.span>
+                        ))
+                      )
+                    ) : readyState === 'init' ? (
+                      <motion.span
+                        key="init"
+                        initial={{ opacity: 0 }}
+                        animate={{
+                          opacity: 1,
+                        }}
+                        exit={{ opacity: 0 }}
+                      >
+                        Loading...
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="timeout"
+                        initial={{ opacity: 0 }}
+                        animate={{
+                          opacity: 1,
+                        }}
+                        exit={{ opacity: 0 }}
+                      >
+                        Timed out
+                      </motion.span>
                     )
                   ) : (
                     <motion.span

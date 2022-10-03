@@ -4,7 +4,7 @@ import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
-  const [active] = useDeviceState(device, 'active', false)
+  const [active, , , readyState] = useDeviceState(device, 'active', false)
   const [paused, setPaused] = useDeviceState(device, 'paused', false)
   const [volume, setVolume] = useDeviceState(device, 'volume', 0)
   const [player] = useDeviceState(device, 'player', '')
@@ -35,6 +35,7 @@ const useData: DataHook = (device) => {
     sliderValue: volume,
     onSliderChange: (vol) => setVolume(Math.floor(vol)),
     texts,
+    readyState,
   }
 }
 

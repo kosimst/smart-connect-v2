@@ -13,15 +13,21 @@ const useUnavailableDevices = () => {
 
   const [unavailableDevices, setUnavailableDevices] = useState<Device[]>([])
 
+  const [ready, setReady] = useState(false)
+
   useEffect(() => {
     const fetchStatesToWatch = async () => {
       if (!connection) {
         return
       }
 
+      setReady(false)
+
       const newUnavailableStates = await connection.getStates(
         'alias.0.*.available'
       )
+
+      setReady(true)
 
       const newUnavailableDevices = Object.entries(newUnavailableStates)
         .filter(([, state]) => !state?.val)
@@ -69,7 +75,7 @@ const useUnavailableDevices = () => {
     }
   }, [unavailableStates])
 
-  return unavailableDevices
+  return [unavailableDevices, ready] as const
 }
 
 export default useUnavailableDevices

@@ -15,11 +15,15 @@ const useOpenedDevices = () => {
     { device: Device; openedState: 0 | 1 | 2 }[]
   >([])
 
+  const [ready, setReady] = useState(false)
+
   useEffect(() => {
     const fetchStatesToWatch = async () => {
       if (!connection) {
         return
       }
+
+      setReady(false)
 
       const states = await connection.getStates('alias.0.*')
       const newOpenedStates = Object.fromEntries(
@@ -71,6 +75,8 @@ const useOpenedDevices = () => {
           })
         }
       }
+
+      setReady(true)
 
       setOpenedDevices(combinedOpenedDevices)
       setOpenedStates(Object.keys(newOpenedStates))
@@ -168,7 +174,7 @@ const useOpenedDevices = () => {
     return true
   })
 
-  return filtered
+  return [filtered, ready] as const
 }
 
 export default useOpenedDevices

@@ -8,11 +8,15 @@ import { StyledExpandableStatus } from '../styles'
 import { InText } from './styles'
 
 const OpenedDevices: FC = () => {
-  const openedDevices = useOpenedDevices()
+  const [openedDevices, ready] = useOpenedDevices()
 
   const { open } = useDeviceDetails()
 
   const securityText = useMemo(() => {
+    if (!ready) {
+      return 'Loading...'
+    }
+
     const openedCount = openedDevices.length
 
     if (openedCount === 0) {
@@ -20,7 +24,7 @@ const OpenedDevices: FC = () => {
     }
 
     return `${openedCount} security issue${openedCount > 1 ? 's' : ''}`
-  }, [openedDevices.length])
+  }, [openedDevices.length, ready])
 
   return (
     <StyledExpandableStatus statusText={securityText} icon="security">

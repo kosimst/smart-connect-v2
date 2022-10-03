@@ -3,7 +3,11 @@ import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
-  const [enabled, setEnabled] = useDeviceState(device, 'enabled', false)
+  const [enabled, setEnabled, , readyState] = useDeviceState(
+    device,
+    'enabled',
+    false
+  )
 
   const texts = useMemo<DataText[]>(
     () => [
@@ -19,6 +23,7 @@ const useData: DataHook = (device) => {
     texts,
     toggleValue: enabled,
     onToggleChange: setEnabled,
+    readyState,
   }
 }
 

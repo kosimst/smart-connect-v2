@@ -1,3 +1,4 @@
+import { ReadyState } from '../../../hooks/use-device-state'
 import Device from '../../../types/device'
 
 export type DataText = {
@@ -11,6 +12,7 @@ type DataHook = (device: Device) => {
   toggleValue?: boolean
   onSliderChange?: (value: number) => void
   onToggleChange?: (value: boolean) => void
+  readyState: ReadyState
 }
 
 export default DataHook

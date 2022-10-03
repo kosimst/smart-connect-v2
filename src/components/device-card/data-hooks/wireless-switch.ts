@@ -4,7 +4,7 @@ import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
   const [battery] = useDeviceState(device, 'battery', 100)
-  const [available] = useDeviceState(device, 'available', true)
+  const [available, , , readyState] = useDeviceState(device, 'available', true)
 
   const texts = useMemo<DataText[]>(
     () =>
@@ -24,6 +24,7 @@ const useData: DataHook = (device) => {
   return {
     toggleValue: available,
     texts,
+    readyState,
   }
 }
 

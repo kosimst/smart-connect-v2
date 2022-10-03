@@ -3,7 +3,11 @@ import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
-  const [level, setLevel] = useDeviceState(device, 'opened-level', 0)
+  const [level, setLevel, , readyState] = useDeviceState(
+    device,
+    'opened-level',
+    0
+  )
   const [direction] = useDeviceState(device, 'direction', 0)
   const [, setStop] = useDeviceState(device, 'stop', true)
 
@@ -53,6 +57,7 @@ const useData: DataHook = (device) => {
     onSliderChange,
     onToggleChange,
     toggleValue: usedLevel < 100,
+    readyState,
   }
 }
 

@@ -14,6 +14,8 @@ const useLowBatteryDevices = () => {
     []
   )
 
+  const [ready, setReady] = useState(false)
+
   const [lowBatteryDevices, setLowBatteryDevices] = useState<
     {
       device: Device
@@ -27,10 +29,14 @@ const useLowBatteryDevices = () => {
         return
       }
 
+      setReady(false)
+
       const newBatteryStates = await connection.getStates('alias.0.*.battery')
       const newBatteryCriticalStates = await connection.getStates(
         'alias.0.*.battery-critical'
       )
+
+      setReady(true)
 
       const devicesWithLowBattery = Object.entries(newBatteryStates)
         .filter(([, state]) => state?.val <= 20)
@@ -140,7 +146,7 @@ const useLowBatteryDevices = () => {
     }
   }, [subscribeState, batteryStates, batteryCriticalStates])
 
-  return lowBatteryDevices
+  return [lowBatteryDevices, ready] as const
 }
 
 export default useLowBatteryDevices

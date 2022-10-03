@@ -3,7 +3,11 @@ import useDeviceState from '../../../hooks/use-device-state'
 import DataHook, { DataText } from '../use-data-hook/data-hook'
 
 const useData: DataHook = (device) => {
-  const [download] = useDeviceState(device, 'download-megabits', 0)
+  const [download, , , readyState] = useDeviceState(
+    device,
+    'download-megabits',
+    0
+  )
   const [upload] = useDeviceState(device, 'upload-megabits', 0)
   const [running] = useDeviceState(device, 'running', false)
   const [, setRunBtn] = useDeviceState(device, 'run', false)
@@ -39,6 +43,7 @@ const useData: DataHook = (device) => {
   return {
     texts,
     onToggleChange,
+    readyState,
   }
 }
 

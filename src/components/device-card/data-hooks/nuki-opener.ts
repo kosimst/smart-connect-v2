@@ -35,7 +35,7 @@ const useData: DataHook = (device) => {
     "253": "BOOT_RUN",
     "255": "UNDEFINED"
    */
-  const [lockState] = useDeviceState(
+  const [lockState, , , readyState] = useDeviceState(
     device,
     'lock-state',
     0 as 0 | 1 | 3 | 5 | 7 | 253 | 255
@@ -83,6 +83,7 @@ const useData: DataHook = (device) => {
     onToggleChange: () => {
       setAction(3)
     },
+    readyState,
   }
 }
 
