@@ -11,7 +11,7 @@ import { Main } from './styles'
 
 const App: FC = () => {
   const { valid, connection } = useIoBrokerConnection()
-  const isOffline = useIsOffline() || true
+  const isOffline = useIsOffline()
 
   return (
     <>

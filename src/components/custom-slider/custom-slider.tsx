@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 import msToTime from '../../helpers/ms-to-time'
-import { Container, StyledSlider, Texts } from './styles'
+import { AliasTypography, Container, StyledSlider, Texts } from './styles'
 
 export type CustomSliderProps = {
   label: string
@@ -73,13 +73,13 @@ const CustomSlider: FC<CustomSliderProps> = forwardRef(
       <Container>
         <Texts>
           <Typography variant="subtitle1">{label}</Typography>
-          <Typography variant="subtitle1">
+          <AliasTypography variant="subtitle1">
             {alias
               ? alias
               : time
-              ? msToTime(value)
+              ? msToTime(value, max)
               : `${Math.trunc(value)}${unit}`}
-          </Typography>
+          </AliasTypography>
         </Texts>
         <StyledSlider
           value={value}

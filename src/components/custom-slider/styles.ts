@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Slider } from '@mui/material'
+import { Slider, Typography } from '@mui/material'
 
 export const Texts = styled.div`
   display: flex;
@@ -31,4 +31,8 @@ export const StyledSlider = styled(Slider)<{
       box-shadow: 0px 0px 0px 8px rgb(96, 125, 139, 16%);
     }
   }
+`
+
+export const AliasTypography = styled(Typography)`
+  font-variant-numeric: tabular-nums;
 `

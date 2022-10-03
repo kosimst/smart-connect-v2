@@ -119,7 +119,7 @@ const Controls: FC<{
             max={durationMs}
             step={0.1}
             time
-            label={`Progress (${msToTime(durationMs)})`}
+            label="Progress"
           />
         )}
 
