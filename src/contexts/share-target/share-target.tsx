@@ -103,6 +103,7 @@ const ShareTarget: FC<{
                           },
                         ]}
                         onToggleChange={onMusicServerClick(musicServer)}
+                        readyState="ready"
                       />
                     ))}
                   </DeviceGrid>
