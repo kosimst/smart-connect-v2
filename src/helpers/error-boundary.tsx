@@ -1,29 +1,35 @@
+import styled from '@emotion/styled'
+import { Alert, AlertTitle, IconButton, Theme } from '@mui/material'
 import { Component, ReactNode } from 'react'
+import Icon from '../components/icon'
 import ApplicationError from './application-error'
 
 type State = {
-  errors: ApplicationError[]
+  error: ApplicationError | null
 }
 
-const isDev = process.env.NODE_ENV === 'development'
+const ErrorContainer = styled.div`
+  background-color: ${({ theme }) => theme.palette.background.default};
+  position: absolute;
+  inset: 0;
+  padding: 16px;
 
-// error boundary react component
+  & > * {
+    margin: auto;
+    max-width: 600px;
+  }
+`
+
 class ErrorBoundary extends Component<{ children: ReactNode }, State> {
-  state: State = { errors: [] }
+  state: State = { error: null }
 
   static getDerivedStateFromError(error: any): State {
-    if (!isDev) {
-      location.reload()
-    }
-
-    console.error(error)
-
     if (!ApplicationError.isApplicationError(error)) {
       if (error instanceof Error) {
         error = new ApplicationError(error.message, 'fatal', error)
       } else {
         error = new ApplicationError(
-          'Unhandled promise rejection',
+          error?.message ?? 'Unknown error',
           'fatal',
           error
         )
@@ -31,36 +37,31 @@ class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     }
 
     return {
-      // TODO: Include old errors
-      errors: [error],
+      error,
     }
   }
 
   #promiseRejectionHandler = (e: PromiseRejectionEvent) => {
     e.preventDefault()
 
-    if (!isDev) {
-      location.reload()
-    }
-
     let error = e.reason
 
-    console.error(error)
+    if (typeof error === 'string') {
+      error = new Error(error)
+    }
 
     if (!ApplicationError.isApplicationError(error)) {
       if (error instanceof Error) {
         error = new ApplicationError(error.message, 'fatal', error)
       } else {
         error = new ApplicationError(
-          'Unhandled promise rejection',
+          error?.message ?? 'Unknown promise rejection',
           'fatal',
           error
         )
       }
     }
-    this.setState({
-      errors: [...this.state.errors, error],
-    })
+    this.setState({ error })
   }
 
   componentDidMount() {
@@ -75,37 +76,26 @@ class ErrorBoundary extends Component<{ children: ReactNode }, State> {
   }
 
   render() {
-    const { errors } = this.state
+    const { error } = this.state
 
-    if (errors.some(({ severity }) => severity === 'fatal')) {
-      if (!isDev) {
-        return null
-      }
-
-      return (
-        <>
-          <h1>Something went wrong.</h1>
-          <ul>
-            {errors.map((error) => (
-              <li key={error.timestamp.getTime()}>
-                <b>{error.severity}: </b>
-                <span>{error.message}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )
+    if (!error) {
+      return this.props.children
     }
 
     return (
-      <>
-        <div>
-          {errors.map(({ message, timestamp }) => (
-            <div key={timestamp.getTime()}>{message}</div>
-          ))}
-        </div>
-        {this.props.children}
-      </>
+      <ErrorContainer>
+        <Alert
+          severity="error"
+          action={
+            <IconButton>
+              <Icon icon="refresh" onClick={() => window.location.reload()} />
+            </IconButton>
+          }
+        >
+          <AlertTitle>Fatal error</AlertTitle>
+          {error.message}
+        </Alert>
+      </ErrorContainer>
     )
   }
 }
