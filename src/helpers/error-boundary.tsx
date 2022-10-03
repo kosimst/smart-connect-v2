@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Alert, AlertTitle, IconButton, Theme } from '@mui/material'
+import { Alert, AlertTitle, IconButton } from '@mui/material'
 import { Component, ReactNode } from 'react'
 import Icon from '../components/icon'
 import ApplicationError from './application-error'
