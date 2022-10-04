@@ -151,7 +151,7 @@ function SocketClient() {
       }
       // "ws://www.example.com/socketserver"
       // eslint-disable-next-line no-undef
-      socket = new WebSocket(u)
+      socket ??= new WebSocket(u)
     } catch (error) {
       handlers.error && handlers.error.forEach((cb) => cb.call(this, error))
       return this.close()

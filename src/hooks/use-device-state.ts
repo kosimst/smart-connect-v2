@@ -10,7 +10,6 @@ const useDeviceState = <T extends any>(
   state: string,
   defaultValue: T
 ) => {
-  const { connection } = useIoBrokerConnection()
   const { subscribeState, updateState } = useIoBrokerStates()
 
   const path = device && `${device.id}.${state}`
@@ -19,16 +18,6 @@ const useDeviceState = <T extends any>(
   const [exists, setExists] = useState<boolean>(false)
 
   const [readyState, setReadyState] = useState<ReadyState>('init')
-  const setReady = useMemo(() => {
-    const timeout = setTimeout(() => {
-      setReadyState('timeout')
-    }, 15_000)
-
-    return () => {
-      clearTimeout(timeout)
-      setReadyState('ready')
-    }
-  }, [connection])
 
   const setState = useCallback(
     (newValue: T) => {
@@ -49,12 +38,19 @@ const useDeviceState = <T extends any>(
     const abortController = new AbortController()
     const subscribeToState = async () => {
       try {
-        await subscribeState(path, setValue, abortController.signal)
+        await subscribeState(
+          path,
+          (val) => {
+            setReadyState('ready')
+            setValue(val)
+          },
+          abortController.signal
+        )
         if (abortController.signal.aborted) {
           return
         }
         setExists(true)
-        setReady()
+        setReadyState('ready')
       } catch {}
     }
 
@@ -65,7 +61,7 @@ const useDeviceState = <T extends any>(
       setExists(false)
       setValue(defaultValue)
     }
-  }, [subscribeState, path, setReady])
+  }, [subscribeState, path])
 
   return [value, setState, exists, readyState] as const
 }
