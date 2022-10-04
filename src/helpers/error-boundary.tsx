@@ -24,6 +24,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, State> {
   state: State = { error: null }
 
   static getDerivedStateFromError(error: any): State {
+    console.error(error)
+
     if (!ApplicationError.isApplicationError(error)) {
       if (error instanceof Error) {
         error = new ApplicationError(error.message, 'fatal', error)
@@ -49,6 +51,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     if (typeof error === 'string') {
       error = new Error(error)
     }
+
+    console.error(e)
 
     if (!ApplicationError.isApplicationError(error)) {
       if (error instanceof Error) {
@@ -87,8 +91,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, State> {
         <Alert
           severity="error"
           action={
-            <IconButton>
-              <Icon icon="refresh" onClick={() => window.location.reload()} />
+            <IconButton onClick={() => window.location.reload()}>
+              <Icon icon="refresh" />
             </IconButton>
           }
         >
