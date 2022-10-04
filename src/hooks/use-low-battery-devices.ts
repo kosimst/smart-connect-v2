@@ -31,10 +31,10 @@ const useLowBatteryDevices = () => {
 
       setReady(false)
 
-      const newBatteryStates = await connection.getStates('alias.0.*.battery')
-      const newBatteryCriticalStates = await connection.getStates(
-        'alias.0.*.battery-critical'
-      )
+      const [newBatteryStates, newBatteryCriticalStates] = await Promise.all([
+        connection.getStates('alias.0.*.battery'),
+        connection.getStates('alias.0.*.battery-critical'),
+      ])
 
       setReady(true)
 
