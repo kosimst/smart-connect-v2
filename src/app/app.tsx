@@ -1,3 +1,4 @@
+import { AnimatePresence } from 'framer-motion'
 import { FC } from 'react'
 import useIoBrokerConnection from '../contexts/iobroker-connection'
 import useIsOffline from '../hooks/use-is-offline'
@@ -16,15 +17,12 @@ const App: FC = () => {
   return (
     <>
       <Main>
-        {connection && !isOffline ? (
-          <DevicesPage />
-        ) : isOffline ? (
-          <OfflineOverlay />
-        ) : valid ? (
-          <ConnectingOverlay />
-        ) : (
-          <ConnectPage />
-        )}
+        <AnimatePresence>
+          {isOffline && <OfflineOverlay />}
+          {!connection && valid && <ConnectingOverlay />}
+        </AnimatePresence>
+
+        {valid ? <DevicesPage /> : <ConnectPage />}
       </Main>
     </>
   )
