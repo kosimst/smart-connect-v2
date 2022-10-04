@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import useIoBrokerConnection from '../contexts/iobroker-connection'
+import { useCallback, useEffect, useState } from 'react'
 import { useIoBrokerStates } from '../contexts/iobroker-states/iobroker-states'
 import Device from '../types/device'
 
