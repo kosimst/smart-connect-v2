@@ -2,7 +2,7 @@ import { Button, Card, CardContent, TextField, Typography } from '@mui/material'
 import { FC, useCallback, useState } from 'react'
 import useIoBrokerConnection from '../../contexts/iobroker-connection'
 import withProps from '../../helpers/with-props'
-import { Container, FormContainer } from './styles'
+import { Container, FormContainer, Title } from './styles'
 
 const CustomTextField = withProps(TextField, {
   variant: 'outlined',
@@ -43,7 +43,7 @@ const ConnectPage: FC = () => {
 
   return (
     <Container>
-      <Typography variant="h1">Hey there!</Typography>
+      <Title variant="h1">Hey there!</Title>
 
       <Card variant="outlined">
         <CardContent>

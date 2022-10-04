@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Typography } from '@mui/material'
 
 export const Container = styled.div`
   display: flex;
@@ -22,4 +23,8 @@ export const FormContainer = styled.form`
   flex-direction: column;
   gap: 16px;
   margin-top: 32px;
+`
+
+export const Title = styled(Typography)`
+  color: ${({ theme }) => theme.palette.text.primary};
 `
