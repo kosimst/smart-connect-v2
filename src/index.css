@@ -14,6 +14,13 @@ html {
   overscroll-behavior-y: contain;
 }
 
+@media (prefers-color-scheme: dark) {
+  body,
+  html {
+    background-color: #1e2022;
+  }
+}
+
 body::-webkit-scrollbar {
   display: none;
 }

@@ -3,7 +3,7 @@ import { BigIcon, FullBleedCentered, Text } from './styles'
 
 const OfflineOverlay = forwardBaseProps((baseProps) => {
   return (
-    <FullBleedCentered {...baseProps}>
+    <FullBleedCentered {...baseProps} aria-label="test">
       <BigIcon icon="cloud_off" />
 
       <Text>Offline</Text>
