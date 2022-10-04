@@ -50,6 +50,9 @@ const useDeviceState = <T extends any>(
     const subscribeToState = async () => {
       try {
         await subscribeState(path, setValue, abortController.signal)
+        if (abortController.signal.aborted) {
+          return
+        }
         setExists(true)
         setReady()
       } catch {}
