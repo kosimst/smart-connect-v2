@@ -169,5 +169,6 @@ export const Indicators = styled.div`
 
   & > span {
     font-size: 18px;
+    color: currentColor;
   }
 `

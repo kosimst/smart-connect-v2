@@ -1,4 +1,4 @@
-import { Alert, Badge } from '@mui/material'
+import { Alert, Badge, IconButton } from '@mui/material'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { useCallback, useMemo } from 'react'
 import Chip from '../../components/chip'
@@ -8,6 +8,7 @@ import { AvailableIcon } from '../../components/icon/available-icons'
 import deviceDefinitions from '../../constants/device-definitions'
 import useIoBrokerDevices from '../../contexts/iobroker-devices'
 import { useSettings } from '../../contexts/settings'
+import useThemeSwitcher from '../../contexts/theme-switcher/theme-switcher'
 import forwardBaseProps from '../../helpers/forward-base-props'
 import groupBy from '../../helpers/group-by'
 import toKebabCase from '../../helpers/to-kebab-case'
@@ -128,6 +129,8 @@ const DevicesPage = forwardBaseProps((baseProps) => {
     return [...favorite, ...withoutFavorite]
   }, [selectedDevices, favoriteRoom])
 
+  const { theme, setTheme } = useThemeSwitcher()
+
   return (
     <div {...baseProps}>
       <AnimatePresence>
@@ -147,15 +150,24 @@ const DevicesPage = forwardBaseProps((baseProps) => {
 
       <Title variant="h1">
         <span>My home</span>
-        <FilterIconButton onClick={toggleFilterExpanded}>
-          <Badge
-            variant="standard"
-            badgeContent={hiddenDeviceTypesCount}
-            color="error"
-          >
-            <Icon icon="tune" />
-          </Badge>
-        </FilterIconButton>
+        <div>
+          <IconButton>
+            <Icon
+              icon="dark_mode"
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              filled={theme === 'dark'}
+            />
+          </IconButton>
+          <FilterIconButton onClick={toggleFilterExpanded}>
+            <Badge
+              variant="standard"
+              badgeContent={hiddenDeviceTypesCount}
+              color="error"
+            >
+              <Icon icon="tune" />
+            </Badge>
+          </FilterIconButton>
+        </div>
       </Title>
 
       <StyledExpandableChips
